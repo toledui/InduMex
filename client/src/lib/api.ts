@@ -245,6 +245,24 @@ export async function subscribeNewsletter(payload: {
   return parseResponse<Subscriber>(response);
 }
 
+export async function submitContact(payload: {
+  nombre: string;
+  email: string;
+  telefono?: string;
+  asunto: string;
+  mensaje: string;
+}): Promise<{ message: string }> {
+  const response = await fetch(`${API_BASE_URL}/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return parseResponse<{ message: string }>(response);
+}
+
 export async function getSubscribers(token: string, emailQuery?: string): Promise<Subscriber[]> {
   const params = new URLSearchParams();
   if (emailQuery?.trim()) {

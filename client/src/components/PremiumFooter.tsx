@@ -1,10 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { TrendingUp, Share2, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import NewsletterCapture from "@/components/NewsletterCapture";
+import { getConfig } from "@/lib/api";
 
 export default function PremiumFooter() {
   const currentYear = new Date().getFullYear();
+  const defaultCopyright = `© ${currentYear} INDUMEX MEDIA SA DE CV. HECHO EN MÉXICO.`;
+
+  const [copyright, setCopyright] = useState(defaultCopyright);
+
+  useEffect(() => {
+    let active = true;
+
+    void (async () => {
+      try {
+        const cfg = await getConfig();
+        if (active && cfg.site_copyright) {
+          setCopyright(cfg.site_copyright);
+        }
+      } catch {
+        if (active) {
+          setCopyright(defaultCopyright);
+        }
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [defaultCopyright]);
 
   return (
     <footer className="bg-[#050505] border-t border-gray-900">
@@ -42,7 +70,7 @@ export default function PremiumFooter() {
               <ul className="space-y-4 text-gray-400 text-sm">
                 <li>
                   <Link
-                    href="/"
+                    href="/blog"
                     className="hover:text-white transition-colors"
                   >
                     Noticias
@@ -81,15 +109,15 @@ export default function PremiumFooter() {
               <ul className="space-y-4 text-gray-400 text-sm">
                 <li>
                   <Link
-                    href="/"
+                    href="/sobre-nosotros"
                     className="hover:text-white transition-colors"
                   >
-                    Acerca de InduMex
+                    Sobre Nosotros
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/"
+                    href="/contacto"
                     className="hover:text-white transition-colors"
                   >
                     Contacto Ventas
@@ -97,10 +125,26 @@ export default function PremiumFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/"
+                    href="/privacidad"
                     className="hover:text-white transition-colors"
                   >
                     Aviso de Privacidad
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terminos-y-condiciones"
+                    className="hover:text-white transition-colors"
+                  >
+                    Términos y Condiciones
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/facturacion-electronica"
+                    className="hover:text-white transition-colors"
+                  >
+                    Política de Facturación
                   </Link>
                 </li>
               </ul>
@@ -133,9 +177,7 @@ export default function PremiumFooter() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-widest font-bold">
-          <p>
-            © {currentYear} INDUMEX MEDIA SA DE CV. HECHO EN MÉXICO.
-          </p>
+          <p>{copyright}</p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition-colors flex items-center gap-2">
               <Share2 className="h-4 w-4" /> LinkedIn

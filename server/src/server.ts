@@ -10,6 +10,7 @@ import usuariosRoutes from "./routes/usuarios";
 import postsRoutes from "./routes/posts";
 import redSocialesRoutes from "./routes/redes-sociales";
 import anunciosRoutes from "./routes/anuncios";
+import contactRoutes from "./routes/contact";
 // Importar modelos para sincronización
 import "./models/RedSocial";
 import "./models/Anuncio";
@@ -34,6 +35,7 @@ app.use("/api/v1", suscriptoresRoutes);
 app.use("/api/v1", postsRoutes);
 app.use("/api/v1", redSocialesRoutes);
 app.use("/api/v1/ads", anunciosRoutes);
+app.use("/api/v1/contact", contactRoutes);
 
 async function startServer(): Promise<void> {
   try {

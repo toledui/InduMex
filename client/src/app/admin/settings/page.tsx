@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
 import { getConfig, updateConfig, getAuthTokenFromCookie } from '@/lib/api';
 
 const inputBase =
@@ -56,6 +56,22 @@ export default function SettingsPage() {
   const [isWpSaving, setIsWpSaving] = useState(false);
   const [wpSaveResult, setWpSaveResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
+  // ── Formulario de contacto ─────────────────────────────────────
+  const [contactForm, setContactForm] = useState({
+    contact_notification_emails: '',
+  });
+  const [isContactLoading, setIsContactLoading] = useState(true);
+  const [isContactSaving, setIsContactSaving] = useState(false);
+  const [contactResult, setContactResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  // ── Copyright del sitio ───────────────────────────────────────
+  const [copyrightForm, setCopyrightForm] = useState({
+    site_copyright: '',
+  });
+  const [isCopyrightLoading, setIsCopyrightLoading] = useState(true);
+  const [isCopyrightSaving, setIsCopyrightSaving] = useState(false);
+  const [copyrightResult, setCopyrightResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
   // ── Email marketing providers (Mailrelay / Mailchimp) ─────────
   const [marketingForm, setMarketingForm] = useState({
     email_provider_default: 'local',
@@ -96,11 +112,21 @@ export default function SettingsPage() {
           mailchimp_audience_id: cfg.mailchimp_audience_id ?? '',
           mailchimp_tags_default: cfg.mailchimp_tags_default ?? '',
         });
+
+        setContactForm({
+          contact_notification_emails: cfg.contact_notification_emails ?? '',
+        });
+
+        setCopyrightForm({
+          site_copyright: cfg.site_copyright ?? '',
+        });
       })
       .catch(() => { /* keep defaults */ })
       .finally(() => {
         setIsWpLoading(false);
         setIsMarketingLoading(false);
+        setIsContactLoading(false);
+        setIsCopyrightLoading(false);
       });
   }, []);
 
@@ -162,6 +188,42 @@ export default function SettingsPage() {
       });
     } finally {
       setIsMarketingSaving(false);
+    }
+  }
+
+  function handleContactChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setContactForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function handleContactSave() {
+    setIsContactSaving(true);
+    setContactResult(null);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      await updateConfig(token, {
+        contact_notification_emails: contactForm.contact_notification_emails.trim() || null,
+      });
+      setContactResult({ ok: true, msg: 'Configuración de contacto guardada correctamente.' });
+    } catch (err) {
+      setContactResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar' });
+    } finally {
+      setIsContactSaving(false);
+    }
+  }
+
+  async function handleCopyrightSave() {
+    setIsCopyrightSaving(true);
+    setCopyrightResult(null);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      await updateConfig(token, {
+        site_copyright: copyrightForm.site_copyright.trim() || null,
+      });
+      setCopyrightResult({ ok: true, msg: 'Copyright guardado correctamente.' });
+    } catch (err) {
+      setCopyrightResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar' });
+    } finally {
+      setIsCopyrightSaving(false);
     }
   }
 
@@ -653,6 +715,133 @@ export default function SettingsPage() {
           >
             <Save size={15} />
             {isMarketingSaving ? 'Guardando…' : 'Guardar Configuración'}
+          </button>
+        </div>
+      </section>
+
+      {/* ── FORMULARIO DE CONTACTO CARD ── */}
+      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#004AAD]/10 border border-[#004AAD]/20 flex items-center justify-center">
+              <MessageSquare size={18} className="text-[#004AAD]" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-white">Formulario de Contacto</h2>
+              <p className="text-xs text-white/30 mt-0.5">Correos que recibirán notificaciones del formulario público</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-white/5" />
+
+        {isContactLoading ? (
+          <div className="flex items-center gap-2 text-sm text-white/30 py-4">
+            <RefreshCw size={14} className="animate-spin" />
+            Cargando configuración…
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <FieldGroup label="Correos de Notificación (separados por coma)" icon={AtSign}>
+              <input
+                type="text"
+                name="contact_notification_emails"
+                value={contactForm.contact_notification_emails}
+                onChange={handleContactChange}
+                placeholder="admin@indumex.blog, contacto@indumex.blog"
+                className={inputBase}
+              />
+              <p className="text-[11px] text-white/25 mt-1">
+                Cuando alguien envíe el formulario de contacto, se enviará una notificación a estos correos.
+                Separa múltiples direcciones con coma.
+              </p>
+            </FieldGroup>
+          </div>
+        )}
+
+        {contactResult && (
+          <div
+            className={`flex items-center gap-2.5 text-sm px-4 py-3 rounded-xl border ${
+              contactResult.ok
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            {contactResult.ok ? <CheckCircle2 size={15} className="shrink-0" /> : <AlertCircle size={15} className="shrink-0" />}
+            {contactResult.msg}
+          </div>
+        )}
+
+        <div className="flex justify-end pt-2 border-t border-white/5">
+          <button
+            type="button"
+            onClick={handleContactSave}
+            disabled={isContactSaving || isContactLoading}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Save size={15} />
+            {isContactSaving ? 'Guardando…' : 'Guardar Configuración'}
+          </button>
+        </div>
+      </section>
+
+      {/* ── COPYRIGHT CARD ── */}
+      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#004AAD]/10 border border-[#004AAD]/20 flex items-center justify-center">
+            <Globe size={18} className="text-[#004AAD]" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold text-white">Copyright del Sitio</h2>
+            <p className="text-xs text-white/30 mt-0.5">Texto que aparece en el pie de página del sitio público</p>
+          </div>
+        </div>
+
+        <div className="border-t border-white/5" />
+
+        {isCopyrightLoading ? (
+          <div className="flex items-center gap-2 text-sm text-white/30 py-4">
+            <RefreshCw size={14} className="animate-spin" />
+            Cargando configuración…
+          </div>
+        ) : (
+          <FieldGroup label="Texto de Copyright" icon={AtSign}>
+            <input
+              type="text"
+              name="site_copyright"
+              value={copyrightForm.site_copyright}
+              onChange={(e) => setCopyrightForm({ site_copyright: e.target.value })}
+              placeholder="© 2026 INDUMEX MEDIA SA DE CV. HECHO EN MÉXICO."
+              className={inputBase}
+            />
+            <p className="text-[11px] text-white/25 mt-1">
+              Si se deja vacío, se usará el texto predeterminado con el año actual.
+            </p>
+          </FieldGroup>
+        )}
+
+        {copyrightResult && (
+          <div
+            className={`flex items-center gap-2.5 text-sm px-4 py-3 rounded-xl border ${
+              copyrightResult.ok
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            {copyrightResult.ok ? <CheckCircle2 size={15} className="shrink-0" /> : <AlertCircle size={15} className="shrink-0" />}
+            {copyrightResult.msg}
+          </div>
+        )}
+
+        <div className="flex justify-end pt-2 border-t border-white/5">
+          <button
+            type="button"
+            onClick={handleCopyrightSave}
+            disabled={isCopyrightSaving || isCopyrightLoading}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Save size={15} />
+            {isCopyrightSaving ? 'Guardando…' : 'Guardar Configuración'}
           </button>
         </div>
       </section>

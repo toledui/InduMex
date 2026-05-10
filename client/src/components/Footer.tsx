@@ -1,15 +1,8 @@
-import { HeartHandshake, Twitter, Linkedin, Facebook, Instagram, Youtube, Github } from "lucide-react";
+import { HeartHandshake, Link2 } from "lucide-react";
 import { getSocialNetworks, SocialNetwork } from "@/lib/api";
 
-// Mapeo de nombres de iconos a componentes
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Twitter,
-  Linkedin,
-  Facebook,
-  Instagram,
-  Youtube,
-  Github,
-};
+// lucide-react v1.14+ no incluye iconos de marcas — se usa Link2 como fallback genérico
+const GenericSocialIcon = Link2;
 
 export default async function Footer() {
   let socialNetworks: SocialNetwork[] = [];
@@ -43,9 +36,7 @@ export default async function Footer() {
           <div className="flex items-center gap-4 border-t border-slate-200 pt-6">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Síguenos:</span>
             <div className="flex flex-wrap items-center gap-3">
-              {socialNetworks.map((social) => {
-                const IconComponent = social.icono ? iconMap[social.icono] : null;
-                return (
+              {socialNetworks.map((social) => (
                   <a
                     key={social.id}
                     href={social.url}
@@ -55,14 +46,9 @@ export default async function Footer() {
                     className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-100 text-slate-600 hover:bg-[var(--indumex-accent)] hover:text-white transition-all duration-200"
                     aria-label={`Ir a ${social.nombre}`}
                   >
-                    {IconComponent ? (
-                      <IconComponent className="w-4 h-4" />
-                    ) : (
-                      <span className="text-xs font-bold">{social.nombre.charAt(0)}</span>
-                    )}
+                    <GenericSocialIcon className="w-4 h-4" />
                   </a>
-                );
-              })}
+                ))}
             </div>
           </div>
         )}
