@@ -1,0 +1,15 @@
+{
+  "name": "indumex",
+  "version": "1.0.0",
+  "private": true,
+  "description": "InduMex 2.0 monorepo",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run dev\"",
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "start": "concurrently \"npm --prefix server run start\" \"npm --prefix client run start\"",
+    "db:deploy": "npm --prefix server run db:migrate && npm --prefix server run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

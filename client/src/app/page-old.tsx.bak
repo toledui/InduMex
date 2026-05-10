@@ -1,0 +1,208 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, CalendarDays } from "lucide-react";
+import AdBanner from "@/components/AdBanner";
+import {
+  getAllPosts,
+  getPrimaryCategory,
+  WORDPRESS_GRAPHQL_URL,
+} from "@/lib/wordpress";
+import {
+  OrganizationJsonLd,
+  WebSiteJsonLd,
+} from "@/lib/json-ld";
+
+export const metadata: Metadata = {
+  title: "InduMex 2.0 | Revista Digital Industrial",
+  description:
+    "Landing tecnica de alto rendimiento conectada a WordPress por WPGraphQL. Analisis industrial, innovacion y precision.",
+  openGraph: {
+    title: "InduMex 2.0 - Revista Digital Industrial",
+    description:
+      "Plataforma editorial tecnica para la industria mexicana. Contenido vivo desde WordPress.",
+    type: "website",
+    url: "https://indumex.blog",
+    siteName: "InduMex 2.0",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+};
+
+function createPostPath(category: string | undefined, slug: string): string {
+  const segment = category || "noticias";
+  return `/${segment}/${slug}`;
+}
+
+export default async function Home() {
+  let posts = [] as Awaited<ReturnType<typeof getAllPosts>>;
+  let error = "";
+
+  try {
+    posts = await getAllPosts(10);
+  } catch (err) {
+    error =
+      err instanceof Error
+        ? err.message
+        : "No se pudo consultar WordPress en este momento.";
+  }
+
+  const hero = posts[0];
+  const gridPosts = posts.slice(1, 6);
+  const listPosts = posts.slice(6);
+
+  return (
+    <>
+      <OrganizationJsonLd
+        name="InduMex 2.0"
+        url="https://indumex.blog"
+        description="Revista digital tecnica para la industria mexicana"
+      />
+      <WebSiteJsonLd
+        name="InduMex 2.0"
+        url="https://indumex.blog"
+        description="Plataforma editorial de alto rendimiento conectada a WordPress por WPGraphQL"
+      />
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section className="mb-8 rounded-3xl border border-[var(--indumex-primary)]/20 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--indumex-accent)]">
+              Plataforma Editorial Tecnica
+            </p>
+            <h1 className="mt-2 font-heading text-4xl font-black leading-tight text-[var(--indumex-primary)] sm:text-5xl">
+              Revista digital para la industria mexicana
+            </h1>
+            <p className="mt-4 max-w-3xl text-sm text-slate-600">
+              Visual rapido, arquitectura limpia y contenido vivo desde WPGraphQL.
+              Preparado para medios tecnicos, proveedores y analisis de campo.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-[var(--indumex-gray)] px-4 py-3 text-xs text-slate-600">
+            Origen de datos: {WORDPRESS_GRAPHQL_URL}
+          </div>
+        </div>
+      </section>
+
+      {error ? (
+        <section className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+          Error al consultar WordPress: {error}
+        </section>
+      ) : null}
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-6">
+          {hero ? (
+            <article className="rounded-3xl border border-[var(--indumex-primary)]/20 bg-white p-5 shadow-sm sm:p-6">
+              <p className="mb-3 inline-flex rounded-full bg-[var(--indumex-primary)]/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--indumex-primary)]">
+                {getPrimaryCategory(hero)?.name || "Actualidad"}
+              </p>
+              <h2 className="font-heading text-3xl font-black text-[var(--indumex-primary)]">
+                {hero.title}
+              </h2>
+              <div className="mt-2 inline-flex items-center gap-2 text-sm text-slate-500">
+                <CalendarDays className="h-4 w-4" />
+                {new Date(hero.date).toLocaleDateString("es-MX")}
+              </div>
+
+              {hero.featuredImage?.node?.sourceUrl ? (
+                <figure className="relative mt-5 overflow-hidden rounded-2xl border border-slate-200">
+                  <Image
+                    src={hero.featuredImage.node.sourceUrl}
+                    alt={hero.featuredImage.node.altText || hero.title}
+                    width={hero.featuredImage.node.mediaDetails?.width || 1200}
+                    height={hero.featuredImage.node.mediaDetails?.height || 680}
+                    className="h-auto w-full object-cover"
+                    priority
+                    quality={85}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1160px"
+                  />
+                </figure>
+              ) : null}
+
+              <Link
+                href={createPostPath(getPrimaryCategory(hero)?.slug, hero.slug)}
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--indumex-accent)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                Leer analisis
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </article>
+          ) : null}
+
+          <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {gridPosts.map((post) => (
+              <article
+                key={post.id}
+                className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--indumex-accent)]">
+                    {getPrimaryCategory(post)?.name || "Industria"}
+                  </p>
+                  <h3 className="mt-2 font-heading text-lg font-bold text-[var(--indumex-primary)]">
+                    {post.title}
+                  </h3>
+                </div>
+                <Link
+                  href={createPostPath(getPrimaryCategory(post)?.slug, post.slug)}
+                  className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[var(--indumex-primary)]"
+                >
+                  Abrir articulo
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </article>
+            ))}
+          </section>
+
+          <AdBanner size="728x90" className="max-w-full" />
+
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="font-heading text-2xl font-bold text-[var(--indumex-primary)]">
+              Ultimas publicaciones
+            </h2>
+            <div className="mt-4 divide-y divide-slate-200">
+              {listPosts.length === 0 ? (
+                <p className="py-4 text-sm text-slate-500">
+                  Aun no hay suficientes articulos para esta seccion.
+                </p>
+              ) : (
+                listPosts.map((post) => (
+                  <div key={post.id} className="flex items-center justify-between gap-3 py-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.08em] text-slate-500">
+                        {getPrimaryCategory(post)?.name || "General"}
+                      </p>
+                      <h3 className="font-semibold text-slate-800">{post.title}</h3>
+                    </div>
+                    <Link
+                      href={createPostPath(getPrimaryCategory(post)?.slug, post.slug)}
+                      className="rounded-full border border-[var(--indumex-primary)]/30 px-3 py-1 text-xs font-semibold uppercase text-[var(--indumex-primary)]"
+                    >
+                      Ver
+                    </Link>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
+
+        <aside className="space-y-6">
+          <AdBanner size="300x600" />
+          <section className="rounded-2xl border border-[var(--indumex-primary)]/20 bg-white p-4">
+            <h2 className="font-heading text-lg font-bold text-[var(--indumex-primary)]">
+              Zona de proveedores
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Integra aqui fichas, directorios, casos de exito y espacios
+              comerciales patrocinados.
+            </p>
+          </section>
+        </aside>
+      </div>
+      </div>
+    </>
+  );
+}
