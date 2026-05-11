@@ -102,7 +102,7 @@ module.exports = {
       await queryInterface.bulkInsert(
         'proveedores',
         rows.map((r) => {
-          const row = { ...r };
+          const { nombre, empresa, ...row } = r;
 
           if (hasNombre) row.nombre = r.name;
           if (hasEmpresa) row.empresa = r.name;
