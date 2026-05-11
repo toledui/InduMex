@@ -37,10 +37,21 @@ dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
   })
 );
 app.use(express.json());
