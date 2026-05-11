@@ -83,16 +83,25 @@ module.exports = {
       defaultValue: true,
     });
 
+    const providerTable = await queryInterface.describeTable('proveedores');
+    const hasNombre = Object.prototype.hasOwnProperty.call(providerTable, 'nombre');
+    const hasEmpresa = Object.prototype.hasOwnProperty.call(providerTable, 'empresa');
+    const hasSector = Object.prototype.hasOwnProperty.call(providerTable, 'sector');
+
+    const nombreExpr = hasNombre ? "NULLIF(nombre, '')" : 'NULL';
+    const empresaExpr = hasEmpresa ? "NULLIF(empresa, '')" : 'NULL';
+    const sectorExpr = hasSector ? "NULLIF(sector, '')" : 'NULL';
+
     await queryInterface.sequelize.query(`
       UPDATE proveedores
       SET
-        name = COALESCE(NULLIF(name, ''), NULLIF(nombre, ''), NULLIF(empresa, ''), CONCAT('Proveedor ', id)),
-        slug = COALESCE(NULLIF(slug, ''), CONCAT(LOWER(REPLACE(COALESCE(NULLIF(nombre, ''), NULLIF(empresa, ''), CONCAT('proveedor-', id)), ' ', '-')), '-', id)),
-        logo = COALESCE(NULLIF(logo, ''), UPPER(LEFT(COALESCE(NULLIF(nombre, ''), NULLIF(empresa, ''), 'PR'), 2))),
+        name = COALESCE(NULLIF(name, ''), ${nombreExpr}, ${empresaExpr}, CONCAT('Proveedor ', id)),
+        slug = COALESCE(NULLIF(slug, ''), CONCAT(LOWER(REPLACE(COALESCE(${nombreExpr}, ${empresaExpr}, CONCAT('proveedor-', id)), ' ', '-')), '-', id)),
+        logo = COALESCE(NULLIF(logo, ''), UPPER(LEFT(COALESCE(${nombreExpr}, ${empresaExpr}, 'PR'), 2))),
         tier = COALESCE(NULLIF(tier, ''), 'basic'),
-        shortDescription = COALESCE(NULLIF(shortDescription, ''), CONCAT('Proveedor industrial especializado en ', COALESCE(NULLIF(sector, ''), 'soluciones B2B'))),
-        about = COALESCE(NULLIF(about, ''), CONCAT('Proveedor industrial especializado en ', COALESCE(NULLIF(sector, ''), 'soluciones B2B'), '.')),
-        sectors = COALESCE(sectors, JSON_ARRAY(COALESCE(NULLIF(sector, ''), 'Industrial'))),
+        shortDescription = COALESCE(NULLIF(shortDescription, ''), CONCAT('Proveedor industrial especializado en ', COALESCE(${sectorExpr}, 'soluciones B2B'))),
+        about = COALESCE(NULLIF(about, ''), CONCAT('Proveedor industrial especializado en ', COALESCE(${sectorExpr}, 'soluciones B2B'), '.')),
+        sectors = COALESCE(sectors, JSON_ARRAY(COALESCE(${sectorExpr}, 'Industrial'))),
         certifications = COALESCE(certifications, JSON_ARRAY()),
         city = COALESCE(NULLIF(city, ''), 'México'),
         state = COALESCE(NULLIF(state, ''), 'México'),
