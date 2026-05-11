@@ -93,6 +93,7 @@ module.exports = {
     const hasNombre = Object.prototype.hasOwnProperty.call(providerTable, 'nombre');
     const hasEmpresa = Object.prototype.hasOwnProperty.call(providerTable, 'empresa');
     const hasSector = Object.prototype.hasOwnProperty.call(providerTable, 'sector');
+    const hasSocialNetworks = Object.prototype.hasOwnProperty.call(providerTable, 'social_networks');
 
     const [existing] = await queryInterface.sequelize.query('SELECT slug FROM proveedores');
     const existingSlugs = new Set(existing.map((row) => row.slug));
@@ -107,6 +108,7 @@ module.exports = {
           if (hasNombre) row.nombre = r.name;
           if (hasEmpresa) row.empresa = r.name;
           if (hasSector) row.sector = JSON.parse(r.sectors)[0] || 'General';
+          if (hasSocialNetworks) row.social_networks = JSON.stringify([]);
 
           return row;
         })
