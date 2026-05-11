@@ -1651,12 +1651,16 @@ export type Anuncio = {
 };
 
 export async function getAdsByZona(zona: AdZona): Promise<Anuncio[]> {
-  const response = await fetch(`${API_BASE_URL}/ads?zona=${zona}`, {
-    next: { revalidate: 60 },
-  });
-  if (!response.ok) return [];
-  const payload = (await response.json()) as ApiResponse<Anuncio[]>;
-  return payload.data ?? [];
+  try {
+    const response = await fetch(`${API_BASE_URL}/ads?zona=${zona}`, {
+      next: { revalidate: 60 },
+    });
+    if (!response.ok) return [];
+    const payload = (await response.json()) as ApiResponse<Anuncio[]>;
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getAdsAdmin(token: string): Promise<Anuncio[]> {
