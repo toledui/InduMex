@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "blog.indumex.blog",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "secure.gravatar.com",
         pathname: "/avatar/**",
       },
