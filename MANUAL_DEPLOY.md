@@ -250,3 +250,65 @@ npx sequelize-cli init
 ```
 
 El init puede ser opcional si ya existe configuracion (como en este proyecto).
+
+## 13. Configuración de Webhooks - Ecart Pay
+
+Para recibir notificaciones en tiempo real de pagos exitosos desde Ecart Pay, debes registrar un webhook en el panel de la plataforma.
+
+### 13.1 URL del webhook
+
+Desde el panel de Ecart Pay, agrega un nuevo webhook con los siguientes parámetros:
+
+- **URL**: `https://TU-DOMINIO/api/v1/webhooks/ecartpay`
+- **Método**: POST
+- **Content-Type**: application/json
+- **Header de seguridad**: `x-ecartpay-secret` (el valor debe coincidir con tu `ECARTPAY_SECRET_KEY` en server/.env)
+
+### 13.2 Configuración en server/.env
+
+Asegúrate de que en tu archivo `server/.env` tengas configuradas las credenciales de Ecart Pay:
+
+```env
+ECARTPAY_PUBLIC_ID=tu_public_id_aqui
+ECARTPAY_SECRET_KEY=tu_secret_key_aqui
+ECARTPAY_SANDBOX=true  # cambiar a false para producción
+```
+
+### 13.3 Eventos a suscribir
+
+Suscribe el webhook a los siguientes eventos (según la nomenclatura que use Ecart Pay en su panel):
+
+- Pago completado / Order paid
+- Pago exitoso / Payment successful
+
+### 13.4 Validación de seguridad
+
+El backend valida automáticamente que los webhooks provengan de Ecart Pay comparando el header `x-ecartpay-secret` con tu clave configurada. Si no coincide, rechaza la request con HTTP 401.
+
+### 13.5 Prueba local con ngrok
+
+Para probar webhooks en desarrollo local:
+
+1. Instala ngrok: `npm install -g ngrok` (o descárgalo desde ngrok.com)
+2. Expone tu puerto local: `ngrok http 4000`
+3. Copia la URL pública que genera ngrok (ej. `https://abc123.ngrok.io`)
+4. En Ecart Pay, usa: `https://abc123.ngrok.io/api/v1/webhooks/ecartpay`
+5. Realiza un pago de prueba en sandbox
+6. Verifica en los logs del servidor que el webhook fue recibido
+
+### 13.6 Flujo de pago exitoso
+
+Cuando un cliente completa un pago en EcartPay:
+
+1. Frontend envía `POST /api/v1/pay/:token/complete` (confirmación inicial)
+2. Backend marca link como "pagado" y crea registro en tabla `ventas`
+3. Ecart Pay envía webhook a `POST /api/v1/webhooks/ecartpay` (confirmación por servidor)
+4. Backend actualiza el registro de venta con información del webhook
+5. Cliente es redirigido a `/mi-cuenta` (si está logueado) o `/` (si no)
+6. Cliente puede descargar recibo PDF desde su historial de pagos
+
+### 13.7 Troubleshooting de webhooks
+
+- **El webhook no se dispara**: verifica que el URL es público y accesible desde internet
+- **HTTP 401 en los logs**: comprueba que `x-ecartpay-secret` coincide con tu `ECARTPAY_SECRET_KEY`
+- **Pago registrado pero webhook no llega**: usa el flujo frontend como confirmación primaria, el webhook es una capa adicional de auditoría

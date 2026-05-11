@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as service from "../services/configuracionService";
 import { failure, success } from "../utils/response";
+import { sendSmtpTestEmail } from "../utils/mailer";
 
 export async function getConfig(req: Request, res: Response): Promise<void> {
   try {
@@ -28,5 +29,23 @@ export async function updateConfig(req: Request, res: Response): Promise<void> {
     success(res, data);
   } catch (err) {
     failure(res, "Error al guardar configuración", 500);
+  }
+}
+
+export async function testSmtp(req: Request, res: Response): Promise<void> {
+  try {
+    const { to } = req.body as { to?: string };
+    const recipient = to?.trim().toLowerCase();
+
+    if (!recipient) {
+      failure(res, "El correo destino es obligatorio", 422);
+      return;
+    }
+
+    await sendSmtpTestEmail(recipient);
+    success(res, { message: `Correo de prueba enviado a ${recipient}` });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error al probar SMTP";
+    failure(res, message, 400);
   }
 }

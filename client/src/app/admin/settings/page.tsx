@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
-import { getConfig, updateConfig, getAuthTokenFromCookie } from '@/lib/api';
+import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle, MessageSquare, CreditCard } from 'lucide-react';
+import { getConfig, updateConfig, testSmtpConfig, getAuthTokenFromCookie, validateClipCredentials } from '@/lib/api';
 
 const inputBase =
   'w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all duration-200 focus:border-[#F58634] focus:ring-1 focus:ring-[#F58634]/30';
@@ -32,13 +32,14 @@ function FieldGroup({
 
 export default function SettingsPage() {
   const [form, setForm] = useState({
-    host: '',
-    port: '587',
-    usuario: '',
-    password: '',
-    cifrado: 'TLS',
-    nombreRemitente: 'InduMex B2B',
-    emailRemitente: '',
+    smtp_host: '',
+    smtp_port: '587',
+    smtp_user: '',
+    smtp_password: '',
+    smtp_secure: 'false',
+    smtp_from_name: 'InduMex B2B',
+    smtp_from_email: '',
+    smtp_test_email: '',
   });
   const [isTesting, setIsTesting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,6 +60,7 @@ export default function SettingsPage() {
   // ── Formulario de contacto ─────────────────────────────────────
   const [contactForm, setContactForm] = useState({
     contact_notification_emails: '',
+    payment_notification_emails: '',
   });
   const [isContactLoading, setIsContactLoading] = useState(true);
   const [isContactSaving, setIsContactSaving] = useState(false);
@@ -71,6 +73,18 @@ export default function SettingsPage() {
   const [isCopyrightLoading, setIsCopyrightLoading] = useState(true);
   const [isCopyrightSaving, setIsCopyrightSaving] = useState(false);
   const [copyrightResult, setCopyrightResult] = useState<{ ok: boolean; msg: string } | null>(null);
+
+  // ── EcartPay ──────────────────────────────────────────────────
+  const [ecartpayForm, setEcartpayForm] = useState({
+    clip_api_key: '',
+    clip_secret_key: '',
+    clip_webhook_secret: '',
+    clip_sandbox: 'true',
+  });
+  const [isEcartpayLoading, setIsEcartpayLoading] = useState(true);
+  const [isEcartpaySaving, setIsEcartpaySaving] = useState(false);
+  const [isEcartpayTesting, setIsEcartpayTesting] = useState(false);
+  const [ecartpayResult, setEcartpayResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   // ── Email marketing providers (Mailrelay / Mailchimp) ─────────
   const [marketingForm, setMarketingForm] = useState({
@@ -92,6 +106,18 @@ export default function SettingsPage() {
   useEffect(() => {
     getConfig()
       .then((cfg) => {
+        setForm((prev) => ({
+          ...prev,
+          smtp_host: cfg.smtp_host ?? '',
+          smtp_port: cfg.smtp_port ?? '587',
+          smtp_user: cfg.smtp_user ?? '',
+          smtp_password: cfg.smtp_password ?? '',
+          smtp_secure: cfg.smtp_secure ?? 'false',
+          smtp_from_name: cfg.smtp_from_name ?? 'InduMex B2B',
+          smtp_from_email: cfg.smtp_from_email ?? '',
+          smtp_test_email: cfg.smtp_from_email ?? '',
+        }));
+
         setWpForm({
           wordpress_api_url: cfg.wordpress_api_url ?? '',
           wordpress_revalidate: cfg.wordpress_revalidate ?? '60',
@@ -115,10 +141,18 @@ export default function SettingsPage() {
 
         setContactForm({
           contact_notification_emails: cfg.contact_notification_emails ?? '',
+          payment_notification_emails: cfg.payment_notification_emails ?? '',
         });
 
         setCopyrightForm({
           site_copyright: cfg.site_copyright ?? '',
+        });
+
+        setEcartpayForm({
+          clip_api_key: cfg.clip_api_key ?? '',
+          clip_secret_key: cfg.clip_secret_key ?? '',
+          clip_webhook_secret: cfg.clip_webhook_secret ?? '',
+          clip_sandbox: cfg.clip_sandbox ?? 'true',
         });
       })
       .catch(() => { /* keep defaults */ })
@@ -127,6 +161,7 @@ export default function SettingsPage() {
         setIsMarketingLoading(false);
         setIsContactLoading(false);
         setIsCopyrightLoading(false);
+        setIsEcartpayLoading(false);
       });
   }, []);
 
@@ -202,12 +237,63 @@ export default function SettingsPage() {
       const token = getAuthTokenFromCookie() ?? '';
       await updateConfig(token, {
         contact_notification_emails: contactForm.contact_notification_emails.trim() || null,
+        payment_notification_emails: contactForm.payment_notification_emails.trim() || null,
       });
       setContactResult({ ok: true, msg: 'Configuración de contacto guardada correctamente.' });
     } catch (err) {
       setContactResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar' });
     } finally {
       setIsContactSaving(false);
+    }
+  }
+
+  function handleEcartpayChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    setEcartpayForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function handleEcartpaySave() {
+    setIsEcartpaySaving(true);
+    setEcartpayResult(null);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      await updateConfig(token, {
+        clip_api_key: ecartpayForm.clip_api_key.trim() || null,
+        clip_secret_key: ecartpayForm.clip_secret_key.trim() || null,
+        clip_webhook_secret: ecartpayForm.clip_webhook_secret.trim() || null,
+        clip_sandbox: ecartpayForm.clip_sandbox,
+      });
+      setEcartpayResult({ ok: true, msg: 'Credenciales de Clip guardadas correctamente.' });
+    } catch (err) {
+      setEcartpayResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar' });
+    } finally {
+      setIsEcartpaySaving(false);
+    }
+  }
+
+  async function handleEcartpayValidate() {
+    setIsEcartpayTesting(true);
+    setEcartpayResult(null);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      const result = await validateClipCredentials(token);
+      if (result.tokenGenerated) {
+        setEcartpayResult({
+          ok: true,
+          msg: `Conexión Clip OK (${result.sandbox ? 'Sandbox' : 'Producción'}). Token generado correctamente.`,
+        });
+      } else {
+        setEcartpayResult({
+          ok: false,
+          msg: 'No se pudo generar token de Clip con las credenciales actuales.',
+        });
+      }
+    } catch (err) {
+      setEcartpayResult({
+        ok: false,
+        msg: err instanceof Error ? err.message : 'Error al comprobar credenciales de Clip',
+      });
+    } finally {
+      setIsEcartpayTesting(false);
     }
   }
 
@@ -234,15 +320,40 @@ export default function SettingsPage() {
   async function handleTest() {
     setIsTesting(true);
     setTestResult(null);
-    await new Promise((r) => setTimeout(r, 1500));
-    setTestResult({ ok: true, msg: 'Conexión SMTP exitosa. El servidor respondió correctamente.' });
-    setIsTesting(false);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      if (!form.smtp_test_email.trim()) {
+        throw new Error('Ingresa un correo destino para la prueba SMTP.');
+      }
+      const result = await testSmtpConfig(token, { to: form.smtp_test_email.trim() });
+      setTestResult({ ok: true, msg: result.message });
+    } catch (err) {
+      setTestResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al probar SMTP' });
+    } finally {
+      setIsTesting(false);
+    }
   }
 
   async function handleSave() {
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsSaving(false);
+    setTestResult(null);
+    try {
+      const token = getAuthTokenFromCookie() ?? '';
+      await updateConfig(token, {
+        smtp_host: form.smtp_host.trim() || null,
+        smtp_port: form.smtp_port.trim() || '587',
+        smtp_user: form.smtp_user.trim() || null,
+        smtp_password: form.smtp_password.trim() || null,
+        smtp_secure: form.smtp_secure,
+        smtp_from_name: form.smtp_from_name.trim() || 'InduMex B2B',
+        smtp_from_email: form.smtp_from_email.trim() || null,
+      });
+      setTestResult({ ok: true, msg: 'Configuración SMTP guardada correctamente.' });
+    } catch (err) {
+      setTestResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar SMTP' });
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -283,8 +394,8 @@ export default function SettingsPage() {
           <FieldGroup label="Servidor SMTP (Host)" icon={Server}>
             <input
               type="text"
-              name="host"
-              value={form.host}
+              name="smtp_host"
+              value={form.smtp_host}
               onChange={handleChange}
               placeholder="smtp.ejemplo.com"
               className={inputBase}
@@ -294,8 +405,8 @@ export default function SettingsPage() {
           <FieldGroup label="Puerto" icon={ShieldCheck}>
             <input
               type="number"
-              name="port"
-              value={form.port}
+              name="smtp_port"
+              value={form.smtp_port}
               onChange={handleChange}
               placeholder="587"
               className={inputBase}
@@ -305,8 +416,8 @@ export default function SettingsPage() {
           <FieldGroup label="Usuario SMTP" icon={User}>
             <input
               type="text"
-              name="usuario"
-              value={form.usuario}
+              name="smtp_user"
+              value={form.smtp_user}
               onChange={handleChange}
               placeholder="usuario@dominio.com"
               className={inputBase}
@@ -316,8 +427,8 @@ export default function SettingsPage() {
           <FieldGroup label="Contraseña" icon={Lock}>
             <input
               type="password"
-              name="password"
-              value={form.password}
+              name="smtp_password"
+              value={form.smtp_password}
               onChange={handleChange}
               placeholder="••••••••••••"
               className={inputBase}
@@ -327,14 +438,13 @@ export default function SettingsPage() {
           <FieldGroup label="Cifrado" icon={ShieldCheck}>
             <div className="relative">
               <select
-                name="cifrado"
-                value={form.cifrado}
+                name="smtp_secure"
+                value={form.smtp_secure}
                 onChange={handleChange}
                 className={selectBase}
               >
-                <option value="SSL" className="bg-[#111] text-white">SSL</option>
-                <option value="TLS" className="bg-[#111] text-white">TLS</option>
-                <option value="Ninguno" className="bg-[#111] text-white">Ninguno</option>
+                <option value="false" className="bg-[#111] text-white">TLS / STARTTLS (587)</option>
+                <option value="true" className="bg-[#111] text-white">SSL (465)</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -347,8 +457,8 @@ export default function SettingsPage() {
           <FieldGroup label="Nombre del Remitente" icon={User}>
             <input
               type="text"
-              name="nombreRemitente"
-              value={form.nombreRemitente}
+              name="smtp_from_name"
+              value={form.smtp_from_name}
               onChange={handleChange}
               placeholder="InduMex B2B"
               className={inputBase}
@@ -359,10 +469,23 @@ export default function SettingsPage() {
             <FieldGroup label="Email del Remitente" icon={AtSign}>
               <input
                 type="email"
-                name="emailRemitente"
-                value={form.emailRemitente}
+                name="smtp_from_email"
+                value={form.smtp_from_email}
                 onChange={handleChange}
                 placeholder="noreply@indumex.blog"
+                className={inputBase}
+              />
+            </FieldGroup>
+          </div>
+
+          <div className="md:col-span-2">
+            <FieldGroup label="Correo destino para prueba" icon={AtSign}>
+              <input
+                type="email"
+                name="smtp_test_email"
+                value={form.smtp_test_email}
+                onChange={handleChange}
+                placeholder="tu-correo@dominio.com"
                 className={inputBase}
               />
             </FieldGroup>
@@ -381,7 +504,7 @@ export default function SettingsPage() {
             {testResult.ok ? (
               <ShieldCheck size={15} className="shrink-0" />
             ) : (
-              <Mail size={15} className="shrink-0" />
+              <AlertCircle size={15} className="shrink-0" />
             )}
             {testResult.msg}
           </div>
@@ -434,14 +557,8 @@ export default function SettingsPage() {
 
         <div className="border-t border-white/5" />
 
-        {isWpLoading ? (
-          <div className="flex items-center gap-2 text-sm text-white/30 py-4">
-            <RefreshCw size={14} className="animate-spin" />
-            Cargando configuración…
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="md:col-span-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="md:col-span-2">
               <FieldGroup label="URL del endpoint GraphQL" icon={Globe}>
                 <input
                   type="url"
@@ -520,7 +637,6 @@ export default function SettingsPage() {
               </p>
             </FieldGroup>
           </div>
-        )}
 
         {/* Save result banner */}
         {wpSaveResult && (
@@ -756,6 +872,20 @@ export default function SettingsPage() {
                 Separa múltiples direcciones con coma.
               </p>
             </FieldGroup>
+
+            <FieldGroup label="Correos para notificación de pagos (coma separada)" icon={CreditCard}>
+              <input
+                type="text"
+                name="payment_notification_emails"
+                value={contactForm.payment_notification_emails}
+                onChange={handleContactChange}
+                placeholder="finanzas@indumex.blog, direccion@indumex.blog"
+                className={inputBase}
+              />
+              <p className="text-[11px] text-white/25 mt-1">
+                Cuando un pago se complete exitosamente, se notificará a estos correos para seguimiento del equipo.
+              </p>
+            </FieldGroup>
           </div>
         )}
 
@@ -842,6 +972,140 @@ export default function SettingsPage() {
           >
             <Save size={15} />
             {isCopyrightSaving ? 'Guardando…' : 'Guardar Configuración'}
+          </button>
+        </div>
+      </section>
+
+      {/* ── ECARTPAY CARD ── */}
+      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#F58634]/10 border border-[#F58634]/20 flex items-center justify-center">
+              <CreditCard size={18} className="text-[#F58634]" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-white">Clip — Pasarela de Pagos</h2>
+              <p className="text-xs text-white/30 mt-0.5">Credenciales para procesar pagos y generar links de cobro</p>
+            </div>
+          </div>
+          {!isEcartpayLoading && ecartpayForm.clip_api_key && (
+            <span className={`hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full border ${
+              ecartpayForm.clip_sandbox === 'true'
+                ? 'text-amber-400 bg-amber-400/10 border-amber-400/20'
+                : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${ecartpayForm.clip_sandbox === 'true' ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              {ecartpayForm.clip_sandbox === 'true' ? 'Modo Sandbox' : 'Producción'}
+            </span>
+          )}
+        </div>
+
+        <div className="border-t border-white/5" />
+
+        {isEcartpayLoading ? (
+          <div className="flex items-center gap-2 text-sm text-white/30 py-4">
+            <RefreshCw size={14} className="animate-spin" />
+            Cargando configuración…
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FieldGroup label="Modo" icon={ShieldCheck}>
+              <select
+                name="clip_sandbox"
+                value={ecartpayForm.clip_sandbox}
+                onChange={handleEcartpayChange}
+                className={selectBase}
+              >
+                <option value="true" className="bg-[#111] text-white">Sandbox (Pruebas)</option>
+                <option value="false" className="bg-[#111] text-white">Producción</option>
+              </select>
+            </FieldGroup>
+
+            <FieldGroup label="API Key" icon={User}>
+              <input
+                type="text"
+                name="clip_api_key"
+                value={ecartpayForm.clip_api_key}
+                onChange={handleEcartpayChange}
+                placeholder="5f2ab3c7-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                className={inputBase}
+              />
+            </FieldGroup>
+
+            <div className="md:col-span-2">
+              <FieldGroup label="Secret Key" icon={Lock}>
+                <input
+                  type="password"
+                  name="clip_secret_key"
+                  value={ecartpayForm.clip_secret_key}
+                  onChange={handleEcartpayChange}
+                  placeholder="••••••••••••••••••••••••••••••••"
+                  className={inputBase}
+                />
+                <p className="text-[11px] text-white/25 mt-1">
+                  Se usa en backend junto con API Key para generar Authorization Basic de Clip.
+                </p>
+              </FieldGroup>
+            </div>
+
+            <div className="md:col-span-2">
+              <FieldGroup label="Webhook Secret" icon={ShieldCheck}>
+                <input
+                  type="password"
+                  name="clip_webhook_secret"
+                  value={ecartpayForm.clip_webhook_secret}
+                  onChange={handleEcartpayChange}
+                  placeholder="hook_••••••••••••••••••••••••••••••••"
+                  className={inputBase}
+                />
+                <p className="text-[11px] text-white/25 mt-1">
+                  Secret opcional para validar webhooks de Clip (si habilitas firma en tu configuración).
+                </p>
+              </FieldGroup>
+            </div>
+
+            <div className="md:col-span-2">
+              <div className="rounded-xl border border-[#004AAD]/20 bg-[#004AAD]/5 px-4 py-3 text-xs text-[#004AAD]">
+                <strong>URL del Webhook:</strong>{' '}
+                <code className="font-mono">{typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname.replace('3000', '4000')}/api/v1/webhooks/clip-checkout` : '/api/v1/webhooks/clip-checkout'}</code>
+                <br />
+                <span className="text-white/25">Configura esta URL en el panel de Clip para recibir confirmaciones server-to-server.</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {ecartpayResult && (
+          <div
+            className={`flex items-center gap-2.5 text-sm px-4 py-3 rounded-xl border ${
+              ecartpayResult.ok
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-red-500/10 border-red-500/20 text-red-400'
+            }`}
+          >
+            {ecartpayResult.ok ? <CheckCircle2 size={15} className="shrink-0" /> : <AlertCircle size={15} className="shrink-0" />}
+            {ecartpayResult.msg}
+          </div>
+        )}
+
+        <div className="flex justify-end gap-3 pt-2 border-t border-white/5">
+          <button
+            type="button"
+            onClick={handleEcartpayValidate}
+            disabled={isEcartpayTesting || isEcartpaySaving || isEcartpayLoading}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white/70 border border-white/15 hover:text-white hover:border-white/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <RefreshCw size={15} className={isEcartpayTesting ? 'animate-spin' : ''} />
+            {isEcartpayTesting ? 'Comprobando…' : 'Comprobar Conexión'}
+          </button>
+          <button
+            type="button"
+            onClick={handleEcartpaySave}
+            disabled={isEcartpaySaving || isEcartpayTesting || isEcartpayLoading}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Save size={15} />
+            {isEcartpaySaving ? 'Guardando…' : 'Guardar Credenciales'}
           </button>
         </div>
       </section>

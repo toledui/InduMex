@@ -7,6 +7,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   Bookmark,
+  Building2,
   Calendar,
   ChevronRight,
   Clock,

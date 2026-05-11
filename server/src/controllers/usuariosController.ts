@@ -39,9 +39,10 @@ class UsuariosController {
     try {
       const { nombre, email, password, rol } = req.body as {
         nombre?: string;
+        telefono?: string;
         email?: string;
         password?: string;
-        rol?: "admin" | "editor";
+        rol?: "admin" | "editor" | "cliente";
       };
 
       if (!nombre || !email || !password) {
@@ -50,6 +51,7 @@ class UsuariosController {
 
       const usuario = await usuarioService.create({
         nombre,
+        telefono: req.body.telefono,
         email,
         password,
         rol,
@@ -67,11 +69,12 @@ class UsuariosController {
     try {
       const id = toId(req.params.id);
       const actorEmail = req.auth?.email;
-      const { nombre, email, password, rol, activo } = req.body as {
+      const { nombre, telefono, email, password, rol, activo } = req.body as {
         nombre?: string;
+        telefono?: string;
         email?: string;
         password?: string;
-        rol?: "admin" | "editor";
+        rol?: "admin" | "editor" | "cliente";
         activo?: boolean;
       };
 
@@ -81,6 +84,7 @@ class UsuariosController {
 
       const usuario = await usuarioService.update(id, {
         nombre,
+        telefono,
         email,
         password,
         rol,

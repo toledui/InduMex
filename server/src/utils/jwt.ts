@@ -22,7 +22,7 @@ export function verifyAuthToken(token: string): JwtPayload {
   const payload = decoded as JwtLibPayload & {
     sub?: number | string;
     email?: string;
-    rol?: "admin" | "editor";
+    rol?: "admin" | "editor" | "cliente";
   };
 
   if (!payload.sub || !payload.email || !payload.rol) {

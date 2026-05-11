@@ -86,7 +86,7 @@ export default function PremiumFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/"
+                    href="/directorio"
                     className="hover:text-white transition-colors"
                   >
                     Directorio de Proveedores

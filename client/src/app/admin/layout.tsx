@@ -13,25 +13,52 @@ import {
   Settings,
   Share2,
   Megaphone,
+  Handshake,
   ChevronRight,
+  ChevronDown,
   Bell,
   CircleUserRound,
   LogOut,
 } from 'lucide-react';
+import { CreditCard, LayoutGrid, BadgeCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { clearAdminSession } from '@/lib/api';
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/articulos', label: 'Artículos', icon: FileText },
-  { href: '/admin/directorio', label: 'Directorio B2B', icon: Building2 },
-  { href: '/admin/marketplace', label: 'Marketplace', icon: ShoppingBag },
-  { href: '/admin/usuarios', label: 'Usuarios', icon: UserCog },
-  { href: '/admin/suscriptores', label: 'Suscriptores', icon: Users },
-  { href: '/admin/redes-sociales', label: 'Redes Sociales', icon: Share2 },
-  { href: '/admin/anuncios', label: 'Anuncios', icon: Megaphone },
-  { href: '/admin/settings', label: 'Configuración', icon: Settings },
+  // ── Principal
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, group: 'principal' },
+
+  // ── Monetización (Publicidad & Pagos)
+  { href: '/admin/media-kit', label: 'Media Kit', icon: LayoutGrid, group: 'monetizacion' },
+  { href: '/admin/anuncios', label: 'Anuncios', icon: Megaphone, group: 'monetizacion' },
+  { href: '/admin/pagos', label: 'Pagos / Ventas', icon: CreditCard, group: 'monetizacion' },
+  { href: '/admin/suscripciones', label: 'Suscripciones', icon: BadgeCheck, group: 'monetizacion' },
+
+  // ── Marketplace
+  { href: '/admin/marketplace', label: 'Marketplace', icon: ShoppingBag, group: 'tienda' },
+
+  // ── Audiencia
+  { href: '/admin/usuarios', label: 'Usuarios', icon: UserCog, group: 'audiencia' },
+  { href: '/admin/suscriptores', label: 'Suscriptores', icon: Users, group: 'audiencia' },
+  { href: '/admin/directorio', label: 'Directorio B2B', icon: Building2, group: 'audiencia' },
+
+  // ── Sitio Web
+  { href: '/admin/articulos', label: 'Artículos', icon: FileText, group: 'sitioweb' },
+  { href: '/admin/empresas-lectoras', label: 'Empresas Lectoras', icon: Handshake, group: 'sitioweb' },
+  { href: '/admin/redes-sociales', label: 'Redes Sociales', icon: Share2, group: 'sitioweb' },
+
+  // ── Configuración
+  { href: '/admin/settings', label: 'Configuración', icon: Settings, group: 'configuracion' },
 ];
+
+const sectionLabels: Record<string, string> = {
+  principal: 'Inicio',
+  tienda: 'Tienda',
+  monetizacion: 'Monetización',
+  audiencia: 'Audiencia',
+  sitioweb: 'Sitio Web',
+  configuracion: 'Configuración',
+};
 
 function getBreadcrumbs(pathname: string): string[] {
   const segments = pathname.replace('/admin', '').split('/').filter(Boolean);
@@ -39,10 +66,14 @@ function getBreadcrumbs(pathname: string): string[] {
     articulos: 'Artículos',
     directorio: 'Directorio B2B',
     marketplace: 'Marketplace',
+    'media-kit': 'Media Kit',
+    pagos: 'Pagos / Ventas',
+    suscripciones: 'Suscripciones',
     usuarios: 'Usuarios',
     suscriptores: 'Suscriptores',
     'redes-sociales': 'Redes Sociales',
-    'anuncios': 'Anuncios',
+    anuncios: 'Anuncios',
+    'empresas-lectoras': 'Empresas Lectoras',
     settings: 'Configuración',
   };
   return ['Admin', ...segments.map((s) => labelMap[s] ?? s.charAt(0).toUpperCase() + s.slice(1))];
@@ -51,6 +82,28 @@ function getBreadcrumbs(pathname: string): string[] {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<{ nombre?: string; email?: string } | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    principal: true,
+    tienda: true,
+    monetizacion: true,
+    audiencia: true,
+    sitioweb: true,
+    configuracion: false,
+  });
+
+  useEffect(() => {
+    const raw = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('indumex_admin_user='));
+    if (raw) {
+      try {
+        setCurrentUser(JSON.parse(decodeURIComponent(raw.split('=')[1])));
+      } catch {
+        setCurrentUser(null);
+      }
+    }
+  }, []);
 
   const isAuthPage =
     pathname.startsWith('/admin/login') ||
@@ -67,24 +120,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const breadcrumbs = getBreadcrumbs(pathname);
 
-  const [currentUser, setCurrentUser] = useState<{ nombre?: string; email?: string } | null>(null);
-
-  useEffect(() => {
-    const raw = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('indumex_admin_user='));
-    if (raw) {
-      try {
-        setCurrentUser(JSON.parse(decodeURIComponent(raw.split('=')[1])));
-      } catch {
-        setCurrentUser(null);
-      }
-    }
-  }, []);
-
   function handleLogout(): void {
     clearAdminSession();
     router.push('/admin/login');
+  }
+
+  function toggleSection(section: string): void {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
   }
 
   return (
@@ -109,29 +154,76 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const isActive =
-              href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+        <nav className="flex-1 px-3 py-6 space-y-0 overflow-y-auto">
+          {Object.entries(
+            navItems.reduce(
+              (acc, item) => {
+                if (!acc[item.group]) acc[item.group] = [];
+                acc[item.group].push(item);
+                return acc;
+              },
+              {} as Record<string, typeof navItems>
+            )
+          ).map(([group, items]) => {
+            const isExpanded = expandedSections[group] ?? true;
+
             return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${
-                  isActive
-                    ? 'bg-[#F58634]/10 text-[#F58634] border border-[#F58634]/20'
-                    : 'text-white/50 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <Icon
-                  size={17}
-                  className={`shrink-0 transition-colors ${isActive ? 'text-[#F58634]' : 'text-white/30 group-hover:text-white/70'}`}
-                />
-                <span className="font-medium">{label}</span>
-                {isActive && (
-                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#F58634]" />
+              <div key={group} className="mb-2">
+                {/* Section Header */}
+                {group !== 'principal' && (
+                  <button
+                    onClick={() => toggleSection(group)}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-white/40 hover:text-white hover:bg-white/5 transition-all duration-150 uppercase tracking-wider"
+                  >
+                    <ChevronDown
+                      size={14}
+                      className={`shrink-0 transition-transform duration-200 ${
+                        isExpanded ? 'rotate-0' : '-rotate-90'
+                      }`}
+                    />
+                    {sectionLabels[group] || group}
+                  </button>
                 )}
-              </Link>
+
+                {/* Section Items */}
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="space-y-1">
+                    {items.map(({ href, label, icon: Icon }) => {
+                      const isActive =
+                        href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+
+                      return (
+                        <Link
+                          key={href}
+                          href={href}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${
+                            isActive
+                              ? 'bg-[#F58634]/10 text-[#F58634] border border-[#F58634]/20'
+                              : 'text-white/50 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          <Icon
+                            size={17}
+                            className={`shrink-0 transition-colors ${
+                              isActive
+                                ? 'text-[#F58634]'
+                                : 'text-white/30 group-hover:text-white/70'
+                            }`}
+                          />
+                          <span className="font-medium">{label}</span>
+                          {isActive && (
+                            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#F58634]" />
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             );
           })}
         </nav>

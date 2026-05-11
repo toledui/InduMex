@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getAllPosts, getPostsByCategory, type WordPressPostCard } from "@/lib/wordpress";
-import { getAdsByZona } from "@/lib/api";
+import { getAdsByZona, getMarketplaceCatalog, type MarketplaceCatalogProducto } from "@/lib/api";
 import HeroSection from "@/components/HeroSection";
 import TickerNews from "@/components/TickerNews";
 import TrustBanner from "@/components/TrustBanner";
@@ -9,6 +9,7 @@ import ProviderSearchWidget from "@/components/ProviderSearchWidget";
 import EditorialGrid from "@/components/EditorialGrid";
 import MarketplaceTeaser from "@/components/MarketplaceTeaser";
 import TrainingTeaser from "@/components/TrainingTeaser";
+import MediaKitTeaser from "@/components/MediaKitTeaser";
 import NewsletterCapture from "@/components/NewsletterCapture";
 import CTASection from "@/components/CTASection";
 import {
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   let posts: WordPressPostCard[] = [];
-  let marketplacePosts: WordPressPostCard[] = [];
+  let marketplaceProducts: MarketplaceCatalogProducto[] = [];
   let trainingPosts: WordPressPostCard[] = [];
   let error: string = "";
 
@@ -60,13 +61,23 @@ export default async function Home() {
   }
 
   // Fetch en paralelo para no bloquear el render
-  const [marketplacePosts2, trainingPosts2, editorialAds] = await Promise.all([
-    getPostsByCategory("marketplace", 6),
+  const [marketplaceCatalogRes, trainingPosts2, editorialAds] = await Promise.allSettled([
+    getMarketplaceCatalog(),
     getPostsByCategory("capacitacion", 4),
     getAdsByZona("editorial-grid"),
   ]);
-  marketplacePosts = marketplacePosts2;
-  trainingPosts = trainingPosts2;
+
+  if (marketplaceCatalogRes.status === 'fulfilled') {
+    marketplaceProducts = [...marketplaceCatalogRes.value.productos]
+      .sort((a, b) => Number(b.destacado) - Number(a.destacado))
+      .slice(0, 8);
+  }
+
+  if (trainingPosts2.status === 'fulfilled') {
+    trainingPosts = trainingPosts2.value;
+  }
+
+  const editorialAdsResolved = editorialAds.status === 'fulfilled' ? editorialAds.value : [];
 
   const hero = posts[0];
   const gridPosts = posts.slice(1, 6);
@@ -109,13 +120,16 @@ export default async function Home() {
       )}
 
       {/* Editorial Grid */}
-      {gridPosts.length > 0 && <EditorialGrid posts={gridPosts} editorialAds={editorialAds} />}
+      {gridPosts.length > 0 && <EditorialGrid posts={gridPosts} editorialAds={editorialAdsResolved} />}
 
       {/* Marketplace Industrial */}
-      <MarketplaceTeaser posts={marketplacePosts} />
+      <MarketplaceTeaser products={marketplaceProducts} />
 
       {/* Capacitación y Formación Directiva */}
       <TrainingTeaser posts={trainingPosts} />
+
+      {/* Media Kits Publicitarios */}
+      <MediaKitTeaser />
 
       {/* CTA Section */}
       <CTASection />

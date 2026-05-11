@@ -7,7 +7,7 @@ declare module "express-serve-static-core" {
     auth?: {
       userId: number;
       email: string;
-      rol: "admin" | "editor";
+      rol: "admin" | "editor" | "cliente";
     };
   }
 }

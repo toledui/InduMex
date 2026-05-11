@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, UserCircle2, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { label: "Revista", href: "#" },
   { label: "Blog", href: "/blog" },
-  { label: "Directorio B2B", href: "#" },
-  { label: "Marketplace", href: "#" },
-  { label: "Eventos", href: "#" },
+  { label: "Directorio B2B", href: "/directorio" },
+  { label: "Marketplace", href: "/marketplace" },
   { label: "Contacto", href: "/contacto" },
 ];
 
@@ -37,7 +36,7 @@ export default function PremiumHeader() {
         style={{ backdropFilter: "blur(20px)", backgroundColor: "rgba(10,10,10,0.85)" }}
         role="banner"
       >
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
+        <div className="max-w-400 mx-auto px-4 sm:px-6 h-16 flex justify-between items-center">
           {/* Logo */}
           <Link
             href="/"
@@ -63,13 +62,22 @@ export default function PremiumHeader() {
                 className="hover:text-[#F58634] transition-colors relative group"
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#F58634] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#F58634] transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
+            <Link
+              href="/mi-cuenta"
+              className="hidden sm:inline-flex items-center justify-center h-10 w-10 rounded-full border border-white/20 text-white/80 hover:text-white hover:border-[#F58634] transition-colors"
+              aria-label="Mi cuenta"
+              title="Mi cuenta"
+            >
+              <UserCircle2 size={18} />
+            </Link>
+
             {/* CTA — oculto en móvil para no saturar */}
             <Link
               href="/#newsletter"
@@ -128,6 +136,13 @@ export default function PremiumHeader() {
             </li>
           ))}
           <li className="px-6 py-4">
+            <Link
+              href="/mi-cuenta"
+              onClick={() => setOpen(false)}
+              className="mb-3 flex items-center justify-center w-full py-3 rounded-xl text-xs uppercase tracking-widest font-bold border border-white/20 text-white hover:border-[#F58634] hover:text-[#F58634] transition-colors"
+            >
+              Mi Cuenta
+            </Link>
             <Link
               href="/#newsletter"
               onClick={() => setOpen(false)}

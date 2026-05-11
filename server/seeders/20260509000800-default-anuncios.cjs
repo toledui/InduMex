@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.bulkInsert('anuncios', [
+    const seedRows = [
       // ── ZONA: hero-slider (Homepage, full-width) ───────────────
       {
         titulo: 'Soluciones de Automatización KUKA',
@@ -145,7 +145,19 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       },
-    ]);
+    ];
+
+    const existing = await queryInterface.sequelize.query(
+      'SELECT zona, titulo FROM anuncios',
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
+
+    const existingKeys = new Set(existing.map((row) => `${row.zona}::${row.titulo}`));
+    const rowsToInsert = seedRows.filter((row) => !existingKeys.has(`${row.zona}::${row.titulo}`));
+
+    if (rowsToInsert.length > 0) {
+      await queryInterface.bulkInsert('anuncios', rowsToInsert);
+    }
   },
 
   down: async (queryInterface) => {

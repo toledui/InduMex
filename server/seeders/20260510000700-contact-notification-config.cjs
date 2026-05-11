@@ -23,9 +23,8 @@ module.exports = {
     }
   },
 
-  async down(queryInterface) {
-    await queryInterface.bulkDelete('configuraciones', {
-      clave: ['contact_notification_emails'],
-    });
+  async down() {
+    // Non-destructive rollback: preserve operational notification recipients.
+    return;
   },
 };

@@ -80,3 +80,45 @@ export async function getContactNotificationEmails(): Promise<string[]> {
     .map((e) => e.trim())
     .filter(Boolean);
 }
+
+/**
+ * Obtiene la lista de correos de notificación cuando se confirma un pago.
+ */
+export async function getPaymentNotificationEmails(): Promise<string[]> {
+  const rows = await configuracionRepo.findAll();
+  const cfg = Object.fromEntries(rows.map((r) => [r.clave, r.valor ?? ""]));
+  const raw = cfg.payment_notification_emails || process.env.PAYMENT_NOTIFICATION_EMAILS || "";
+  return raw
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Envía un correo de prueba SMTP y lanza error si no hay configuración válida.
+ */
+export async function sendSmtpTestEmail(to: string): Promise<void> {
+  const result = await createTransporter();
+  if (!result) {
+    throw new Error("SMTP no está configurado. Completa host, usuario y contraseña.");
+  }
+
+  const { transporter, from } = result;
+  await transporter.sendMail({
+    from,
+    to,
+    subject: "Prueba SMTP InduMex",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background:#f8f9fa;">
+        <div style="background:#004AAD; color:#fff; border-radius:12px 12px 0 0; padding:18px 22px;">
+          <h1 style="margin:0; font-size:18px;">Prueba SMTP exitosa</h1>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-top:none; border-radius:0 0 12px 12px; padding:22px; color:#111827;">
+          <p style="margin:0 0 10px 0;">Tu configuración de correo en InduMex está funcionando correctamente.</p>
+          <p style="margin:0; color:#6b7280; font-size:13px;">Fecha: ${new Date().toLocaleString("es-MX")}</p>
+        </div>
+      </div>
+    `,
+    text: `Prueba SMTP exitosa. Fecha: ${new Date().toLocaleString("es-MX")}`,
+  });
+}

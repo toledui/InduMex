@@ -2,16 +2,26 @@ import Usuario from "../models/Usuario";
 
 export type CreateUsuarioInput = {
   nombre: string;
+  apellido?: string | null;
+  telefono?: string | null;
+  empresa?: string | null;
+  aceptaTerminos?: boolean;
+  aceptaTerminosAt?: Date | null;
   email: string;
   passwordHash: string;
-  rol?: "admin" | "editor";
+  rol?: "admin" | "editor" | "cliente";
 };
 
 export type UpdateUsuarioInput = {
   nombre?: string;
+  apellido?: string | null;
+  telefono?: string | null;
+  empresa?: string | null;
+  aceptaTerminos?: boolean;
+  aceptaTerminosAt?: Date | null;
   email?: string;
   passwordHash?: string;
-  rol?: "admin" | "editor";
+  rol?: "admin" | "editor" | "cliente";
   activo?: boolean;
 };
 

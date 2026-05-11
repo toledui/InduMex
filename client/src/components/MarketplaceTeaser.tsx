@@ -5,24 +5,29 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, Tag, Package } from "lucide-react";
-import type { WordPressPostCard } from "@/lib/wordpress";
-
-// Datos de demostración - se usan solo si WordPress no devuelve posts de la categoría "marketplace"
-const FALLBACK_POSTS = [
-  { id: "1", title: "Sensor de Proximidad Inductivo IP67", slug: "sensor-proximidad-ip67", date: "", categories: { nodes: [{ name: "Sensores & Detección", slug: "marketplace" }] }, featuredImage: undefined },
-  { id: "2", title: "Cilindro Neumático Serie ISO 15552", slug: "cilindro-neumatico-iso", date: "", categories: { nodes: [{ name: "Neumática", slug: "marketplace" }] }, featuredImage: undefined },
-  { id: "3", title: "Variador de Frecuencia 7.5 kW Trifásico", slug: "variador-frecuencia-7kw", date: "", categories: { nodes: [{ name: "Automatización", slug: "marketplace" }] }, featuredImage: undefined },
-  { id: "4", title: "Banda Transportadora Modular Polipropileno", slug: "banda-transportadora", date: "", categories: { nodes: [{ name: "Manejo de Materiales", slug: "marketplace" }] }, featuredImage: undefined },
-  { id: "5", title: "PLC Compacto 24 E/S con Ethernet", slug: "plc-compacto-ethernet", date: "", categories: { nodes: [{ name: "Control Industrial", slug: "marketplace" }] }, featuredImage: undefined },
-] as WordPressPostCard[];
+import type { MarketplaceCatalogProducto } from "@/lib/api";
 
 interface MarketplaceTeaserProps {
-  posts?: WordPressPostCard[];
+  products?: MarketplaceCatalogProducto[];
 }
 
-export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
+function isAllowedImageUrl(url: string): boolean {
+  return (
+    url.startsWith('/') ||
+    url.includes('indumex.blog') ||
+    url.includes('secure.gravatar.com') ||
+    url.includes('images.unsplash.com') ||
+    url.includes('encrypted-tbn0.gstatic.com') ||
+    url.includes('localhost:4000/uploads/') ||
+    url.includes('127.0.0.1:4000/uploads/')
+  );
+}
+
+export default function MarketplaceTeaser({ products = [] }: MarketplaceTeaserProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const items = posts && posts.length > 0 ? posts : FALLBACK_POSTS;
+  const items = [...products]
+    .sort((a, b) => Number(b.destacado) - Number(a.destacado))
+    .slice(0, 8);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -31,7 +36,7 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
 
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-[#050505] border-y border-white/5 overflow-hidden">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
+      <div className="max-w-400 mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 md:mb-14">
           <div>
@@ -49,10 +54,10 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
             <button onClick={() => scroll("right")} aria-label="Siguiente" className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:border-[#004AAD] hover:text-white transition-colors">
               <ChevronRight className="h-5 w-5" />
             </button>
-            <a href="#" className="hidden sm:inline-flex items-center gap-2 text-xs uppercase tracking-widest text-gray-500 hover:text-white transition-colors group ml-2">
+            <Link href="/marketplace" className="hidden sm:inline-flex items-center gap-2 text-xs uppercase tracking-widest text-gray-500 hover:text-white transition-colors group ml-2">
               Ver Todo el Catálogo
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -62,15 +67,14 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
           className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {items.map((post, idx) => {
-            const category = post.categories?.nodes?.[0];
-            const imageUrl = post.featuredImage?.node?.sourceUrl;
-            const href = `/${category?.slug || "marketplace"}/${post.slug}`;
+          {items.map((product, idx) => {
+            const imageUrl = product.imagenes.find((image) => isAllowedImageUrl(image));
+            const href = `/marketplace/${product.slug}`;
 
             return (
               <motion.div
-                key={post.id}
-                className="snap-start shrink-0 w-[260px] sm:w-[280px]"
+                key={product.id}
+                className="snap-start shrink-0 w-65 sm:w-70"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
@@ -82,7 +86,7 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
-                        alt={post.title}
+                        alt={product.nombre}
                         fill
                         sizes="280px"
                         className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
@@ -101,14 +105,16 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
                     <div className="flex items-center gap-1.5 mb-3">
                       <Tag className="h-3 w-3 text-[#004AAD] shrink-0" />
                       <span className="text-xs text-[#004AAD] font-bold uppercase tracking-widest line-clamp-1">
-                        {category?.name || "Marketplace"}
+                        {product.categoria?.nombre || "Marketplace"}
                       </span>
                     </div>
                     <h4 className="text-sm font-semibold text-white leading-snug mb-4 flex-1 line-clamp-2 group-hover:text-[#F58634] transition-colors">
-                      {post.title}
+                      {product.nombre}
                     </h4>
                     <div className="mt-auto">
-                      <p className="text-xs text-[#F58634] mb-4 font-medium">Solicitar Cotización</p>
+                      <p className="text-xs text-[#F58634] mb-4 font-medium">
+                        {product.destacado ? 'Destacado · Solicitar cotización' : 'Solicitar cotización'}
+                      </p>
                       <Link
                         href={href}
                         className="block w-full text-center text-xs font-bold uppercase tracking-widest border border-[#004AAD] text-[#004AAD] py-2.5 rounded-lg hover:bg-[#004AAD] hover:text-white transition-colors duration-200"
@@ -122,6 +128,12 @@ export default function MarketplaceTeaser({ posts }: MarketplaceTeaserProps) {
             );
           })}
         </div>
+
+        {items.length === 0 && (
+          <div className="rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-white/60">
+            No hay productos publicados en este momento.
+          </div>
+        )}
       </div>
     </section>
   );

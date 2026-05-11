@@ -7,5 +7,5 @@ export type ApiResponse<T> = {
 export type JwtPayload = {
   sub: number;
   email: string;
-  rol: "admin" | "editor";
+  rol: "admin" | "editor" | "cliente";
 };

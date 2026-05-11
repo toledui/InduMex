@@ -151,7 +151,7 @@ export default async function ContactoPage() {
                   diferentes formas de llegar a miles de profesionales del sector industrial.
                 </p>
                 <Link
-                  href="/media-kit"
+                  href="/media-kits"
                   className="relative z-10 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] active:scale-[0.98] transition-all duration-150"
                 >
                   Ver planes de publicidad

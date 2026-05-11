@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Globe2, ArrowRight } from "lucide-react";
 
 const PROVIDER_CATEGORIES = [
@@ -12,7 +13,25 @@ const PROVIDER_CATEGORIES = [
 ];
 
 export default function ProviderSearchWidget() {
+  const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
+
+  function navigateToDirectory(rawValue: string) {
+    const trimmed = rawValue.trim();
+    const params = new URLSearchParams();
+
+    if (trimmed) {
+      params.set("q", trimmed);
+    }
+
+    const href = params.toString() ? `/directorio?${params.toString()}` : "/directorio";
+    router.push(href);
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    navigateToDirectory(searchValue);
+  }
 
   return (
     <section className="py-16 md:py-24 lg:py-32 relative border-b border-white/5 overflow-hidden">
@@ -30,7 +49,7 @@ export default function ProviderSearchWidget() {
           </p>
         </div>
 
-        <div className="relative group">
+        <form className="relative group" onSubmit={handleSubmit}>
           <input
             type="text"
             value={searchValue}
@@ -39,22 +58,26 @@ export default function ProviderSearchWidget() {
             className="w-full bg-transparent border-b-2 border-gray-700 pb-4 md:pb-6 text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-['Space_Grotesk'] font-bold tracking-tight text-white placeholder-gray-800 focus:outline-none focus:border-[#F58634] transition-colors"
           />
           <button
+            type="submit"
+            aria-label="Buscar proveedores"
             className={`absolute right-0 bottom-6 text-[#F58634] transition-all duration-300 ${
               searchValue ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
             }`}
           >
             <ArrowRight className="h-12 w-12" />
           </button>
-        </div>
+        </form>
 
         <div className="mt-8 flex flex-wrap gap-4 justify-center">
           {PROVIDER_CATEGORIES.map((tag) => (
-            <span
+            <button
               key={tag}
+              type="button"
+              onClick={() => navigateToDirectory(tag)}
               className="text-xs uppercase tracking-widest border border-gray-800 text-gray-400 px-4 py-2 rounded-full hover:border-[#004AAD] hover:text-white cursor-pointer transition-colors"
             >
               {tag}
-            </span>
+            </button>
           ))}
         </div>
       </div>

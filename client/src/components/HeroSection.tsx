@@ -108,11 +108,11 @@ export default function HeroSection({ post }: HeroSectionProps) {
               transition={{ duration: 0.6, ease: easeOut, delay: 0.75 }}
             >
               <Link
-                href={postUrl}
+                href="/media-kits"
                 className="group inline-flex items-center gap-3 bg-[#F58634] hover:bg-[#E07B2A] text-black text-sm font-bold uppercase tracking-widest px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-[#F58634]/30 data-interactive"
                 data-interactive
               >
-                Leer Última Edición
+                Explorar Media Kits
                 <ArrowRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -123,7 +123,8 @@ export default function HeroSection({ post }: HeroSectionProps) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: easeOut, delay: 0.85 }}
             >
-              <button
+              <Link
+                href="/directorio"
                 className="inline-flex items-center gap-3 border-2 border-white/30 hover:border-[#004AAD] text-white hover:text-[#004AAD] text-sm font-bold uppercase tracking-widest px-8 py-4 rounded-lg transition-all duration-300 hover:bg-white/5 group data-interactive"
                 data-interactive
               >
@@ -131,7 +132,7 @@ export default function HeroSection({ post }: HeroSectionProps) {
                 <span className="w-5 h-5 border-2 border-current rounded-full flex items-center justify-center group-hover:bg-current group-hover:text-[#0a0a0a] transition-all">
                   →
                 </span>
-              </button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>

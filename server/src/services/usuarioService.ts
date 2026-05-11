@@ -6,8 +6,11 @@ const PROTECTED_ADMIN_EMAIL = "contacto@indumex.blog";
 export type UsuarioOutput = {
   id: number;
   nombre: string;
+  apellido: string | null;
+  telefono: string | null;
+  empresa: string | null;
   email: string;
-  rol: "admin" | "editor";
+  rol: "admin" | "editor" | "cliente";
   activo: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -16,8 +19,11 @@ export type UsuarioOutput = {
 function toOutput(usuario: {
   id: number;
   nombre: string;
+  apellido: string | null;
+  telefono: string | null;
+  empresa: string | null;
   email: string;
-  rol: "admin" | "editor";
+  rol: "admin" | "editor" | "cliente";
   activo: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +31,9 @@ function toOutput(usuario: {
   return {
     id: usuario.id,
     nombre: usuario.nombre,
+    apellido: usuario.apellido,
+    telefono: usuario.telefono,
+    empresa: usuario.empresa,
     email: usuario.email,
     rol: usuario.rol,
     activo: usuario.activo,
@@ -53,9 +62,12 @@ class UsuarioService {
 
   async create(payload: {
     nombre: string;
+    apellido?: string;
+    telefono?: string;
+    empresa?: string;
     email: string;
     password: string;
-    rol?: "admin" | "editor";
+    rol?: "admin" | "editor" | "cliente";
   }): Promise<UsuarioOutput> {
     const existing = await usuarioRepository.findByEmail(payload.email);
     if (existing) {
@@ -65,9 +77,12 @@ class UsuarioService {
     const passwordHash = await bcrypt.hash(payload.password, 10);
     const usuario = await usuarioRepository.create({
       nombre: payload.nombre,
+      apellido: payload.apellido?.trim() || null,
+      telefono: payload.telefono?.trim() || null,
+      empresa: payload.empresa?.trim() || null,
       email: payload.email,
       passwordHash,
-      rol: payload.rol || "editor",
+      rol: payload.rol || "cliente",
     });
 
     return toOutput(usuario);
@@ -77,9 +92,12 @@ class UsuarioService {
     id: number,
     payload: {
       nombre?: string;
+      apellido?: string;
+      telefono?: string;
+      empresa?: string;
       email?: string;
       password?: string;
-      rol?: "admin" | "editor";
+      rol?: "admin" | "editor" | "cliente";
       activo?: boolean;
     },
     actorEmail: string
@@ -112,6 +130,9 @@ class UsuarioService {
 
     const usuario = await usuarioRepository.update(id, {
       nombre: payload.nombre,
+      apellido: payload.apellido,
+      telefono: payload.telefono,
+      empresa: payload.empresa,
       email: payload.email,
       rol: payload.rol,
       activo: payload.activo,

@@ -102,9 +102,8 @@ module.exports = {
     }
   },
 
-  async down(queryInterface) {
-    await queryInterface.bulkDelete("configuraciones", {
-      clave: CONFIG_KEYS.map((item) => item.clave),
-    });
+  async down() {
+    // Non-destructive rollback: preserve edited configuration values.
+    return;
   },
 };

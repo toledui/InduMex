@@ -13,9 +13,14 @@ class Usuario extends Model<
 > {
   declare id: CreationOptional<number>;
   declare nombre: string;
+  declare apellido: CreationOptional<string | null>;
+  declare telefono: CreationOptional<string | null>;
+  declare empresa: CreationOptional<string | null>;
+  declare aceptaTerminos: CreationOptional<boolean>;
+  declare aceptaTerminosAt: CreationOptional<Date | null>;
   declare email: string;
   declare passwordHash: string;
-  declare rol: CreationOptional<"admin" | "editor">;
+  declare rol: CreationOptional<"admin" | "editor" | "cliente">;
   declare activo: CreationOptional<boolean>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -32,6 +37,29 @@ Usuario.init(
       type: DataTypes.STRING(120),
       allowNull: false,
     },
+    apellido: {
+      type: DataTypes.STRING(120),
+      allowNull: true,
+    },
+    telefono: {
+      type: DataTypes.STRING(40),
+      allowNull: true,
+    },
+    empresa: {
+      type: DataTypes.STRING(160),
+      allowNull: true,
+    },
+    aceptaTerminos: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: "acepta_terminos",
+    },
+    aceptaTerminosAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: "acepta_terminos_at",
+    },
     email: {
       type: DataTypes.STRING(180),
       allowNull: false,
@@ -46,7 +74,7 @@ Usuario.init(
       field: "password_hash",
     },
     rol: {
-      type: DataTypes.ENUM("admin", "editor"),
+      type: DataTypes.ENUM("admin", "editor", "cliente"),
       allowNull: false,
       defaultValue: "editor",
     },
