@@ -41,7 +41,7 @@ export async function getSuscripcionesParaRenovacion() {
       proximoLinkPagoGeneradoEn: null,
     },
     include: [
-      { model: Usuario, attributes: ["id", "nombre", "email"] },
+      { model: Usuario, as: "usuario", attributes: ["id", "nombre", "email"] },
       { model: ProveedorSuscripcionPlan, as: "plan" },
     ],
   });
