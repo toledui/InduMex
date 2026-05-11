@@ -89,12 +89,28 @@ const PROVIDERS = [
 
 module.exports = {
   up: async (queryInterface) => {
+    const providerTable = await queryInterface.describeTable('proveedores');
+    const hasNombre = Object.prototype.hasOwnProperty.call(providerTable, 'nombre');
+    const hasEmpresa = Object.prototype.hasOwnProperty.call(providerTable, 'empresa');
+    const hasSector = Object.prototype.hasOwnProperty.call(providerTable, 'sector');
+
     const [existing] = await queryInterface.sequelize.query('SELECT slug FROM proveedores');
     const existingSlugs = new Set(existing.map((row) => row.slug));
     const rows = PROVIDERS.filter((provider) => !existingSlugs.has(provider.slug));
 
     if (rows.length > 0) {
-      await queryInterface.bulkInsert('proveedores', rows.map(r => ({ ...r, nombre: r.name, empresa: r.name, sector: JSON.parse(r.sectors)[0] || 'General' })));
+      await queryInterface.bulkInsert(
+        'proveedores',
+        rows.map((r) => {
+          const row = { ...r };
+
+          if (hasNombre) row.nombre = r.name;
+          if (hasEmpresa) row.empresa = r.name;
+          if (hasSector) row.sector = JSON.parse(r.sectors)[0] || 'General';
+
+          return row;
+        })
+      );
     }
   },
 
