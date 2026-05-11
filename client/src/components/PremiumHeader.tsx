@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu, UserCircle2, X } from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Revista", href: "#" },
+  { label: "Revista", href: "/revista" },
   { label: "Blog", href: "/blog" },
   { label: "Directorio B2B", href: "/directorio" },
   { label: "Marketplace", href: "/marketplace" },

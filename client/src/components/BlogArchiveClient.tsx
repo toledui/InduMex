@@ -340,7 +340,7 @@ export default function BlogArchiveClient({
         </div>
         <div className="max-w-400 mx-auto px-4 sm:px-6 mt-6 text-center">
           <Link
-            href="#"
+            href="/directorio"
             className="inline-flex items-center gap-2 rounded-full bg-[#004AAD] px-7 py-3 text-xs font-bold uppercase tracking-widest text-white hover:bg-[#003b89] transition-colors"
           >
             Abrir Directorio B2B

@@ -56,9 +56,12 @@ export default function PremiumFooter() {
               demanda técnica en la manufactura nacional.
             </p>
 
-            <button className="text-xs uppercase tracking-widest font-bold border border-gray-700 px-6 py-3 rounded hover:border-[#F58634] hover:text-[#F58634] transition-colors">
+            <Link
+              href="/media-kits"
+              className="inline-flex text-xs uppercase tracking-widest font-bold border border-gray-700 px-6 py-3 rounded hover:border-[#F58634] hover:text-[#F58634] transition-colors"
+            >
               Solicitar Media Kit B2B
-            </button>
+            </Link>
           </div>
 
           {/* Links Section */}
@@ -94,7 +97,7 @@ export default function PremiumFooter() {
                 </li>
                 <li>
                   <Link
-                    href="/"
+                    href="/marketplace"
                     className="hover:text-white transition-colors"
                   >
                     Marketplace Técnico

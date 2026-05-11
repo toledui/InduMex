@@ -112,7 +112,7 @@ export default async function Home() {
 
       {/* Error Display */}
       {error && (
-        <section className="max-w-[1600px] mx-auto px-6 py-12">
+        <section className="max-w-400 mx-auto px-6 py-12">
           <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-6 text-sm text-red-200">
             <strong>Error:</strong> {error}
           </div>
