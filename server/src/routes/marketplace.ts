@@ -511,7 +511,7 @@ router.get("/marketplace/catalogo", async (_req: Request, res: Response) => {
         usuarioId: { [Op.in]: [...perfilesPorUsuarioId.keys()] },
         isActive: true,
       },
-      attributes: ["usuarioId", "nombre", "empresa", "logo", "website", "email", "phone", "whatsapp", "socialNetworks"],
+      attributes: ["usuarioId", "name", "empresa", "logo", "website", "email", "phone", "whatsapp", "socialNetworks"],
     });
 
     const providerByUserId = new Map<number, {
@@ -529,7 +529,7 @@ router.get("/marketplace/catalogo", async (_req: Request, res: Response) => {
       if (!provider.usuarioId) return;
 
       providerByUserId.set(provider.usuarioId, {
-        nombre: sanitizeContactValue(provider.nombre),
+        nombre: sanitizeContactValue(provider.name ?? provider.empresa),
         empresa: sanitizeContactValue(provider.empresa),
         logo: sanitizeContactValue(provider.logo),
         website: sanitizeContactValue(provider.website),
@@ -552,7 +552,7 @@ router.get("/marketplace/catalogo", async (_req: Request, res: Response) => {
       sellersByUserId.set(suscripcion.usuarioId, {
         nivelVisibilidad: plan.nivelVisibilidad,
         planNombre: plan.nombre,
-        usuarioNombre: provider?.nombre ?? usuario.nombre,
+        usuarioNombre: provider?.name ?? provider?.empresa ?? usuario.nombre,
         usuarioApellido: usuario.apellido ?? null,
         empresa: provider?.empresa ?? usuario.empresa ?? null,
         logo: provider?.logo ?? null,
