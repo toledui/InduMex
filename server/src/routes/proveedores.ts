@@ -93,9 +93,9 @@ function normalizeProveedor(proveedor: Proveedor) {
 
   return {
     id: raw.id,
-      nombre: (raw.nombre ?? raw.name ?? raw.empresa ?? "") as string,
-    empresa: (raw.empresa ?? raw.name ?? raw.nombre ?? "") as string,
-    name: (raw.name ?? raw.nombre ?? raw.empresa ?? "") as string,
+    nombre: (raw.name ?? raw.nombre ?? "") as string,
+    empresa: (raw.name ?? raw.nombre ?? "") as string,
+    name: (raw.name ?? raw.nombre ?? "") as string,
     slug: (raw.slug ?? "") as string,
     logo: (raw.logo ?? "") as string,
     tier: (raw.tier ?? "basic") as "premium" | "verified" | "basic",
@@ -278,7 +278,6 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
 
     const provider = await Proveedor.create({
       usuarioId: userId,
-      empresa: String(name).trim(),
       name: String(name).trim(),
       slug,
       logo: String(logo ?? "").trim(),
@@ -357,7 +356,6 @@ router.put("/proveedores/mi-perfil", requireAuth, async (req, res) => {
 
     if (name && String(name).trim() !== provider.get("name")) {
       const slug = await generateUniqueSlug(String(name), userId);
-      provider.set("empresa", String(name).trim());
       provider.set("name", String(name).trim());
       provider.set("slug", slug);
     }
@@ -451,7 +449,6 @@ router.post("/proveedores", requireAuth, requireAdminRole, async (req, res) => {
 
     const provider = await Proveedor.create({
       usuarioId: resolvedUsuarioId,
-      empresa: String(name).trim(),
       name: String(name).trim(),
       slug: String(slug).trim(),
       logo: String(logo ?? "").trim(),
@@ -541,7 +538,6 @@ router.put("/proveedores/:id", requireAuth, requireAdminRole, async (req, res) =
 
     if (name !== undefined) {
       const normalizedName = String(name).trim();
-      provider.set("empresa", normalizedName);
       provider.set("name", normalizedName);
       if (!slug) {
         provider.set("slug", await generateUniqueSlug(normalizedName, providerId));

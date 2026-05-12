@@ -13,7 +13,6 @@ class Proveedor extends Model<
 > {
   declare id: CreationOptional<number>;
   declare usuarioId: CreationOptional<number | null>;
-  declare empresa: string;
   declare name: string;
   declare slug: string;
   declare logo: string;
@@ -46,11 +45,6 @@ Proveedor.init(
       allowNull: true,
       unique: true,
       field: "usuario_id",
-    },
-    empresa: {
-      type: DataTypes.STRING(180),
-      allowNull: false,
-      field: "empresa",
     },
     name: {
       type: DataTypes.STRING(180),
