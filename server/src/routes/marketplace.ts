@@ -552,7 +552,7 @@ router.get("/marketplace/catalogo", async (_req: Request, res: Response) => {
       sellersByUserId.set(suscripcion.usuarioId, {
         nivelVisibilidad: plan.nivelVisibilidad,
         planNombre: plan.nombre,
-        usuarioNombre: provider?.name ?? provider?.empresa ?? usuario.nombre,
+        usuarioNombre: provider?.nombre ?? provider?.empresa ?? usuario.nombre,
         usuarioApellido: usuario.apellido ?? null,
         empresa: provider?.empresa ?? usuario.empresa ?? null,
         logo: provider?.logo ?? null,
