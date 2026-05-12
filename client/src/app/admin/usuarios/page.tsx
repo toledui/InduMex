@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import {
@@ -200,7 +200,7 @@ export default function AdminUsuariosPage() {
       </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6">
-        <article className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-5">
+        <article className="rounded-2xl border border-white/10 bg-[#021325] p-5">
           <h2 className="text-sm uppercase tracking-widest text-white/55 font-semibold">
             {editingId ? 'Editar Usuario' : 'Nuevo Usuario'}
           </h2>
@@ -235,16 +235,16 @@ export default function AdminUsuariosPage() {
                 onChange={(e) => onFieldChange('rol', e.target.value as 'admin' | 'editor')}
                 className="px-3 py-2.5 rounded-xl bg-black/20 border border-white/10 text-white outline-none focus:border-[#004AAD]"
               >
-                <option value="editor" className="bg-[#101010]">Editor</option>
-                <option value="admin" className="bg-[#101010]">Admin</option>
+                <option value="editor" className="bg-[#021e3a]">Editor</option>
+                <option value="admin" className="bg-[#021e3a]">Admin</option>
               </select>
               <select
                 value={String(form.activo)}
                 onChange={(e) => onFieldChange('activo', e.target.value === 'true')}
                 className="px-3 py-2.5 rounded-xl bg-black/20 border border-white/10 text-white outline-none focus:border-[#004AAD]"
               >
-                <option value="true" className="bg-[#101010]">Activo</option>
-                <option value="false" className="bg-[#101010]">Inactivo</option>
+                <option value="true" className="bg-[#021e3a]">Activo</option>
+                <option value="false" className="bg-[#021e3a]">Inactivo</option>
               </select>
             </div>
 
@@ -270,7 +270,7 @@ export default function AdminUsuariosPage() {
           </form>
         </article>
 
-        <article className="rounded-2xl border border-white/10 bg-[#0d0d0d] overflow-hidden">
+        <article className="rounded-2xl border border-white/10 bg-[#021325] overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
             <h2 className="text-sm uppercase tracking-widest text-white/55 font-semibold">Listado de usuarios</h2>
             <span className="text-xs text-white/40">{users.length} registros</span>

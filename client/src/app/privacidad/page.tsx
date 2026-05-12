@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -36,9 +36,9 @@ const Li = ({ children }: { children: React.ReactNode }) => (
 
 export default function PrivacidadPage() {
   return (
-    <div className="min-h-screen bg-[#050505]">
+    <div className="min-h-screen bg-[#010b17]">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-gray-900">
+      <section className="relative overflow-hidden border-b border-white/10">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -199,7 +199,7 @@ export default function PrivacidadPage() {
           así como oponerse al uso de sus datos personales para fines específicos (<strong className="text-white">Oposición</strong>).
         </P>
         <P>Para ejercer cualquiera de sus Derechos ARCO, envíe su solicitud a:</P>
-        <div className="bg-[#0d0d0d] border border-gray-800 rounded-xl px-6 py-5 mb-6">
+        <div className="bg-[#021325] border border-white/10 rounded-xl px-6 py-5 mb-6">
           <p className="text-[#F58634] font-bold text-sm mb-3">contacto@indumex.blog</p>
           <p className="text-white/50 text-xs mb-2">La solicitud debe contener al menos:</p>
           <ul className="list-disc list-inside space-y-1.5 pl-1">

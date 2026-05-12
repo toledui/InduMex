@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle, MessageSquare, CreditCard } from 'lucide-react';
@@ -39,8 +39,8 @@ export default function SettingsPage() {
     smtp_secure: 'false',
     smtp_from_name: 'InduMex B2B',
     smtp_from_email: '',
-    smtp_test_email: '',
   });
+  const [testEmail, setTestEmail] = useState('');
   const [isTesting, setIsTesting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null);
@@ -115,8 +115,8 @@ export default function SettingsPage() {
           smtp_secure: cfg.smtp_secure ?? 'false',
           smtp_from_name: cfg.smtp_from_name ?? 'InduMex B2B',
           smtp_from_email: cfg.smtp_from_email ?? '',
-          smtp_test_email: cfg.smtp_from_email ?? '',
         }));
+        setTestEmail(cfg.smtp_from_email ?? '');
 
         setWpForm({
           wordpress_api_url: cfg.wordpress_api_url ?? '',
@@ -322,10 +322,10 @@ export default function SettingsPage() {
     setTestResult(null);
     try {
       const token = getAuthTokenFromCookie() ?? '';
-      if (!form.smtp_test_email.trim()) {
+      if (!testEmail.trim()) {
         throw new Error('Ingresa un correo destino para la prueba SMTP.');
       }
-      const result = await testSmtpConfig(token, { to: form.smtp_test_email.trim() });
+      const result = await testSmtpConfig(token, { to: testEmail.trim() });
       setTestResult({ ok: true, msg: result.message });
     } catch (err) {
       setTestResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al probar SMTP' });
@@ -367,7 +367,7 @@ export default function SettingsPage() {
       </div>
 
       {/* ── SMTP CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         {/* Card header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -443,8 +443,8 @@ export default function SettingsPage() {
                 onChange={handleChange}
                 className={selectBase}
               >
-                <option value="false" className="bg-[#111] text-white">TLS / STARTTLS (587)</option>
-                <option value="true" className="bg-[#111] text-white">SSL (465)</option>
+                <option value="false" className="bg-[#031c38] text-white">TLS / STARTTLS (587)</option>
+                <option value="true" className="bg-[#031c38] text-white">SSL (465)</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -478,18 +478,6 @@ export default function SettingsPage() {
             </FieldGroup>
           </div>
 
-          <div className="md:col-span-2">
-            <FieldGroup label="Correo destino para prueba" icon={AtSign}>
-              <input
-                type="email"
-                name="smtp_test_email"
-                value={form.smtp_test_email}
-                onChange={handleChange}
-                placeholder="tu-correo@dominio.com"
-                className={inputBase}
-              />
-            </FieldGroup>
-          </div>
         </div>
 
         {/* Test result banner */}
@@ -514,16 +502,6 @@ export default function SettingsPage() {
         <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-white/5">
           <button
             type="button"
-            onClick={handleTest}
-            disabled={isTesting}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 hover:text-white transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Zap size={15} className={isTesting ? 'animate-pulse text-[#F58634]' : ''} />
-            {isTesting ? 'Probando…' : 'Probar Conexión'}
-          </button>
-
-          <button
-            type="button"
             onClick={handleSave}
             disabled={isSaving}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
@@ -532,10 +510,37 @@ export default function SettingsPage() {
             {isSaving ? 'Guardando…' : 'Guardar Configuración'}
           </button>
         </div>
+
+        {/* ── Prueba de envío (no se guarda en BD) ── */}
+        <div className="border-t border-white/5 pt-5 space-y-3">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-widest">Prueba de envío de correo</p>
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+            <div className="flex-1">
+              <FieldGroup label="Correo destino para prueba" icon={AtSign}>
+                <input
+                  type="email"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  placeholder="tu-correo@dominio.com"
+                  className={inputBase}
+                />
+              </FieldGroup>
+            </div>
+            <button
+              type="button"
+              onClick={handleTest}
+              disabled={isTesting}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 hover:text-white transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            >
+              <Zap size={15} className={isTesting ? 'animate-pulse text-[#F58634]' : ''} />
+              {isTesting ? 'Enviando…' : 'Enviar correo de prueba'}
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* ── WORDPRESS / HEADLESS CMS CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         {/* Card header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -667,7 +672,7 @@ export default function SettingsPage() {
       </section>
 
       {/* ── EMAIL MARKETING PROVIDERS CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#F58634]/10 border border-[#F58634]/20 flex items-center justify-center">
@@ -696,9 +701,9 @@ export default function SettingsPage() {
                 onChange={handleMarketingChange}
                 className={selectBase}
               >
-                <option value="local" className="bg-[#111] text-white">Local (solo base de datos)</option>
-                <option value="mailrelay" className="bg-[#111] text-white">Mailrelay</option>
-                <option value="mailchimp" className="bg-[#111] text-white">Mailchimp</option>
+                <option value="local" className="bg-[#031c38] text-white">Local (solo base de datos)</option>
+                <option value="mailrelay" className="bg-[#031c38] text-white">Mailrelay</option>
+                <option value="mailchimp" className="bg-[#031c38] text-white">Mailchimp</option>
               </select>
             </FieldGroup>
 
@@ -709,8 +714,8 @@ export default function SettingsPage() {
                 onChange={handleMarketingChange}
                 className={selectBase}
               >
-                <option value="false" className="bg-[#111] text-white">No</option>
-                <option value="true" className="bg-[#111] text-white">Sí</option>
+                <option value="false" className="bg-[#031c38] text-white">No</option>
+                <option value="true" className="bg-[#031c38] text-white">Sí</option>
               </select>
             </FieldGroup>
 
@@ -756,8 +761,8 @@ export default function SettingsPage() {
                 onChange={handleMarketingChange}
                 className={selectBase}
               >
-                <option value="false" className="bg-[#111] text-white">No</option>
-                <option value="true" className="bg-[#111] text-white">Sí</option>
+                <option value="false" className="bg-[#031c38] text-white">No</option>
+                <option value="true" className="bg-[#031c38] text-white">Sí</option>
               </select>
             </FieldGroup>
 
@@ -836,7 +841,7 @@ export default function SettingsPage() {
       </section>
 
       {/* ── FORMULARIO DE CONTACTO CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#004AAD]/10 border border-[#004AAD]/20 flex items-center justify-center">
@@ -916,7 +921,7 @@ export default function SettingsPage() {
       </section>
 
       {/* ── COPYRIGHT CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#004AAD]/10 border border-[#004AAD]/20 flex items-center justify-center">
             <Globe size={18} className="text-[#004AAD]" />
@@ -977,7 +982,7 @@ export default function SettingsPage() {
       </section>
 
       {/* ── ECARTPAY CARD ── */}
-      <section className="bg-[#111] border border-gray-800 rounded-2xl p-8 space-y-6">
+      <section className="bg-[#031c38] border border-white/10 rounded-2xl p-8 space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#F58634]/10 border border-[#F58634]/20 flex items-center justify-center">
@@ -1016,8 +1021,8 @@ export default function SettingsPage() {
                 onChange={handleEcartpayChange}
                 className={selectBase}
               >
-                <option value="true" className="bg-[#111] text-white">Sandbox (Pruebas)</option>
-                <option value="false" className="bg-[#111] text-white">Producción</option>
+                <option value="true" className="bg-[#031c38] text-white">Sandbox (Pruebas)</option>
+                <option value="false" className="bg-[#031c38] text-white">Producción</option>
               </select>
             </FieldGroup>
 

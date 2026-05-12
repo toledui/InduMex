@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,7 +31,7 @@ export default function PremiumAdSliderClient({ ads }: Props) {
   return (
     <section className="py-16 md:py-24">
         <div className="max-w-400 mx-auto px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0f0f0f]/85 backdrop-blur-xl">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#031c38]/85 backdrop-blur-xl">
           {/* Grid pattern */}
           <div
             className="pointer-events-none absolute inset-0 opacity-30"

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -37,7 +37,7 @@ function Item({ children }: { children: React.ReactNode }) {
 
 export default function FacturacionElectronicaPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-slate-200 selection:bg-[#F58634] selection:text-white">
+    <div className="min-h-screen bg-[#021325] text-slate-200 selection:bg-[#F58634] selection:text-white">
       <section className="relative overflow-hidden border-b border-white/5 pt-40 pb-16">
         <div
           aria-hidden

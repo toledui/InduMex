@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import Link from 'next/link';
 import { Mail, MapPin, ExternalLink, Megaphone, Link2 } from 'lucide-react';
 import { getSocialNetworks, SocialNetwork } from '@/lib/api';
@@ -56,9 +56,9 @@ export default async function ContactoPage() {
         }}
       />
 
-      <div className="min-h-screen bg-[#050505]">
+      <div className="min-h-screen bg-[#010b17]">
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden border-b border-gray-900">
+        <section className="relative overflow-hidden border-b border-white/10">
           {/* Grid pattern */}
           <div
             aria-hidden
@@ -103,7 +103,7 @@ export default async function ContactoPage() {
             {/* Left column — info + social */}
             <aside className="lg:col-span-2 space-y-8">
               {/* Contact info card */}
-              <div className="bg-[#0d0d0d] border border-gray-800 rounded-2xl p-8 space-y-6">
+              <div className="bg-[#021325] border border-white/10 rounded-2xl p-8 space-y-6">
                 <h2 className="text-base font-bold text-white tracking-tight">
                   Información de Contacto
                 </h2>
@@ -136,7 +136,7 @@ export default async function ContactoPage() {
               </div>
 
               {/* Advertise CTA card */}
-              <div className="bg-[#0d0d0d] border border-[#F58634]/20 rounded-2xl p-8 space-y-4 relative overflow-hidden">
+              <div className="bg-[#021325] border border-[#F58634]/20 rounded-2xl p-8 space-y-4 relative overflow-hidden">
                 <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 opacity-5">
                   <Megaphone className="w-32 h-32 text-[#F58634]" />
                 </div>
@@ -161,7 +161,7 @@ export default async function ContactoPage() {
 
               {/* Social networks */}
               {socialNetworks.length > 0 && (
-                <div className="bg-[#0d0d0d] border border-gray-800 rounded-2xl p-8 space-y-4">
+                <div className="bg-[#021325] border border-white/10 rounded-2xl p-8 space-y-4">
                   <h2 className="text-base font-bold text-white tracking-tight">Síguenos</h2>
                   <div className="flex flex-wrap gap-3">
                     {socialNetworks.map((social) => (
@@ -187,7 +187,7 @@ export default async function ContactoPage() {
 
             {/* Right column — form */}
             <div className="lg:col-span-3">
-              <div className="bg-[#0d0d0d] border border-gray-800 rounded-2xl p-8">
+              <div className="bg-[#021325] border border-white/10 rounded-2xl p-8">
                 <div className="mb-8">
                   <h2 className="text-xl font-bold text-white tracking-tight mb-1">
                     Envíanos un mensaje

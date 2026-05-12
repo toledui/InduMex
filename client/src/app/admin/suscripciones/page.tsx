@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import {
@@ -210,7 +210,7 @@ function PlanModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+      <div className="relative w-full max-w-lg bg-[#031c38] border border-white/10 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h2 className="text-base font-bold text-white font-['Rubik']">
@@ -563,7 +563,7 @@ export default function SuscripcionesPage() {
               {planes.map((plan) => (
                 <article
                   key={plan.id}
-                  className="relative bg-[#111] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 hover:border-white/20 transition-colors"
+                  className="relative bg-[#031c38] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 hover:border-white/20 transition-colors"
                 >
                   {/* Status badge */}
                   <div className="flex items-center justify-between">
@@ -648,7 +648,7 @@ export default function SuscripcionesPage() {
             { label: 'Vencidas', count: statsCounts.vencida, color: 'text-gray-400' },
             { label: 'Canceladas', count: statsCounts.cancelada, color: 'text-red-400' },
           ].map(({ label, count, color }) => (
-            <div key={label} className="bg-[#111] border border-white/10 rounded-2xl p-4 text-center">
+            <div key={label} className="bg-[#031c38] border border-white/10 rounded-2xl p-4 text-center">
               <p className={`text-3xl font-black font-['Rubik'] ${color}`}>{count}</p>
               <p className="text-xs text-white/50 mt-1">{label}</p>
             </div>
@@ -656,7 +656,7 @@ export default function SuscripcionesPage() {
         </section>
 
         {/* ── Suscripciones Table ── */}
-        <section className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+        <section className="bg-[#031c38] border border-white/10 rounded-2xl overflow-hidden">
           {/* Section header */}
           <div
             className="flex items-center justify-between px-6 py-4 border-b border-white/10 cursor-pointer select-none"

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -121,7 +121,7 @@ export default function NewsletterCapture() {
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="shrink-0 inline-flex items-center justify-center gap-2 bg-black text-white text-xs font-bold uppercase tracking-widest px-7 py-3.5 rounded-lg hover:bg-[#0a0a0a] transition-colors disabled:opacity-60"
+                  className="shrink-0 inline-flex items-center justify-center gap-2 bg-black text-white text-xs font-bold uppercase tracking-widest px-7 py-3.5 rounded-lg hover:bg-[#021325] transition-colors disabled:opacity-60"
                 >
                   {status === "loading" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

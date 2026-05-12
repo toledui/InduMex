@@ -17,10 +17,31 @@ import {
   WebSiteJsonLd,
 } from "@/lib/json-ld";
 
+const OG_IMAGE_DEFAULT = {
+  url: "https://indumex.blog/images/indumex-image.jpg",
+  width: 1200,
+  height: 630,
+  alt: "InduMex 2.0 – Revista Digital Industrial",
+};
+
 export const metadata: Metadata = {
   title: "InduMex 2.0 | Revista Digital Industrial",
   description:
     "Plataforma B2B de inteligencia industrial. Análisis técnico, directorio de proveedores y marketplace para la manufactura mexicana.",
+  alternates: {
+    canonical: "https://indumex.blog",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: "InduMex 2.0 - Revista Digital Industrial",
     description:
@@ -28,19 +49,15 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://indumex.blog",
     siteName: "InduMex 2.0",
-    images: [
-      {
-        url: "https://indumex.blog/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "InduMex 2.0",
-      },
-    ],
+    locale: "es_MX",
+    images: [OG_IMAGE_DEFAULT],
   },
   twitter: {
     card: "summary_large_image",
-    title: "InduMex 2.0",
-    description: "Revista digital para la industria mexicana",
+    title: "InduMex 2.0 – Revista Digital Industrial",
+    description: "Plataforma B2B de inteligencia industrial para la manufactura mexicana.",
+    images: [OG_IMAGE_DEFAULT.url],
+    creator: "@indumexblog",
   },
 };
 
@@ -88,6 +105,8 @@ export default async function Home() {
         name="InduMex 2.0"
         url="https://indumex.blog"
         description="Revista digital técnica para la industria mexicana. Plataforma B2B de inteligencia industrial."
+        logo={{ url: "https://indumex.blog/images/indumex-logo.png", width: 600, height: 138 }}
+        sameAs={[]}
       />
       <WebSiteJsonLd
         name="InduMex 2.0"

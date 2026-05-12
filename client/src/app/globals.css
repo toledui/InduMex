@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;600;700;800&family=Rubik:wght@400;500;700;800;900&family=Inter:wght@400;500;600;700&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;600;700;800&family=Rubik:wght@400;500;700;800;900&family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
   --indumex-primary: #004aad;
   --indumex-accent: #f58634;
-  --indumex-dark-bg: #0a0a0a;
+  --indumex-dark-bg: #021325;
   --indumex-dark-card: #111111;
   --indumex-dark-border: #ffffff0d;
   --indumex-light-text: #e2e8f0;
@@ -266,7 +266,7 @@ button {
   padding: 0.85rem 1.2rem;
   border-radius: 9999px;
   background: #f58634 !important;
-  color: #0a0a0a !important;
+  color: #021325 !important;
   font-weight: 700;
   text-decoration: none;
   border: 1px solid rgba(245, 134, 52, 0.7);

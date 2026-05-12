@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -793,7 +793,7 @@ export default function MiCuentaClient() {
   if (!isHydrated) {
     return (
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-32 sm:px-6 lg:px-8">
-        <header className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-6 sm:p-8">
+        <header className="rounded-3xl border border-white/10 bg-[#021325] p-6 sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F58634]">Mi Cuenta</p>
           <h1 className="mt-2 font-['Rubik'] text-3xl font-black text-white sm:text-4xl">
             Tu espacio de cliente InduMex
@@ -808,7 +808,7 @@ export default function MiCuentaClient() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-32 sm:px-6 lg:px-8">
-      <header className="rounded-3xl border border-white/10 bg-[#0d0d0d] p-6 sm:p-8">
+      <header className="rounded-3xl border border-white/10 bg-[#021325] p-6 sm:p-8">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F58634]">Mi Cuenta</p>
         <h1 className="mt-2 font-['Rubik'] text-3xl font-black text-white sm:text-4xl">
           Tu espacio de cliente InduMex
@@ -827,7 +827,7 @@ export default function MiCuentaClient() {
 
       {!isLoggedIn ? (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <div className="mb-4 flex gap-2">
               <button
                 type="button"
@@ -951,7 +951,7 @@ export default function MiCuentaClient() {
             )}
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-slate-300">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6 text-sm text-slate-300">
             <h2 className="font-['Rubik'] text-xl font-bold text-white">Que incluye Mi Cuenta</h2>
             <ul className="mt-4 space-y-3">
               <li>Registro como cliente con datos completos de contacto y empresa.</li>
@@ -962,7 +962,7 @@ export default function MiCuentaClient() {
         </div>
       ) : (
         <div className="mt-8 grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="rounded-2xl border border-white/10 bg-[#111] p-4 lg:sticky lg:top-28 lg:self-start">
+          <aside className="rounded-2xl border border-white/10 bg-[#031c38] p-4 lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[#F58634]">Cuenta activa</p>
               <h2 className="mt-2 text-lg font-bold text-white">{user?.nombre} {user?.apellido ?? ''}</h2>
@@ -1018,7 +1018,7 @@ export default function MiCuentaClient() {
             </button>
           </aside>
 
-          <div className="min-w-0 rounded-2xl border border-white/10 bg-[#111] p-6 lg:p-8">
+          <div className="min-w-0 rounded-2xl border border-white/10 bg-[#031c38] p-6 lg:p-8">
             {activeSection === 'profile' ? (
               <section>
                 <h2 className="font-['Rubik'] text-2xl font-bold text-white">Datos del perfil</h2>
@@ -1192,7 +1192,7 @@ export default function MiCuentaClient() {
                   <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
                     <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                       <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/35">Logo de la empresa</p>
-                      <div className="mt-4 flex h-48 items-center justify-center rounded-2xl border border-dashed border-white/15 bg-[#0d0d0d] p-4">
+                      <div className="mt-4 flex h-48 items-center justify-center rounded-2xl border border-dashed border-white/15 bg-[#021325] p-4">
                         {providerForm.logo && isImageLogo(providerForm.logo) ? (
                           <img src={providerForm.logo} alt="Logo de empresa" className="max-h-full max-w-full object-contain" />
                         ) : (
@@ -1322,7 +1322,7 @@ export default function MiCuentaClient() {
                       <input
                         type="text"
                         placeholder="Escribe el sector si no existe en la lista"
-                        className="mt-4 w-full rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white"
+                        className="mt-4 w-full rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white"
                         value={providerForm.otherSector}
                         onChange={(e) => setProviderForm((prev) => ({ ...prev, otherSector: e.target.value }))}
                       />
@@ -1343,7 +1343,7 @@ export default function MiCuentaClient() {
                     <input
                       type="text"
                       placeholder="Ejemplo: ISO 9001, AS9100, NOM"
-                      className="w-full rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white"
+                      className="w-full rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white"
                       value={providerForm.certifications}
                       onChange={(e) => setProviderForm((prev) => ({ ...prev, certifications: e.target.value }))}
                     />
@@ -1370,11 +1370,11 @@ export default function MiCuentaClient() {
                           <input
                             type="text"
                             placeholder="Nombre de la red"
-                            className="rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white"
+                            className="rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white"
                             value={social.nombre}
                             onChange={(e) => updateSocialNetwork(index, 'nombre', e.target.value)}
                           />
-                          <label className="rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white focus-within:border-[#F58634] focus-within:ring-1 focus-within:ring-[#F58634]/30">
+                          <label className="rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white focus-within:border-[#F58634] focus-within:ring-1 focus-within:ring-[#F58634]/30">
                             <span className="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-white/35">URL</span>
                             <span className="flex items-center gap-2">
                               <span className="text-white/45">https://</span>
@@ -1735,7 +1735,7 @@ export default function MiCuentaClient() {
 
       {isCancelModalOpen && (
         <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#111] p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#031c38] p-6 shadow-2xl">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F58634]">Confirmación</p>
             <h3 className="mt-2 font-['Rubik'] text-xl font-bold text-white">{cancelModalTitle}</h3>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">{cancelModalDescription}</p>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
@@ -75,7 +75,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
   return (
     <div className="space-y-6">
       {/* Search Bar */}
-      <div className="bg-[#111] border border-gray-800 rounded-lg p-4 flex items-center gap-3">
+      <div className="bg-[#031c38] border border-white/10 rounded-lg p-4 flex items-center gap-3">
         <Search size={20} className="text-gray-400" />
         <input
           type="text"
@@ -91,9 +91,9 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
 
       {/* Tabla de Artículos */}
       {paginatedPosts.length > 0 ? (
-        <div className="bg-[#111] border border-gray-800 rounded-lg overflow-hidden">
+        <div className="bg-[#031c38] border border-white/10 rounded-lg overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-800 text-sm font-semibold text-gray-300">
+          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10 text-sm font-semibold text-gray-300">
             <div className="col-span-5">Título</div>
             <div className="col-span-2">Categoría</div>
             <div className="col-span-2">Publicado</div>
@@ -108,7 +108,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
             return (
               <div
                 key={post.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-gray-800/50 hover:bg-white/5 transition-colors items-center"
+                className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10/50 hover:bg-white/5 transition-colors items-center"
               >
                 {/* Título con imagen */}
                 <div className="col-span-5 flex items-center gap-3">
@@ -170,7 +170,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
                     <div className="absolute right-0 top-full mt-2 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-50 min-w-48">
                       <Link
                         href={`/admin/posts/${post.slug}/edit`}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-gray-800"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10"
                       >
                         <Edit size={16} />
                         <span>Editar</span>
@@ -181,7 +181,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
                           handleDuplicate(post.slug);
                           setOpenMenuId(null);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-gray-800 text-left"
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10 text-left"
                       >
                         <Copy size={16} />
                         <span>Duplicar</span>
@@ -205,7 +205,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
           })}
         </div>
       ) : (
-        <div className="bg-[#111] border border-gray-800 rounded-lg p-12 text-center">
+        <div className="bg-[#031c38] border border-white/10 rounded-lg p-12 text-center">
           <p className="text-gray-400 mb-4">
             {searchTerm ? 'No se encontraron artículos' : 'No hay artículos aún'}
           </p>
@@ -222,7 +222,7 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
 
       {/* Paginación */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between bg-[#111] border border-gray-800 rounded-lg p-4">
+        <div className="flex items-center justify-between bg-[#031c38] border border-white/10 rounded-lg p-4">
           <p className="text-sm text-gray-400">
             Página {currentPage + 1} de {totalPages} ({filteredPosts.length} artículos)
           </p>

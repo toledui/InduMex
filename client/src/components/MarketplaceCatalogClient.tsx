@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -347,7 +347,7 @@ export default function MarketplaceCatalogClient({ productos, categorias, errorM
   }
 
   return (
-    <section className="bg-[#050505] text-white">
+    <section className="bg-[#010b17] text-white">
       <div className="mx-auto max-w-7xl px-4 pt-16 pb-10 sm:px-6 sm:pt-20 lg:pb-14 lg:pt-24">
         <div
           className="rounded-3xl border border-white/10 p-6 sm:p-8 lg:p-10"
@@ -386,13 +386,13 @@ export default function MarketplaceCatalogClient({ productos, categorias, errorM
           </div>
 
           {errorMessage && (
-            <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-950/20 px-4 py-3 text-sm text-red-200">
+            <div className="mt-6 rounded-2xl border border-yellow-500/20 bg-yellow-950/20 px-4 py-3 text-sm text-yellow-200">
               {errorMessage}
             </div>
           )}
 
           <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center">
-            <label className="flex-1 border-b-2 border-gray-800 pb-3 text-white focus-within:border-[#004AAD]">
+            <label className="flex-1 border-b-2 border-white/10 pb-3 text-white focus-within:border-[#004AAD]">
               <div className="flex items-center gap-3">
                 <Search className="h-5 w-5 text-white/30" />
                 <input
@@ -461,8 +461,17 @@ export default function MarketplaceCatalogClient({ productos, categorias, errorM
           {filteredProducts.length === 0 ? (
             <div className="mt-6 rounded-3xl border border-white/10 bg-black/30 p-10 text-center">
               <Box className="mx-auto h-10 w-10 text-white/25" />
-              <h3 className="mt-4 text-xl font-bold text-white">No encontramos productos con esos filtros</h3>
-              <p className="mt-2 text-sm text-white/55">Amplía la búsqueda, quita filtros o revisa otro segmento del catálogo.</p>
+              {productos.length === 0 ? (
+                <>
+                  <h3 className="mt-4 text-xl font-bold text-white">Catálogo en construcción</h3>
+                  <p className="mt-2 text-sm text-white/55">Pronto encontrarás aquí productos y proveedores industriales verificados.<br />¡Vuelve pronto!</p>
+                </>
+              ) : (
+                <>
+                  <h3 className="mt-4 text-xl font-bold text-white">No encontramos productos con esos filtros</h3>
+                  <p className="mt-2 text-sm text-white/55">Amplía la búsqueda, quita filtros o revisa otro segmento del catálogo.</p>
+                </>
+              )}
             </div>
           ) : (
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
@@ -474,10 +483,10 @@ export default function MarketplaceCatalogClient({ productos, categorias, errorM
                   viewport={{ once: true, margin: '-60px' }}
                   transition={{ duration: 0.4, delay: index * 0.02 }}
                   className={`group overflow-hidden rounded-3xl border shadow-[0_20px_60px_rgba(0,0,0,0.35)] ${
-                    product.destacado ? 'border-[#F58634]/40 bg-[#F58634]/5' : 'border-white/10 bg-[#111]'
+                    product.destacado ? 'border-[#F58634]/40 bg-[#F58634]/5' : 'border-white/10 bg-[#031c38]'
                   }`}
                 >
-                  <div className="relative aspect-square bg-[#111]">
+                  <div className="relative aspect-square bg-[#031c38]">
                     {product.imagenes[0] && isProductImageAllowed(product.imagenes[0]) ? (
                       <Image
                         src={product.imagenes[0]}

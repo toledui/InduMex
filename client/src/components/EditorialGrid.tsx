@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -34,7 +34,7 @@ export default function EditorialGrid({
 
   return (
     <section className="py-16 md:py-24 lg:py-32 max-w-[1600px] mx-auto px-4 sm:px-6">
-      <div className="flex justify-between items-end mb-8 md:mb-16 border-b border-gray-800 pb-4 md:pb-6">
+      <div className="flex justify-between items-end mb-8 md:mb-16 border-b border-white/10 pb-4 md:pb-6">
         <h3 className="font-['Space_Grotesk'] text-3xl font-bold uppercase tracking-tight">
           Última <span className="text-[#004AAD]">Inteligencia</span>
         </h3>
@@ -59,15 +59,15 @@ export default function EditorialGrid({
 
           return (
             <React.Fragment key={post.id}>
-              <article
-                key={post.id}
-                className={`relative overflow-hidden group cursor-pointer rounded-xl bg-gray-900 border border-white/5 min-h-[280px] md:min-h-0 ${gridClass}`}
+              <Link
+                href={`/${category?.slug || "noticias"}/${post.slug}`}
+                className={`relative overflow-hidden group cursor-pointer rounded-xl bg-[#031c38] border border-white/5 min-h-[280px] md:min-h-0 ${gridClass}`}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 data-interactive
               >
                 <div className="absolute inset-0 z-0">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#021325] via-[#021325]/50 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity"></div>
 
                   {imageUrl ? (
                     <Image
@@ -98,13 +98,10 @@ export default function EditorialGrid({
                 </div>
 
                 {/* Hover Button */}
-                <Link
-                  href={`/${category?.slug || "noticias"}/${post.slug}`}
-                  className="absolute top-8 right-8 z-20 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-500"
-                >
+                <div className="absolute top-8 right-8 z-20 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-500">
                   <Play className="h-5 w-5 ml-1" />
-                </Link>
-              </article>
+                </div>
+              </Link>
 
               {/* AdBanner nativo después del artículo 1 (idx=1) */}
               {idx === 1 && (

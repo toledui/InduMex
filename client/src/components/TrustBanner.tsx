@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -46,7 +46,7 @@ export default function TrustBanner() {
 
   return (
     <section
-      className="border-y border-white/5 bg-[#080808] py-8 overflow-hidden"
+      className="border-y border-white/5 bg-[#010b17] py-8 overflow-hidden"
       aria-label="Empresas que leen InduMex"
     >
       <div className="max-w-400 mx-auto px-4 sm:px-6">

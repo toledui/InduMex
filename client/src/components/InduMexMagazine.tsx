@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { ArrowRight, Share2, Bookmark, Volume2, Maximize, Activity, Cpu, ArrowUpRight, Play } from 'lucide-react';
@@ -98,7 +98,7 @@ export default function InduMexMagazine() {
   }, []);
 
   return (
-    <div className="relative overflow-hidden bg-[#0a0a0a] pt-24 text-slate-200 font-['Space_Grotesk',sans-serif] selection:bg-[#F58634] selection:text-white md:pt-28">
+    <div className="relative overflow-hidden bg-[#021325] pt-24 text-slate-200 font-['Space_Grotesk',sans-serif] selection:bg-[#F58634] selection:text-white md:pt-28">
       <div
         className="fixed left-0 top-0 z-100 hidden h-8 w-8 items-center justify-center rounded-full bg-white mix-blend-difference transition-transform duration-200 ease-out lg:flex pointer-events-none"
         style={{ transform: `translate(${mousePosition.x - 16}px, ${mousePosition.y - 16}px) scale(${isHoveringLink ? 2.5 : 1})` }}
@@ -130,7 +130,7 @@ export default function InduMexMagazine() {
           style={{ transform: `scale(${1 + scrollY * 0.0005}) translateY(${scrollY * 0.2}px)` }}
         >
           <img src={issueData.cover.image} alt="Cover" className="h-full w-full object-cover opacity-50 grayscale transition-all duration-1000 hover:grayscale-0" />
-          <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#0a0a0a]/50 to-[#0a0a0a]" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#021325]/50 to-[#021325]" />
         </div>
 
         <div className="relative z-10 flex w-full flex-col items-center justify-center px-4 text-white mix-blend-overlay">
@@ -220,7 +220,7 @@ export default function InduMexMagazine() {
                 <span className="mt-1 block text-xs uppercase tracking-wider text-[#F58634]">Editor Senior</span>
               </div>
 
-              <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#111] p-8">
+              <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#031c38] p-8">
                 <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-[#004AAD] opacity-20 blur-[50px] transition-opacity group-hover:opacity-50" />
                 <Activity className="relative z-10 mb-6 h-6 w-6 text-[#F58634]" />
                 <div className="relative z-10 mb-4 font-['Syncopate'] text-6xl font-bold tracking-tighter text-white">
@@ -284,9 +284,9 @@ export default function InduMexMagazine() {
                 </div>
               </div>
 
-              <div className="group relative overflow-hidden rounded-2xl border border-[#F58634]/30 bg-[#111] p-8 transition-colors hover:border-[#F58634] cursor-pointer">
+              <div className="group relative overflow-hidden rounded-2xl border border-[#F58634]/30 bg-[#031c38] p-8 transition-colors hover:border-[#F58634] cursor-pointer">
                 <div className="absolute inset-0 bg-linear-to-br from-[#F58634]/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                <span className="mb-4 block border-b border-gray-800 pb-2 text-[10px] uppercase tracking-widest text-gray-500">Masterclass B2B</span>
+                <span className="mb-4 block border-b border-white/10 pb-2 text-[10px] uppercase tracking-widest text-gray-500">Masterclass B2B</span>
                 <h4 className="mb-4 font-['Syncopate'] text-xl font-bold uppercase tracking-tighter text-white">
                   Atracción de Clientes Industriales
                 </h4>
@@ -302,7 +302,7 @@ export default function InduMexMagazine() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-[#050505] py-24 relative overflow-hidden">
+      <section className="border-t border-white/10 bg-[#010b17] py-24 relative overflow-hidden">
         <div className="absolute right-0 top-0 h-150 w-150 rounded-full bg-[#004AAD]/10 blur-[120px] pointer-events-none" />
         <div className="mx-auto max-w-250 px-6 relative z-10">
           <div className="mb-12 flex items-center gap-4 border-b border-white/10 pb-6">
@@ -334,7 +334,7 @@ export default function InduMexMagazine() {
         </div>
       </section>
 
-      <section className="relative flex h-screen items-center justify-center overflow-hidden border-t border-white/10 bg-[#111] text-white group cursor-pointer"
+      <section className="relative flex h-screen items-center justify-center overflow-hidden border-t border-white/10 bg-[#031c38] text-white group cursor-pointer"
         onMouseEnter={() => setIsHoveringLink(true)}
         onMouseLeave={() => setIsHoveringLink(false)}
       >

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { use, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -374,8 +374,8 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0a0a0a] px-4 pb-12 pt-28 text-white sm:px-6">
-        <div className="mx-auto max-w-7xl rounded-2xl border border-white/10 bg-[#101010] p-8">
+      <main className="min-h-screen bg-[#021325] px-4 pb-12 pt-28 text-white sm:px-6">
+        <div className="mx-auto max-w-7xl rounded-2xl border border-white/10 bg-[#021e3a] p-8">
           <p className="font-['Space_Grotesk'] text-sm text-white/70">Cargando detalle del producto...</p>
         </div>
       </main>
@@ -384,7 +384,7 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
 
   if (error || !product) {
     return (
-      <main className="min-h-screen bg-[#0a0a0a] px-4 pb-12 pt-28 text-white sm:px-6">
+      <main className="min-h-screen bg-[#021325] px-4 pb-12 pt-28 text-white sm:px-6">
         <div className="mx-auto max-w-7xl rounded-2xl border border-red-500/30 bg-red-950/20 p-8">
           <p className="font-['Space_Grotesk'] text-sm text-red-200">{error ?? 'Producto no disponible.'}</p>
           <Link
@@ -400,10 +400,10 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
 
   return (
     <>
-      <main className="min-h-screen bg-[#0a0a0a] px-4 pb-12 pt-28 text-white sm:px-6">
+      <main className="min-h-screen bg-[#021325] px-4 pb-12 pt-28 text-white sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
-            <section className="space-y-6 rounded-2xl border border-white/10 bg-[#101010] p-5 sm:p-6">
+            <section className="space-y-6 rounded-2xl border border-white/10 bg-[#021e3a] p-5 sm:p-6">
               <header className="space-y-3">
                 <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/70">
                   SKU {product.sku}
@@ -482,7 +482,7 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
             </section>
 
             <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-              <section className="rounded-2xl border border-white/10 bg-[#101010] p-5">
+              <section className="rounded-2xl border border-white/10 bg-[#021e3a] p-5">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">Precio de referencia</p>
                 <p className="mt-2 text-3xl font-black text-white">{formatMoney(product.precio, product.moneda)}</p>
                 <div className="mt-3 flex items-center gap-2 text-xs text-white/65">
@@ -491,7 +491,7 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
                 </div>
               </section>
 
-              <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#101010] p-5">
+              <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#021e3a] p-5">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">Proveedor</p>
 
                 {!isAuthenticated && (
@@ -620,7 +620,7 @@ export default function MarketplaceProductDetailPage({ params }: MarketplaceProd
 
       {isQuoteModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 px-4 py-6 backdrop-blur-sm">
-          <div className="mx-auto mt-20 w-full max-w-xl rounded-2xl border border-white/10 bg-[#0f0f0f] p-5">
+          <div className="mx-auto mt-20 w-full max-w-xl rounded-2xl border border-white/10 bg-[#031c38] p-5">
             <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#F58634]">Solicitud de Cotizacion</p>

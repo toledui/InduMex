@@ -27,14 +27,11 @@ export default async function MarketplacePage() {
         categorias={catalog.categorias}
       />
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'No se pudo cargar el marketplace en este momento.';
-
+  } catch {
     return (
       <MarketplaceCatalogClient
         productos={[]}
         categorias={[]}
-        errorMessage={message}
       />
     );
   }

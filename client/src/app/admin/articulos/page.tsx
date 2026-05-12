@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getAllPostsUnlimited, WordPressPostCard } from '@/lib/wordpress';
@@ -21,7 +21,7 @@ export default async function ArticulosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-8">
+    <div className="min-h-screen bg-[#010b17] text-white p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

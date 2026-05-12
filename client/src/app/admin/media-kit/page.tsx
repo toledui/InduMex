@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import {
@@ -247,7 +247,7 @@ export default function MediaKitPage() {
 
       {/* Editor */}
       {isCreating && (
-        <section className="bg-[#111] border border-[#F58634]/20 rounded-2xl p-6 space-y-6">
+        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-6 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-white">{editing ? `Editar: ${editing.nombre}` : 'Nuevo Plan'}</h2>
             <button type="button" onClick={closeEditor} className="text-white/40 hover:text-white transition-colors">
@@ -430,13 +430,13 @@ export default function MediaKitPage() {
       ) : error ? (
         <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-400">{error}</div>
       ) : planes.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-8 text-center text-white/30 text-sm">
+        <div className="rounded-2xl border border-white/10 bg-[#031c38] p-8 text-center text-white/30 text-sm">
           No hay planes creados aún. Haz clic en <strong className="text-[#F58634]">Nuevo Plan</strong> para comenzar.
         </div>
       ) : (
         <div className="space-y-3">
           {planes.map((plan) => (
-            <div key={plan.id} className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+            <div key={plan.id} className="bg-[#031c38] border border-white/10 rounded-2xl overflow-hidden">
               <div className="flex items-center gap-4 p-5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#F58634]/10">
                   <DollarSign size={18} className="text-[#F58634]" />

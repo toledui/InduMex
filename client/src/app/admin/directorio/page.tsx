@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -154,7 +154,7 @@ export default function AdminDirectoryPage() {
           { label: 'Verificados', value: stats.verified, icon: ShieldCheck },
           { label: 'Patrocinadores', value: stats.premium, icon: Award },
         ].map((metric) => (
-          <div key={metric.label} className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <div key={metric.label} className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <metric.icon className="h-5 w-5 text-[#F58634]" />
             <p className="mt-4 text-3xl font-black">{metric.value}</p>
             <p className="mt-1 text-xs uppercase tracking-[0.25em] text-white/35">{metric.label}</p>
@@ -162,7 +162,7 @@ export default function AdminDirectoryPage() {
         ))}
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+      <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
         <div className="flex flex-col gap-4 border-b border-white/10 pb-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-lg font-bold text-white">Proveedores registrados</h2>
@@ -208,7 +208,7 @@ export default function AdminDirectoryPage() {
                     <th className="px-4 py-3 font-semibold">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 bg-[#0d0d0d]">
+                <tbody className="divide-y divide-white/5 bg-[#021325]">
                   {filteredProviders.map((provider) => (
                     <tr
                       key={provider.slug}

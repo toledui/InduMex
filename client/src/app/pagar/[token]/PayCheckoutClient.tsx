@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -151,7 +151,7 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
 
   if (success) {
     return (
-      <div className="max-w-md w-full bg-[#111] border border-emerald-500/20 rounded-2xl p-8 text-center space-y-4">
+      <div className="max-w-md w-full bg-[#031c38] border border-emerald-500/20 rounded-2xl p-8 text-center space-y-4">
         <CheckCircle2 size={48} className="mx-auto text-emerald-400" />
         <h1 className="text-xl font-bold text-white">¡Pago exitoso!</h1>
         <p className="text-sm text-white/50">
@@ -174,7 +174,7 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
         </div>
 
         {/* Order summary */}
-        <section className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+        <section className="bg-[#031c38] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-6 py-4 border-b border-white/5">
             <h2 className="text-sm font-bold text-white/60 uppercase tracking-widest">Resumen del pedido</h2>
           </div>
@@ -210,7 +210,7 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
         </section>
 
         {/* Link metadata */}
-        <section className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+        <section className="bg-[#031c38] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-6 py-4 border-b border-white/5">
             <h2 className="text-sm font-bold text-white/60 uppercase tracking-widest">Datos del link</h2>
           </div>

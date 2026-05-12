@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
@@ -106,8 +106,8 @@ export default function PostPremiumClient({
   const tags = useMemo(() => extractTags(post), [post]);
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen text-slate-200 selection:bg-[#F58634] selection:text-white">
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-900 z-100">
+    <div className="bg-[#021325] min-h-screen text-slate-200 selection:bg-[#F58634] selection:text-white">
+      <div className="fixed top-0 left-0 w-full h-1 bg-[#031c38] z-100">
         <div
           className="h-full bg-[#F58634] transition-all duration-150 ease-out"
           style={{ width: `${scrollProgress * 100}%` }}
@@ -151,9 +151,9 @@ export default function PostPremiumClient({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="w-full h-[50vh] md:h-[65vh] relative mb-16 md:mb-24 bg-gray-900 border-y border-white/5"
+        className="w-full h-[50vh] md:h-[65vh] relative mb-16 md:mb-24 bg-[#031c38] border-y border-white/5"
       >
-        <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] via-transparent to-transparent z-10"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-[#021325] via-transparent to-transparent z-10"></div>
         {heroImage ? (
           <Image
             src={heroImage}
@@ -164,7 +164,7 @@ export default function PostPremiumClient({
             className="w-full h-full object-cover grayscale-30 opacity-80"
           />
         ) : (
-          <div className="w-full h-full bg-linear-to-br from-[#004AAD]/35 via-[#050505] to-[#F58634]/20" />
+          <div className="w-full h-full bg-linear-to-br from-[#004AAD]/35 via-[#010b17] to-[#F58634]/20" />
         )}
         <div
           className="absolute inset-0 opacity-[0.03] mix-blend-overlay z-20"
@@ -188,7 +188,7 @@ export default function PostPremiumClient({
                   className="w-12 h-12 rounded-full grayscale border border-white/20 object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full border border-white/20 bg-[#111] flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full border border-white/20 bg-[#031c38] flex items-center justify-center">
                   <Building2 className="h-5 w-5 text-[#F58634]" />
                 </div>
               )}

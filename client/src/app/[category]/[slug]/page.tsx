@@ -41,7 +41,8 @@ export async function generateMetadata({
     post.excerpt?.replace(/<[^>]+>/g, "") ||
     "Análisis técnico industrial en InduMex 2.0";
 
-  const image = post.featuredImage?.node?.sourceUrl;
+  const DEFAULT_OG_IMAGE = "https://indumex.blog/images/indumex-image.jpg";
+  const image = post.featuredImage?.node?.sourceUrl || DEFAULT_OG_IMAGE;
   const url = `https://indumex.blog/${category}/${slug}`;
   const authorName = post.author?.node?.name || "InduMex Editorial";
   
@@ -73,7 +74,7 @@ export async function generateMetadata({
       url,
       siteName: "InduMex",
       locale: "es_MX",
-      images: image ? [{ url: image, width: 1200, height: 630, alt: post.title }] : [],
+      images: [{ url: image, width: 1200, height: 630, alt: post.title }],
       publishedTime: post.date,
       modifiedTime: post.modified,
       authors: [authorName],
@@ -84,7 +85,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: seoTitle,
       description: seoDescription,
-      images: image ? [image] : [],
+      images: [image],
       creator: "@indumexblog",
     },
     other: {

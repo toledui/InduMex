@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Mail, Phone, User, RefreshCw, Search } from 'lucide-react';
@@ -84,7 +84,7 @@ export default function AdminSuscriptoresPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto border border-white/10 rounded-xl bg-[#111]">
+      <div className="overflow-x-auto border border-white/10 rounded-xl bg-[#031c38]">
         <table className="min-w-full text-sm">
           <thead className="bg-black/30 text-white/60 uppercase text-xs tracking-wider">
             <tr>

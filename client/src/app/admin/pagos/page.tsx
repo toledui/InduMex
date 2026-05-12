@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import {
@@ -310,7 +310,7 @@ export default function PagosPage() {
           { label: 'Total Ventas',    value: ventas.length,                                       icon: <ShoppingBag size={16} className="text-[#F58634]" /> },
           { label: 'Ingresos Totales', value: `$${totalVentas.toLocaleString('es-MX')}`, icon: <DollarSign size={16} className="text-blue-400" /> },
         ].map((s) => (
-          <div key={s.label} className="bg-[#111] border border-white/10 rounded-2xl p-4 flex items-center gap-3">
+          <div key={s.label} className="bg-[#031c38] border border-white/10 rounded-2xl p-4 flex items-center gap-3">
             <div className="p-2 bg-white/5 rounded-lg">{s.icon}</div>
             <div>
               <p className="text-xs text-white/30 uppercase tracking-widest">{s.label}</p>
@@ -322,7 +322,7 @@ export default function PagosPage() {
 
       {/* Create form */}
       {showForm && (
-        <section className="bg-[#111] border border-[#F58634]/20 rounded-2xl p-6 space-y-5">
+        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-white">{editingLink ? `Editar Link #${editingLink.id}` : 'Nuevo Link de Pago'}</h2>
             <button type="button" onClick={closeForm} className="text-white/40 hover:text-white transition-colors">
@@ -380,7 +380,7 @@ export default function PagosPage() {
                     </div>
 
                     {showCustomerResults && (
-                      <div className="absolute z-20 mt-2 w-full max-h-56 overflow-auto rounded-xl border border-white/10 bg-[#0f0f0f] shadow-2xl">
+                      <div className="absolute z-20 mt-2 w-full max-h-56 overflow-auto rounded-xl border border-white/10 bg-[#031c38] shadow-2xl">
                         <button
                           type="button"
                           onClick={clearSelectedCustomer}
@@ -547,7 +547,7 @@ export default function PagosPage() {
         links.length === 0 ? (
           <p className="text-sm text-white/30 py-6">No hay links creados aún.</p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#111]">
+          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#031c38]">
             <table className="w-full text-sm">
               <thead className="border-b border-white/5">
                 <tr className="text-left text-[11px] uppercase tracking-widest text-white/25">
@@ -624,7 +624,7 @@ export default function PagosPage() {
         ventas.length === 0 ? (
           <p className="text-sm text-white/30 py-6">No hay ventas registradas aún.</p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#111]">
+          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#031c38]">
             <table className="w-full text-sm">
               <thead className="border-b border-white/5">
                 <tr className="text-left text-[11px] uppercase tracking-widest text-white/25">

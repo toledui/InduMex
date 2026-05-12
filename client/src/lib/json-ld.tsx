@@ -70,24 +70,33 @@ export function BreadcrumbJsonLd({ items }: BreadcrumbSchemaProps) {
 type OrganizationSchemaProps = {
   name?: string;
   url: string;
-  logo?: string;
   description?: string;
+  logo?: { url: string; width: number; height: number };
+  sameAs?: string[];
 };
 
 export function OrganizationJsonLd({
   name = "InduMex 2.0",
   url,
-  logo,
   description,
+  logo,
+  sameAs = [],
 }: OrganizationSchemaProps) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name,
     url,
-    logo,
     description,
-    sameAs: [],
+    ...(logo && {
+      logo: {
+        "@type": "ImageObject",
+        url: logo.url,
+        width: logo.width,
+        height: logo.height,
+      },
+    }),
+    sameAs,
   };
 
   return (

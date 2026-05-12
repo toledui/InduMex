@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -54,8 +54,8 @@ function ProviderCard({ provider }: { provider: B2BProvider }) {
     <article
       className={`relative overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 ${
         premium
-          ? 'border-[#F58634]/30 bg-linear-to-b from-[#111] to-[#0d0d0d] shadow-[0_0_0_1px_rgba(245,134,52,0.10),0_24px_60px_rgba(245,134,52,0.08)]'
-          : 'border-white/10 bg-[#111]'
+          ? 'border-[#F58634]/30 bg-linear-to-b from-[#111] to-[#021325] shadow-[0_0_0_1px_rgba(245,134,52,0.10),0_24px_60px_rgba(245,134,52,0.08)]'
+          : 'border-white/10 bg-[#031c38]'
       }`}
     >
       <ProviderBadge tier={provider.tier} />
@@ -281,7 +281,7 @@ export default function DirectorioClientModern({
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-4 py-[8vh]">
           <div className="fixed inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowSectorModal(false)} />
 
-          <div className="relative z-10 w-full max-w-2xl rounded-3xl border border-white/10 bg-[#111] p-6 shadow-2xl">
+          <div className="relative z-10 w-full max-w-2xl rounded-3xl border border-white/10 bg-[#031c38] p-6 shadow-2xl">
             {/* Header */}
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
@@ -457,7 +457,7 @@ export default function DirectorioClientModern({
       )}
 
       {/* ── Hero / Search ───────────────────────────────────────── */}
-      <section className="border-b border-white/5 bg-[#050505] pt-36 pb-12">
+      <section className="border-b border-white/5 bg-[#010b17] pt-36 pb-12">
         <div className="mx-auto max-w-7xl px-6">
           <span className="mb-4 block text-xs font-bold uppercase tracking-[0.3em] text-[#F58634]">
             B2B Industrial Network
@@ -473,7 +473,7 @@ export default function DirectorioClientModern({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#111] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+            <div className="rounded-3xl border border-white/10 bg-[#031c38] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
               <label className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white/40">
                 <Search className="h-4 w-4 text-[#F58634]" />
                 Terminal de búsqueda
@@ -555,7 +555,7 @@ export default function DirectorioClientModern({
         </div>
 
         {filteredProviders.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-white/60">
+          <div className="mt-8 rounded-2xl border border-white/10 bg-[#031c38] p-6 text-sm text-white/60">
             No hay proveedores activos para los filtros seleccionados.
           </div>
         )}

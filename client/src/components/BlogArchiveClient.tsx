@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -171,7 +171,7 @@ export default function BlogArchiveClient({
             de <span className="text-[#F58634]">Noticias Industriales</span>
           </h1>
 
-          <div className="mt-8 md:mt-10 rounded-2xl border border-white/15 bg-[#0d0d0d] px-5 py-4 md:px-6 md:py-5">
+          <div className="mt-8 md:mt-10 rounded-2xl border border-white/15 bg-[#021325] px-5 py-4 md:px-6 md:py-5">
             <div className="flex flex-col gap-4 md:flex-row md:items-center">
               <div className="flex w-full items-center gap-3">
                 <Search className="h-5 w-5 text-[#F58634]" />
@@ -196,7 +196,7 @@ export default function BlogArchiveClient({
                 </button>
 
                 {isCategoryOpen && (
-                  <div className="absolute right-0 z-20 mt-2 w-full min-w-60 rounded-xl border border-white/15 bg-[#101010] p-3 shadow-2xl md:w-auto">
+                  <div className="absolute right-0 z-20 mt-2 w-full min-w-60 rounded-xl border border-white/15 bg-[#021e3a] p-3 shadow-2xl md:w-auto">
                     <label className="mb-2 block text-[10px] uppercase tracking-widest text-gray-500">
                       Selecciona categoría
                     </label>
@@ -206,7 +206,7 @@ export default function BlogArchiveClient({
                         handleCategoryChange(event.target.value);
                         setIsCategoryOpen(false);
                       }}
-                      className="w-full rounded-lg border border-white/20 bg-[#0a0a0a] px-3 py-2 text-sm text-white focus:border-[#F58634] focus:outline-none"
+                      className="w-full rounded-lg border border-white/20 bg-[#021325] px-3 py-2 text-sm text-white focus:border-[#F58634] focus:outline-none"
                     >
                       <option value="all">Todas</option>
                       {availableCategories.map((category) => (
@@ -232,7 +232,7 @@ export default function BlogArchiveClient({
       <section className="pt-10 md:pt-12">
         <div className="max-w-400 mx-auto px-4 sm:px-6">
           {filteredPosts.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-center text-gray-400 font-['Space_Grotesk']">
+            <div className="rounded-2xl border border-white/10 bg-[#031c38] p-8 text-center text-gray-400 font-['Space_Grotesk']">
               No se encontraron resultados para este parámetro.
             </div>
           ) : (
@@ -263,7 +263,8 @@ export default function BlogArchiveClient({
                         transition={{ delay: index * 0.05, duration: 0.35 }}
                         className={cardSpan}
                       >
-                        <article className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-[#111]">
+                        <article className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-[#031c38]">
+                          <Link href={postHref} className="absolute inset-0 z-20" aria-label={post.title} />
                           <div className="absolute inset-0">
                             {imageUrl ? (
                               <Image
@@ -274,9 +275,9 @@ export default function BlogArchiveClient({
                                 className="object-cover grayscale opacity-55 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.04]"
                               />
                             ) : (
-                              <div className="h-full w-full bg-linear-to-br from-[#004AAD]/40 via-[#0a0a0a] to-[#F58634]/30" />
+                              <div className="h-full w-full bg-linear-to-br from-[#004AAD]/40 via-[#021325] to-[#F58634]/30" />
                             )}
-                            <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] via-[#0a0a0a]/65 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-[#021325] via-[#021325]/65 to-transparent" />
                           </div>
 
                           <div className="relative z-10 flex h-full flex-col justify-end p-5 md:p-7">
@@ -295,13 +296,10 @@ export default function BlogArchiveClient({
                               <p className="text-[11px] uppercase tracking-widest text-gray-400">
                                 {new Date(post.date).toLocaleDateString("es-MX")}
                               </p>
-                              <Link
-                                href={postHref}
-                                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white transition-colors hover:border-[#F58634] hover:text-[#F58634]"
-                              >
+                              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white transition-colors group-hover:border-[#F58634] group-hover:text-[#F58634]">
                                 Leer
                                 <Play className="h-3.5 w-3.5" />
-                              </Link>
+                              </span>
                             </div>
                           </div>
                         </article>

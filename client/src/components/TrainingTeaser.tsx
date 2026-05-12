@@ -10,7 +10,7 @@ interface TrainingTeaserProps {
 export default function TrainingTeaser({ posts: _posts }: TrainingTeaserProps) {
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-[#0a0a0a] relative overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-32 bg-[#021325] relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#004AAD]/40 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#F58634]/20 to-transparent" />
 
@@ -38,7 +38,7 @@ export default function TrainingTeaser({ posts: _posts }: TrainingTeaserProps) {
         </div>
 
         <motion.div
-          className="rounded-3xl border border-white/10 bg-[#111] p-8 text-center sm:p-10"
+          className="rounded-3xl border border-white/10 bg-[#031c38] p-8 text-center sm:p-10"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}

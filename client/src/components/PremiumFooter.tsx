@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { TrendingUp, Share2, ArrowRight } from "lucide-react";
@@ -35,7 +35,7 @@ export default function PremiumFooter() {
   }, [defaultCopyright]);
 
   return (
-    <footer className="bg-[#050505] border-t border-gray-900">
+    <footer className="bg-[#010b17] border-t border-white/10">
       <NewsletterCapture />
 
       <div className="max-w-400 mx-auto px-6 pt-16 md:pt-24 lg:pt-32 pb-12">
@@ -156,7 +156,7 @@ export default function PremiumFooter() {
 
           {/* VALOR B2B Y NETWORKING */}
           <div className="lg:col-span-4">
-            <div className="bg-[#111] border border-gray-800 p-8 rounded-2xl relative overflow-hidden group">
+            <div className="bg-[#031c38] border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
                 <TrendingUp className="w-40 h-40" />
               </div>
@@ -179,7 +179,7 @@ export default function PremiumFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-widest font-bold">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-widest font-bold">
           <p>{copyright}</p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition-colors flex items-center gap-2">

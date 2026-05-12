@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -32,8 +32,8 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <section className="min-h-screen grid place-items-center px-5 py-12 bg-[radial-gradient(circle_at_20%_20%,rgba(245,134,52,0.12),transparent_38%),radial-gradient(circle_at_80%_0%,rgba(0,74,173,0.2),transparent_35%),#050505]">
-      <div className="w-full max-w-md border border-white/10 bg-[#0a0a0a]/90 backdrop-blur-xl rounded-2xl p-8 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
+    <section className="min-h-screen grid place-items-center px-5 py-12 bg-[radial-gradient(circle_at_20%_20%,rgba(245,134,52,0.12),transparent_38%),radial-gradient(circle_at_80%_0%,rgba(0,74,173,0.2),transparent_35%),#010b17]">
+      <div className="w-full max-w-md border border-white/10 bg-[#021325]/90 backdrop-blur-xl rounded-2xl p-8 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
         <div className="flex items-center gap-3 mb-7">
           <Image src="/images/Indumex_logo.png" alt="InduMex" width={38} height={38} />
           <div>

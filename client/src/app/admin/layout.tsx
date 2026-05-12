@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -112,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isAuthPage) {
     return (
-      <main className="min-h-screen bg-[#050505] text-white font-['Space_Grotesk']">
+      <main className="min-h-screen bg-[#010b17] text-white font-['Space_Grotesk']">
         {children}
       </main>
     );
@@ -133,9 +133,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] text-white font-['Space_Grotesk'] overflow-hidden">
+    <div className="flex h-screen bg-[#021325] text-white font-['Space_Grotesk'] overflow-hidden">
       {/* ── SIDEBAR ── */}
-      <aside className="flex flex-col w-64 shrink-0 bg-[#050505] border-r border-white/10">
+      <aside className="flex flex-col w-64 shrink-0 bg-[#010b17] border-r border-white/10">
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
           <Image
@@ -239,7 +239,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* ── MAIN AREA ── */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* TOPBAR */}
-        <header className="flex items-center justify-between px-6 py-3.5 border-b border-white/10 bg-[#050505]/80 backdrop-blur-md shrink-0">
+        <header className="flex items-center justify-between px-6 py-3.5 border-b border-white/10 bg-[#010b17]/80 backdrop-blur-md shrink-0">
           {/* Breadcrumbs */}
           <nav aria-label="Ruta actual" className="flex items-center gap-1.5 text-sm">
             {breadcrumbs.map((crumb, i) => (
@@ -293,7 +293,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-y-auto bg-[#0a0a0a] p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-[#021325] p-6 lg:p-8">
           {children}
         </main>
       </div>

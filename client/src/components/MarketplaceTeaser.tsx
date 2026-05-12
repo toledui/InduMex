@@ -35,7 +35,7 @@ export default function MarketplaceTeaser({ products = [] }: MarketplaceTeaserPr
   };
 
   return (
-    <section className="py-16 md:py-24 lg:py-32 bg-[#050505] border-y border-white/5 overflow-hidden">
+    <section className="py-16 md:py-24 lg:py-32 bg-[#010b17] border-y border-white/5 overflow-hidden">
       <div className="max-w-400 mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 md:mb-14">
@@ -80,7 +80,7 @@ export default function MarketplaceTeaser({ products = [] }: MarketplaceTeaserPr
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: idx * 0.08, duration: 0.5 }}
               >
-                <article className="h-full bg-[#111] border border-white/8 rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 hover:shadow-lg hover:shadow-[#004AAD]/15 transition-all duration-300">
+                <article className="h-full bg-[#031c38] border border-white/8 rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 hover:shadow-lg hover:shadow-[#004AAD]/15 transition-all duration-300">
                   {/* Imagen */}
                   <div className="relative bg-[#181818] flex items-center justify-center h-44 border-b border-white/5 overflow-hidden">
                     {imageUrl ? (
@@ -130,7 +130,7 @@ export default function MarketplaceTeaser({ products = [] }: MarketplaceTeaserPr
         </div>
 
         {items.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-white/60">
+          <div className="rounded-2xl border border-white/10 bg-[#031c38] p-6 text-sm text-white/60">
             No hay productos publicados en este momento.
           </div>
         )}

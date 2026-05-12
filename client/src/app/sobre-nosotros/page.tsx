@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Heart, ShieldCheck, Target, TrendingUp, Users, Zap } from 'lucide-react';
@@ -50,7 +50,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export default function AboutUsPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-slate-200 selection:bg-[#F58634] selection:text-white">
+    <div className="min-h-screen bg-[#021325] text-slate-200 selection:bg-[#F58634] selection:text-white">
       <section className="relative overflow-hidden border-b border-white/5 pt-40 pb-20">
         <div
           className="pointer-events-none absolute inset-0 z-0 opacity-20"
@@ -123,7 +123,7 @@ export default function AboutUsPage() {
               />
             </div>
 
-            <div className="absolute -bottom-8 -left-8 hidden rounded-xl border border-gray-800 bg-[#111] p-6 shadow-2xl md:block">
+            <div className="absolute -bottom-8 -left-8 hidden rounded-xl border border-white/10 bg-[#031c38] p-6 shadow-2xl md:block">
               <TrendingUp className="mb-3 h-8 w-8 text-[#F58634]" />
               <p className="text-lg font-bold leading-tight text-white">
                 Impulsando el
@@ -135,7 +135,7 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-y border-white/5 bg-[#111] py-24">
+      <section className="relative overflow-hidden border-y border-white/5 bg-[#031c38] py-24">
         <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-[#004AAD]/5 blur-[120px]" aria-hidden />
         <div className="relative z-10 mx-auto max-w-250 px-6 text-center">
           <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-rose-500/20 bg-rose-500/10">
@@ -148,7 +148,7 @@ export default function AboutUsPage() {
             Transformar la industria significa cuidar el futuro de quienes la heredarán. En InduMex
             tenemos un compromiso inquebrantable con nuestra sociedad.
           </p>
-          <div className="mx-auto max-w-3xl rounded-2xl border border-gray-800 bg-black/50 p-8 backdrop-blur-sm md:p-12">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-black/50 p-8 backdrop-blur-sm md:p-12">
             <p className="text-2xl font-light leading-snug text-white">
               Destinamos el <strong className="font-bold text-[#F58634]">5% de todos nuestros ingresos comerciales</strong>{' '}
               a fundaciones que otorgan tratamiento médico especializado a niños con cáncer en México.
@@ -169,9 +169,9 @@ export default function AboutUsPage() {
         </div>
 
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
-          <div className="group rounded-2xl border border-gray-800 bg-gray-900 p-8 transition-colors hover:border-[#F58634]/50">
+          <div className="group rounded-2xl border border-white/10 bg-[#031c38] p-8 transition-colors hover:border-[#F58634]/50">
             <div className="mb-6 flex items-center gap-6">
-              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#111]">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#031c38]">
                 <Image
                   src="https://secure.gravatar.com/avatar/81439413f57c3375c6b028e24801ca5b37faf654444df83a49c3221d8f515806?s=200&d=mm&r=g"
                   alt="Luis Toledo"
@@ -194,9 +194,9 @@ export default function AboutUsPage() {
             </p>
           </div>
 
-          <div className="group rounded-2xl border border-gray-800 bg-gray-900 p-8 transition-colors hover:border-[#004AAD]/50">
+          <div className="group rounded-2xl border border-white/10 bg-[#031c38] p-8 transition-colors hover:border-[#004AAD]/50">
             <div className="mb-6 flex items-center gap-6">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#111]">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#031c38]">
                 <Users className="h-8 w-8 text-[#004AAD]" />
               </div>
               <div>

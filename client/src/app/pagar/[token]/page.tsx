@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import { getPublicPayLink, type PublicPayLink } from '@/lib/api';
 import PayCheckoutClient from './PayCheckoutClient';
 
@@ -22,8 +22,8 @@ export default async function PagarPage({ params }: { params: Promise<{ token: s
 
   if (fetchError || !link) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#050505] px-4">
-        <div className="max-w-md w-full bg-[#111] border border-red-500/20 rounded-2xl p-8 text-center space-y-4">
+      <main className="min-h-screen flex items-center justify-center bg-[#010b17] px-4">
+        <div className="max-w-md w-full bg-[#031c38] border border-red-500/20 rounded-2xl p-8 text-center space-y-4">
           <p className="text-4xl">⚠️</p>
           <h1 className="text-xl font-bold text-white">Link no disponible</h1>
           <p className="text-sm text-white/50">{fetchError ?? 'Este link de pago no existe o ya expiró.'}</p>
@@ -34,8 +34,8 @@ export default async function PagarPage({ params }: { params: Promise<{ token: s
 
   if (link.estado === 'paid') {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#050505] px-4">
-        <div className="max-w-md w-full bg-[#111] border border-emerald-500/20 rounded-2xl p-8 text-center space-y-4">
+      <main className="min-h-screen flex items-center justify-center bg-[#010b17] px-4">
+        <div className="max-w-md w-full bg-[#031c38] border border-emerald-500/20 rounded-2xl p-8 text-center space-y-4">
           <p className="text-4xl">✅</p>
           <h1 className="text-xl font-bold text-white">Pago ya realizado</h1>
           <p className="text-sm text-white/50">Este link ya fue pagado. Gracias por tu compra.</p>
@@ -46,8 +46,8 @@ export default async function PagarPage({ params }: { params: Promise<{ token: s
 
   if (link.estado === 'expired' || link.estado === 'cancelled') {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#050505] px-4">
-        <div className="max-w-md w-full bg-[#111] border border-white/10 rounded-2xl p-8 text-center space-y-4">
+      <main className="min-h-screen flex items-center justify-center bg-[#010b17] px-4">
+        <div className="max-w-md w-full bg-[#031c38] border border-white/10 rounded-2xl p-8 text-center space-y-4">
           <p className="text-4xl">🔒</p>
           <h1 className="text-xl font-bold text-white">Link inactivo</h1>
           <p className="text-sm text-white/50">Este link de pago ha {link.estado === 'expired' ? 'expirado' : 'sido cancelado'}.</p>
@@ -57,7 +57,7 @@ export default async function PagarPage({ params }: { params: Promise<{ token: s
   }
 
   return (
-    <main className="min-h-screen bg-[#050505] px-4 pt-28 pb-12 md:pt-32 flex items-center justify-center">
+    <main className="min-h-screen bg-[#010b17] px-4 pt-28 pb-12 md:pt-32 flex items-center justify-center">
       <PayCheckoutClient link={link} linkToken={token} />
     </main>
   );

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Building2, Pencil, Plus, Trash2 } from 'lucide-react';
@@ -148,7 +148,7 @@ export default function AdminEmpresasLectorasPage() {
         <div className="rounded-xl border border-green-800 bg-green-950/40 px-4 py-3 text-sm text-green-300">{message}</div>
       )}
 
-      <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+      <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
         <h2 className="mb-6 text-lg font-bold text-white font-['Space_Grotesk']">
           {editingId !== null ? 'Editar Empresa' : 'Agregar Empresa'}
         </h2>
@@ -223,7 +223,7 @@ export default function AdminEmpresasLectorasPage() {
         </form>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#111]">
+      <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#031c38]">
         {loading && companies.length === 0 ? (
           <div className="p-12 text-center text-gray-500">Cargando empresas...</div>
         ) : companies.length === 0 ? (

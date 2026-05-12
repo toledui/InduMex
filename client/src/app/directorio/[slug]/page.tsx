@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Globe2, MapPin, Mail, Phone, MessageCircle, ShieldCheck, Award } from 'lucide-react';
@@ -37,13 +37,13 @@ export default async function ProviderDetailPage({ params }: { params: Promise<{
   const aboutHtml = sanitizeRichText(provider.about);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#021325] text-white">
       <section className="mx-auto max-w-6xl px-6 pt-32 pb-16">
         <Link href="/directorio" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-white/45 hover:text-[#F58634]">
           <ArrowLeft className="h-4 w-4" /> Volver al directorio
         </Link>
 
-        <div className={`mt-6 rounded-3xl border p-8 ${isPremium ? 'border-[#F58634]/30 bg-[#111] shadow-[0_0_0_1px_rgba(245,134,52,0.08)]' : 'border-white/10 bg-[#111]'}`}>
+        <div className={`mt-6 rounded-3xl border p-8 ${isPremium ? 'border-[#F58634]/30 bg-[#031c38] shadow-[0_0_0_1px_rgba(245,134,52,0.08)]' : 'border-white/10 bg-[#031c38]'}`}>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-start gap-5">
               <div className={`flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-2xl font-black ${isPremium ? 'bg-[#F58634]/10 text-[#F58634]' : 'bg-white/5 text-white/70'}`}>

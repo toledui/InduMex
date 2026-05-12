@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import { ChartColumnIncreasing, ShieldCheck, UsersRound, Settings2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -38,7 +38,7 @@ export default function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {cards.map((card) => (
-          <article key={card.title} className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-5">
+          <article key={card.title} className="rounded-2xl border border-white/10 bg-[#021325] p-5">
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/50">{card.title}</p>
               <card.icon size={18} className={card.color} />
@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
         ))}
       </div>
 
-      <article className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-6">
+      <article className="rounded-2xl border border-white/10 bg-[#021325] p-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h2 className="text-lg font-semibold text-white">Administración de usuarios</h2>

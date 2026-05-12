@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import {
@@ -159,7 +159,7 @@ export default function AdminRedesSocialesPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-[360px_1fr] gap-6">
         {/* Formulario */}
-        <article className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-5 h-fit">
+        <article className="rounded-2xl border border-white/10 bg-[#021325] p-5 h-fit">
           <h2 className="text-sm uppercase tracking-widest text-white/55 font-semibold">
             {editingId ? 'Editar Red Social' : 'Nueva Red Social'}
           </h2>
@@ -245,7 +245,7 @@ export default function AdminRedesSocialesPage() {
             networks.map((network) => (
               <div
                 key={network.id}
-                className="rounded-xl border border-white/10 bg-[#111] p-4 flex items-center justify-between group hover:border-white/20 transition-colors"
+                className="rounded-xl border border-white/10 bg-[#031c38] p-4 flex items-center justify-between group hover:border-white/20 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1">
                   <GripVertical size={16} className="text-white/20 group-hover:text-white/40 transition-colors cursor-grab" />

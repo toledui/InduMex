@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -546,7 +546,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
       </div>
 
       <div className="grid gap-6">
-        <section className="rounded-2xl border border-white/10 bg-[#0d0d0d] p-5">
+        <section className="rounded-2xl border border-white/10 bg-[#021325] p-5">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="font-['Rubik'] text-xl font-bold text-white">Productos</h3>
@@ -596,7 +596,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
               </div>
 
               <div className="mt-4">
-                <div className="relative rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white focus-within:border-[#004AAD] focus-within:ring-1 focus-within:ring-[#004AAD]/30">
+                <div className="relative rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white focus-within:border-[#004AAD] focus-within:ring-1 focus-within:ring-[#004AAD]/30">
                   <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/35">
                     <Search className="h-3.5 w-3.5" /> Categoría
                   </span>
@@ -625,7 +625,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
                   />
 
                   {isCategoryComboboxOpen && (
-                    <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#111] shadow-2xl">
+                    <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-white/10 bg-[#031c38] shadow-2xl">
                       {filteredCategories.length > 0 ? (
                         <div className="max-h-64 overflow-y-auto py-2">
                           {filteredCategories.map((category) => {
@@ -722,11 +722,11 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
               <select
                 value={productForm.moneda}
                 onChange={(e) => setProductForm((prev) => ({ ...prev, moneda: e.target.value }))}
-                className="scheme-dark w-full rounded-md bg-[#0d0d0d] px-0 text-sm text-white outline-none"
+                className="scheme-dark w-full rounded-md bg-[#021325] px-0 text-sm text-white outline-none"
               >
-                <option value="MXN" className="bg-[#0d0d0d] text-white">MXN</option>
-                <option value="USD" className="bg-[#0d0d0d] text-white">USD</option>
-                <option value="EUR" className="bg-[#0d0d0d] text-white">EUR</option>
+                <option value="MXN" className="bg-[#021325] text-white">MXN</option>
+                <option value="USD" className="bg-[#021325] text-white">USD</option>
+                <option value="EUR" className="bg-[#021325] text-white">EUR</option>
               </select>
             </label>
             <label className="rounded-lg border border-white/15 bg-black/20 px-4 py-3 text-sm text-white focus-within:border-[#004AAD] focus-within:ring-1 focus-within:ring-[#004AAD]/30">
@@ -734,10 +734,10 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
               <select
                 value={productForm.impuestoTipo}
                 onChange={(e) => setProductForm((prev) => ({ ...prev, impuestoTipo: e.target.value }))}
-                className="scheme-dark w-full rounded-md bg-[#0d0d0d] px-0 text-sm text-white outline-none"
+                className="scheme-dark w-full rounded-md bg-[#021325] px-0 text-sm text-white outline-none"
               >
                 {TAX_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#0d0d0d] text-white">
+                  <option key={option.value} value={option.value} className="bg-[#021325] text-white">
                     {option.label}
                   </option>
                 ))}
@@ -759,10 +759,10 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
               <select
                 value={productForm.unidadClave}
                 onChange={(e) => setProductForm((prev) => ({ ...prev, unidadClave: e.target.value, unidadOtra: e.target.value === 'otro' ? prev.unidadOtra : '' }))}
-                className="scheme-dark w-full rounded-md bg-[#0d0d0d] px-0 text-sm text-white outline-none"
+                className="scheme-dark w-full rounded-md bg-[#021325] px-0 text-sm text-white outline-none"
               >
                 {UNIT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#0d0d0d] text-white">
+                  <option key={option.value} value={option.value} className="bg-[#021325] text-white">
                     {option.label}
                   </option>
                 ))}
@@ -784,11 +784,11 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
               <select
                 value={productForm.estado}
                 onChange={(e) => setProductForm((prev) => ({ ...prev, estado: e.target.value as ProductForm['estado'] }))}
-                className="scheme-dark w-full rounded-md bg-[#0d0d0d] px-0 text-sm text-white outline-none"
+                className="scheme-dark w-full rounded-md bg-[#021325] px-0 text-sm text-white outline-none"
               >
-                <option value="borrador" className="bg-[#0d0d0d] text-white">Borrador</option>
-                <option value="publicado" className="bg-[#0d0d0d] text-white">Publicado</option>
-                <option value="archivado" className="bg-[#0d0d0d] text-white">Archivado</option>
+                <option value="borrador" className="bg-[#021325] text-white">Borrador</option>
+                <option value="publicado" className="bg-[#021325] text-white">Publicado</option>
+                <option value="archivado" className="bg-[#021325] text-white">Archivado</option>
               </select>
             </label>
             <label className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-black/20 px-4 py-3 text-sm text-white">
@@ -841,13 +841,13 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
                       value={field.clave}
                       onChange={(e) => updateCustomField(index, 'clave', e.target.value)}
                       placeholder="Clave"
-                      className="rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white"
+                      className="rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white"
                     />
                     <input
                       value={field.valor}
                       onChange={(e) => updateCustomField(index, 'valor', e.target.value)}
                       placeholder="Valor"
-                      className="rounded-lg border border-white/15 bg-[#0d0d0d] px-4 py-3 text-sm text-white"
+                      className="rounded-lg border border-white/15 bg-[#021325] px-4 py-3 text-sm text-white"
                     />
                     <button
                       type="button"
@@ -935,7 +935,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
 
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-3xl rounded-2xl border border-white/10 bg-[#0d0d0d] p-5 shadow-2xl">
+          <div className="w-full max-w-3xl rounded-2xl border border-white/10 bg-[#021325] p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-['Rubik'] text-xl font-bold text-white">Crear categoría</h3>
@@ -995,12 +995,12 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
 
               <div className="mt-4 max-h-72 space-y-3 overflow-y-auto pr-1">
                 {categories.length === 0 ? (
-                  <div className="rounded-xl border border-white/10 bg-[#0d0d0d] p-4 text-sm text-white/45">
+                  <div className="rounded-xl border border-white/10 bg-[#021325] p-4 text-sm text-white/45">
                     Crea tu primera categoría para empezar a capturar productos.
                   </div>
                 ) : (
                   categories.map((category) => (
-                    <div key={category.id} className="rounded-xl border border-white/10 bg-[#0d0d0d] p-4">
+                    <div key={category.id} className="rounded-xl border border-white/10 bg-[#021325] p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-semibold text-white">{category.nombre}</p>

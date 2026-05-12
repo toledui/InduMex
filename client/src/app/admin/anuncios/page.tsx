@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -181,7 +181,7 @@ export default function AdminAnunciosPage() {
       )}
 
       {/* Form */}
-      <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+      <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
         <h2 className="text-lg font-bold text-white mb-6 font-['Space_Grotesk']">
           {editingId !== null ? 'Editar Anuncio' : 'Crear Nuevo Anuncio'}
         </h2>
@@ -382,7 +382,7 @@ export default function AdminAnunciosPage() {
       </div>
 
       {/* List */}
-      <section className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+      <section className="rounded-2xl border border-white/10 bg-[#031c38] overflow-hidden">
         {loading && ads.length === 0 ? (
           <div className="p-12 text-center text-gray-500">Cargando anuncios...</div>
         ) : filteredAds.length === 0 ? (

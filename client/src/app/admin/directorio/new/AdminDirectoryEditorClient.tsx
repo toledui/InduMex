@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -279,7 +279,7 @@ function ProviderEditorForm({
 
       <form id="provider-editor-form" onSubmit={handleSubmit} className="grid grid-cols-12 gap-8">
         <div className="col-span-12 space-y-8 lg:col-span-8">
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 text-lg font-bold text-white">Identidad corporativa</h2>
             <div className="grid gap-5 md:grid-cols-2">
               <input className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white" placeholder="Nombre comercial" value={form.name} onChange={(e) => updateField('name', e.target.value)} />
@@ -289,7 +289,7 @@ function ProviderEditorForm({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 text-lg font-bold text-white">Operación y contacto</h2>
             <div className="grid gap-5 md:grid-cols-2">
               <input className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white" placeholder="Ciudad" value={form.city} onChange={(e) => updateField('city', e.target.value)} />
@@ -323,7 +323,7 @@ function ProviderEditorForm({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 text-lg font-bold text-white">Sectores</h2>
             <div className="flex flex-wrap gap-2">
               {PROVIDER_SECTORS.map((sector) => {
@@ -346,7 +346,7 @@ function ProviderEditorForm({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-bold text-white">Redes sociales</h2>
@@ -374,7 +374,7 @@ function ProviderEditorForm({
         </div>
 
         <div className="col-span-12 space-y-8 lg:col-span-4">
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-white"><ListFilter className="h-5 w-5 text-[#F58634]" /> Clasificación</h2>
             <div className="space-y-3">
               {[
@@ -394,10 +394,10 @@ function ProviderEditorForm({
             </label>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-white"><ShieldCheck className="h-5 w-5 text-[#F58634]" /> Logo</h2>
             <div className="rounded-2xl border border-dashed border-white/15 bg-black/20 p-4 text-center">
-              <div className="mx-auto flex h-44 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#0d0d0d]">
+              <div className="mx-auto flex h-44 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#021325]">
                 {form.logo && isImageLogo(form.logo) ? (
                   <img src={form.logo} alt={form.name || 'Logo del proveedor'} className="h-full w-full object-contain p-3" />
                 ) : (
@@ -413,7 +413,7 @@ function ProviderEditorForm({
             <p className="mt-3 text-xs text-white/35">PNG, JPG, WebP o SVG. Máximo 1 MB.</p>
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-[#111] p-6">
+          <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-white"><FileText className="h-5 w-5 text-[#004AAD]" /> Vista previa</h2>
             <p className="text-sm text-white/60">{form.shortDescription || 'Sin descripción corta'}</p>
             <p className="mt-3 text-xs uppercase tracking-[0.2em] text-white/35">URL final</p>

@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import { getPostBySlug } from '@/lib/wordpress';
 import { notFound } from 'next/navigation';
 import EditPostClient from './EditPostClient';
@@ -36,7 +36,7 @@ export default async function EditPostPage(props: EditPostPageProps) {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-[#050505] text-white p-8">
+      <div className="min-h-screen bg-[#010b17] text-white p-8">
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-red-200">
           <p className="font-semibold">Error al cargar artículo</p>
           <p className="text-sm mt-1">{error || 'Artículo no encontrado'}</p>

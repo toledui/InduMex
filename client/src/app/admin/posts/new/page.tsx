@@ -174,7 +174,7 @@ export default function NewPostPage() {
   const selectedCatNames = categories.filter(c => article.categoryIds.includes(c.id)).map(c => c.name);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-8">
+    <div className="min-h-screen bg-[#010b17] text-white p-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-black tracking-tight" style={{ fontFamily: 'Space_Grotesk' }}>
@@ -206,7 +206,7 @@ export default function NewPostPage() {
               placeholder="Resumen breve para SEO y redes sociales..."
               value={article.excerpt}
               onChange={(e) => setArticle(a => ({ ...a, excerpt: e.target.value }))}
-              className="w-full bg-[#111] border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#004AAD] focus:ring-1 focus:ring-[#004AAD]/30 transition-all resize-none"
+              className="w-full bg-[#031c38] border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#004AAD] focus:ring-1 focus:ring-[#004AAD]/30 transition-all resize-none"
               rows={3}
             />
             <p className="text-xs text-gray-400 mt-2">{article.excerpt.length}/160 caracteres</p>
@@ -235,7 +235,7 @@ export default function NewPostPage() {
 
             {editorMode === 'visual' ? (
               <>
-                <div className="bg-[#111] border border-white/10 rounded-t-lg p-3 flex items-center gap-1 flex-wrap border-b border-gray-800">
+                <div className="bg-[#031c38] border border-white/10 rounded-t-lg p-3 flex items-center gap-1 flex-wrap border-b border-white/10">
                   {([Bold, Italic, Link, ImageIcon, List] as React.ElementType[]).map((Icon, i) => (
                     <button key={i} className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white">
                       <Icon size={16} />
@@ -246,7 +246,7 @@ export default function NewPostPage() {
                   placeholder="Escribe el contenido del artículo. Soporta HTML básico."
                   value={article.content}
                   onChange={(e) => setArticle(a => ({ ...a, content: e.target.value }))}
-                  className="w-full bg-[#111] border border-white/10 rounded-b-lg p-6 text-white placeholder-gray-500 focus:outline-none focus:border-[#004AAD] transition-all resize-none font-sans"
+                  className="w-full bg-[#031c38] border border-white/10 rounded-b-lg p-6 text-white placeholder-gray-500 focus:outline-none focus:border-[#004AAD] transition-all resize-none font-sans"
                   rows={18}
                 />
               </>
@@ -277,7 +277,7 @@ export default function NewPostPage() {
         <div className="col-span-4 space-y-6">
 
           {/* Publicación */}
-          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+          <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">
             <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
               <Clock size={16} /> Estado
             </h3>
@@ -306,7 +306,7 @@ export default function NewPostPage() {
           </div>
 
           {/* Categorías */}
-          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+          <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">
             <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
               <FolderOpen size={16} /> Categorías
               {article.categoryIds.length > 0 && (
@@ -328,7 +328,7 @@ export default function NewPostPage() {
                 ))}
               </div>
             )}
-            <div className="mt-4 pt-4 border-t border-gray-800">
+            <div className="mt-4 pt-4 border-t border-white/10">
               <p className="text-xs text-gray-500 mb-2">Nueva categoría:</p>
               <div className="flex gap-2">
                 <input
@@ -351,7 +351,7 @@ export default function NewPostPage() {
           </div>
 
           {/* Etiquetas */}
-          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+          <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">
             <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
               <Tag size={16} /> Etiquetas
               {article.tagIds.length > 0 && (
@@ -385,7 +385,7 @@ export default function NewPostPage() {
                 {!taxonomyLoading && tags.length === 0 && <p className="text-xs text-gray-500">No hay etiquetas aún.</p>}
               </div>
             )}
-            <div className="mt-4 pt-4 border-t border-gray-800">
+            <div className="mt-4 pt-4 border-t border-white/10">
               <p className="text-xs text-gray-500 mb-2">Nueva etiqueta:</p>
               <div className="flex gap-2">
                 <input
@@ -408,7 +408,7 @@ export default function NewPostPage() {
           </div>
 
           {/* Imagen Destacada */}
-          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+          <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">
             <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
               <ImageIcon size={16} /> Imagen Destacada
             </h3>
@@ -438,7 +438,7 @@ export default function NewPostPage() {
           </div>
 
           {/* Preview SEO */}
-          <div className="bg-[#111] border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors">
+          <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">
             <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2">
               <Eye size={16} /> Preview SEO
             </h3>

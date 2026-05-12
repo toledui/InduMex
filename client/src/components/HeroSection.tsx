@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import { motion, easeOut } from "framer-motion";
@@ -36,18 +36,18 @@ export default function HeroSection({ post }: HeroSectionProps) {
   });
 
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050505] pt-20 pb-16 lg:pb-8">
+    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#010b17] pt-20 pb-16 lg:pb-8">
       {/* BACKGROUND: CANVAS NETWORK */}
       <div className="absolute inset-0 z-0">
         <NetworkBackground />
 
         {/* Máscaras para legibilidad y fusión con el layout */}
-        <div className="absolute inset-0 bg-linear-to-r from-[#050505] via-[#050505]/40 to-[#050505]/80 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-linear-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-[#010b17] via-[#010b17]/40 to-[#010b17]/80 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-[#010b17] via-transparent to-[#010b17] pointer-events-none"></div>
       </div>
 
       {/* Main Content - 60/40 Split */}
-      <div className="max-w-400 w-full mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center py-32 lg:py-0 min-h-dvh lg:min-h-screen">
+      <div className="max-w-400 w-full mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-12 pb-32 lg:py-0 min-h-dvh lg:min-h-screen">
         {/* Left Side - 60% */}
         <div className="lg:col-span-7 flex flex-col justify-center">
           {/* Overline / Tag */}
@@ -129,7 +129,7 @@ export default function HeroSection({ post }: HeroSectionProps) {
                 data-interactive
               >
                 Explorar Directorio B2B
-                <span className="w-5 h-5 border-2 border-current rounded-full flex items-center justify-center group-hover:bg-current group-hover:text-[#0a0a0a] transition-all">
+                <span className="w-5 h-5 border-2 border-current rounded-full flex items-center justify-center group-hover:bg-current group-hover:text-[#021325] transition-all">
                   →
                 </span>
               </Link>

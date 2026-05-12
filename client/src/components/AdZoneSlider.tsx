@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
@@ -120,7 +120,7 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
 
   if (zona === "editorial-grid") {
     return (
-      <div className={`relative overflow-hidden rounded-xl bg-gray-900 border border-white/5 flex flex-col ${className}`}>
+      <div className={`relative overflow-hidden rounded-xl bg-[#031c38] border border-white/5 flex flex-col ${className}`}>
         {/* Image area */}
         <div className="relative flex-1 min-h-40">
           {ad.imagen_url ? (
@@ -132,7 +132,7 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${acento}20, #0a0a0a)` }}>
+            <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${acento}20, #021325)` }}>
               <FallbackIcon className="w-16 h-16 opacity-40" style={{ color: acento }} />
             </div>
           )}
@@ -200,7 +200,7 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
 
   if (zona === "post-in-content") {
     return (
-      <div className={`my-16 bg-[#111] border rounded-2xl p-8 relative overflow-hidden group ${className}`} style={{ borderColor: `${acento}30` }}>
+      <div className={`my-16 bg-[#031c38] border rounded-2xl p-8 relative overflow-hidden group ${className}`} style={{ borderColor: `${acento}30` }}>
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{ backgroundImage: `linear-gradient(${acento} 1px, transparent 1px), linear-gradient(90deg, ${acento} 1px, transparent 1px)`, backgroundSize: "24px 24px" }}
@@ -283,7 +283,7 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
 
   // zona === "post-sidebar"
   return (
-    <div className={`w-full bg-[#0d0d0d] border border-gray-800 flex flex-col relative overflow-hidden group cursor-pointer rounded-xl ${className}`}>
+    <div className={`w-full bg-[#021325] border border-white/10 flex flex-col relative overflow-hidden group cursor-pointer rounded-xl ${className}`}>
       <span className="absolute top-2 right-2 z-10 text-[9px] text-gray-400 uppercase tracking-widest">Publicidad</span>
 
       {/* Image */}
@@ -297,11 +297,11 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
             className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, #1a1a1a, #0a0a0a)` }}>
+          <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, #1a1a1a, #021325)` }}>
             <FallbackIcon className="w-16 h-16 text-gray-500 group-hover:text-white transition-colors duration-500" />
           </div>
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-[#0d0d0d] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#021325] via-transparent to-transparent" />
       </div>
 
       {/* Text */}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -74,7 +74,7 @@ export default function ProviderSearchWidget() {
               key={tag}
               type="button"
               onClick={() => navigateToDirectory(tag)}
-              className="text-xs uppercase tracking-widest border border-gray-800 text-gray-400 px-4 py-2 rounded-full hover:border-[#004AAD] hover:text-white cursor-pointer transition-colors"
+              className="text-xs uppercase tracking-widest border border-white/10 text-gray-400 px-4 py-2 rounded-full hover:border-[#004AAD] hover:text-white cursor-pointer transition-colors"
             >
               {tag}
             </button>

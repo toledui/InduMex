@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
 
 export default function RevistaPage() {
   return (
-    <main className="bg-[#0a0a0a] min-h-screen text-slate-200 font-['Space_Grotesk',sans-serif] selection:bg-[#F58634] selection:text-white">
+    <main className="bg-[#021325] min-h-screen text-slate-200 font-['Space_Grotesk',sans-serif] selection:bg-[#F58634] selection:text-white">
       
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden border-b border-white/10 px-6 pt-32 pb-20 sm:pt-40 sm:pb-24">
@@ -113,7 +113,7 @@ export default function RevistaPage() {
             </h2>
           </div>
 
-          <article className="overflow-hidden rounded-3xl border border-white/10 bg-[#111] shadow-2xl relative group">
+          <article className="overflow-hidden rounded-3xl border border-white/10 bg-[#031c38] shadow-2xl relative group">
             {/* Glow effect sutil en hover */}
             <div className="absolute inset-0 bg-linear-to-r from-[#004AAD]/0 via-[#004AAD]/5 to-[#F58634]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
             
@@ -169,7 +169,7 @@ export default function RevistaPage() {
       </section>
 
       {/* 3. ACERVO HISTÓRICO (Grid) */}
-      <section className="px-6 py-20 border-t border-white/5 bg-[#050505]">
+      <section className="px-6 py-20 border-t border-white/5 bg-[#010b17]">
         <div className="mx-auto max-w-350">
           <div className="mb-12 flex items-center justify-between border-b border-white/10 pb-6">
             <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-white">
@@ -183,7 +183,7 @@ export default function RevistaPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {pastEditions.map((edition) => (
               <Link href="/revista/mayo-2026" key={edition.id} className="group block">
-                <article className="relative bg-[#111] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-[#004AAD]/50 hover:shadow-2xl hover:shadow-[#004AAD]/10">
+                <article className="relative bg-[#031c38] border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-[#004AAD]/50 hover:shadow-2xl hover:shadow-[#004AAD]/10">
                   {/* Imagen de Portada (Vertical 3/4) */}
                   <div className="relative w-full aspect-3/4 overflow-hidden bg-black">
                     <img 

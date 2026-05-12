@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BadgeCheck, Plus, RefreshCw, Star, Trash2, X } from 'lucide-react';
@@ -224,7 +224,7 @@ export default function AdminMarketplacePage() {
       {error && <p className="rounded-lg border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
       {message && <p className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{message}</p>}
 
-      <form onSubmit={handleCreatePlan} className="rounded-2xl border border-white/10 bg-[#111] p-5 space-y-4">
+      <form onSubmit={handleCreatePlan} className="rounded-2xl border border-white/10 bg-[#031c38] p-5 space-y-4">
         <div className="flex items-center gap-2 text-white">
           <Plus size={16} className="text-[#F58634]" />
           <h2 className="font-semibold">Nuevo Plan Marketplace</h2>
@@ -341,12 +341,12 @@ export default function AdminMarketplacePage() {
         {loading ? (
           [1, 2].map((item) => <div key={item} className="h-44 animate-pulse rounded-2xl bg-white/5" />)
         ) : plans.length === 0 ? (
-          <p className="rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-white/45">
+          <p className="rounded-2xl border border-white/10 bg-[#031c38] p-6 text-sm text-white/45">
             No hay planes de marketplace creados.
           </p>
         ) : (
           plans.map((plan) => (
-            <article key={plan.id} className="rounded-2xl border border-white/10 bg-[#111] p-5">
+            <article key={plan.id} className="rounded-2xl border border-white/10 bg-[#031c38] p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-bold text-white">{plan.nombre}</h3>

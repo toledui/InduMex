@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -49,8 +49,8 @@ function ProviderCard({ provider }: { provider: B2BProvider }) {
     <article
       className={`relative overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:border-white/20 ${
         premium
-          ? 'border-[#F58634]/30 bg-linear-to-b from-[#111] to-[#0d0d0d] shadow-[0_0_0_1px_rgba(245,134,52,0.10),0_24px_60px_rgba(245,134,52,0.08)]'
-          : 'border-white/10 bg-[#111]'
+          ? 'border-[#F58634]/30 bg-linear-to-b from-[#111] to-[#021325] shadow-[0_0_0_1px_rgba(245,134,52,0.10),0_24px_60px_rgba(245,134,52,0.08)]'
+          : 'border-white/10 bg-[#031c38]'
       }`}
     >
       <ProviderBadge tier={provider.tier} />
@@ -215,7 +215,7 @@ export default function DirectorioClient({
 
   return (
     <>
-      <section className="border-b border-white/5 bg-[#050505] pt-36 pb-12">
+      <section className="border-b border-white/5 bg-[#010b17] pt-36 pb-12">
         <div className="mx-auto max-w-7xl px-6">
           <span className="mb-4 block text-xs font-bold uppercase tracking-[0.3em] text-[#F58634]">
             B2B Industrial Network
@@ -231,7 +231,7 @@ export default function DirectorioClient({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-[#111] p-4 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+            <div className="rounded-2xl border border-white/10 bg-[#031c38] p-4 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
               <label className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white/40">
                 <Search className="h-4 w-4 text-[#F58634]" />
                 Terminal de búsqueda
@@ -252,7 +252,7 @@ export default function DirectorioClient({
         </div>
       </section>
 
-      <section className="sticky top-0 z-20 border-b border-white/5 bg-[#0a0a0a]/95 backdrop-blur-xl">
+      <section className="sticky top-0 z-20 border-b border-white/5 bg-[#021325]/95 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl overflow-x-auto px-6 py-4">
           <div className="flex min-w-max gap-3">
             <button
@@ -302,7 +302,7 @@ export default function DirectorioClient({
           ))}
         </div>
         {filteredProviders.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#111] p-6 text-sm text-white/60">
+          <div className="mt-8 rounded-2xl border border-white/10 bg-[#031c38] p-6 text-sm text-white/60">
             No hay proveedores activos para el criterio de búsqueda/sector seleccionado.
           </div>
         )}

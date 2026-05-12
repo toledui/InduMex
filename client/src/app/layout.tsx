@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import "./globals.css";
 
@@ -31,7 +31,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#004AAD" />
       </head>
-      <body className="min-h-full bg-[#0a0a0a] text-slate-200 font-['Space_Grotesk'] selection:bg-[#F58634] selection:text-white overflow-x-hidden">
+      <body className="min-h-full bg-[#021325] text-slate-200 font-['Space_Grotesk'] selection:bg-[#F58634] selection:text-white overflow-x-hidden">
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
