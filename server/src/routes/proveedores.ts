@@ -278,7 +278,6 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
 
     const provider = await Proveedor.create({
       usuarioId: userId,
-      nombre: String(name).trim(),
       empresa: String(name).trim(),
       name: String(name).trim(),
       slug,
@@ -358,7 +357,6 @@ router.put("/proveedores/mi-perfil", requireAuth, async (req, res) => {
 
     if (name && String(name).trim() !== provider.get("name")) {
       const slug = await generateUniqueSlug(String(name), userId);
-      provider.set("nombre", String(name).trim());
       provider.set("empresa", String(name).trim());
       provider.set("name", String(name).trim());
       provider.set("slug", slug);
@@ -453,7 +451,6 @@ router.post("/proveedores", requireAuth, requireAdminRole, async (req, res) => {
 
     const provider = await Proveedor.create({
       usuarioId: resolvedUsuarioId,
-      nombre: String(name).trim(),
       empresa: String(name).trim(),
       name: String(name).trim(),
       slug: String(slug).trim(),
@@ -544,7 +541,6 @@ router.put("/proveedores/:id", requireAuth, requireAdminRole, async (req, res) =
 
     if (name !== undefined) {
       const normalizedName = String(name).trim();
-      provider.set("nombre", normalizedName);
       provider.set("empresa", normalizedName);
       provider.set("name", normalizedName);
       if (!slug) {
