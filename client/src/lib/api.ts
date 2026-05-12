@@ -534,7 +534,7 @@ export async function updateConfig(token: string, data: ConfigMap): Promise<Conf
 export async function testSmtpConfig(
   token: string,
   payload: { to: string }
-): Promise<{ message: string }> {
+): Promise<{ message: string; messageId?: string; accepted?: string[]; smtp?: string }> {
   const response = await fetch(`${API_BASE_URL}/config/test-smtp`, {
     method: "POST",
     headers: {
@@ -544,7 +544,7 @@ export async function testSmtpConfig(
     body: JSON.stringify(payload),
   });
 
-  return parseResponse<{ message: string }>(response);
+  return parseResponse<{ message: string; messageId?: string; accepted?: string[]; smtp?: string }>(response);
 }
 
 export async function getPublicProviders(): Promise<PublicProvider[]> {

@@ -33,9 +33,14 @@ async function createTransporter() {
     port,
     secure,
     auth: { user, pass },
+    // Necesario para algunos SMTP reales con certificados auto-firmados o SNI
+    tls: {
+      rejectUnauthorized: true,
+      minVersion: "TLSv1.2" as const,
+    },
   });
 
-  return { transporter, from: `"${fromName}" <${fromEmail}>` };
+  return { transporter, from: `"${fromName}" <${fromEmail}>`, config: { host, port, secure, user } };
 }
 
 /**
@@ -53,7 +58,7 @@ export async function sendMail(options: MailOptions): Promise<void> {
     const { transporter, from } = result;
     const toAddresses = Array.isArray(options.to) ? options.to.join(", ") : options.to;
 
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from,
       to: toAddresses,
       subject: options.subject,
@@ -61,7 +66,11 @@ export async function sendMail(options: MailOptions): Promise<void> {
       text: options.text,
     });
 
-    console.log(`[Mailer] Correo enviado a ${toAddresses}: ${options.subject}`);
+    if (info.rejected && info.rejected.length > 0) {
+      console.error(`[Mailer] SMTP rechazó destinatarios: ${JSON.stringify(info.rejected)} | subject: ${options.subject}`);
+    } else {
+      console.log(`[Mailer] Correo enviado a ${toAddresses}: ${options.subject} | messageId: ${info.messageId}`);
+    }
   } catch (error) {
     // No propagamos el error para no romper el flujo del usuario
     console.error("[Mailer] Error al enviar correo:", error);
@@ -94,17 +103,37 @@ export async function getPaymentNotificationEmails(): Promise<string[]> {
     .filter(Boolean);
 }
 
+export interface SmtpTestResult {
+  messageId: string;
+  accepted: string[];
+  rejected: string[];
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+}
+
 /**
- * Envía un correo de prueba SMTP y lanza error si no hay configuración válida.
+ * Verifica la conexión SMTP y envía un correo de prueba.
+ * Lanza error con mensaje descriptivo si algo falla.
  */
-export async function sendSmtpTestEmail(to: string): Promise<void> {
+export async function sendSmtpTestEmail(to: string): Promise<SmtpTestResult> {
   const result = await createTransporter();
   if (!result) {
     throw new Error("SMTP no está configurado. Completa host, usuario y contraseña.");
   }
 
-  const { transporter, from } = result;
-  await transporter.sendMail({
+  const { transporter, from, config } = result;
+
+  // Verificar conexión real ANTES de intentar el envío
+  try {
+    await transporter.verify();
+  } catch (verifyError) {
+    const msg = verifyError instanceof Error ? verifyError.message : String(verifyError);
+    throw new Error(`No se puede conectar al servidor SMTP (${config.host}:${config.port}): ${msg}`);
+  }
+
+  const info = await transporter.sendMail({
     from,
     to,
     subject: "Prueba SMTP InduMex",
@@ -121,4 +150,18 @@ export async function sendSmtpTestEmail(to: string): Promise<void> {
     `,
     text: `Prueba SMTP exitosa. Fecha: ${new Date().toLocaleString("es-MX")}`,
   });
+
+  if (info.rejected && info.rejected.length > 0) {
+    throw new Error(`SMTP aceptó la conexión pero rechazó el destinatario: ${JSON.stringify(info.rejected)}`);
+  }
+
+  return {
+    messageId: info.messageId,
+    accepted: info.accepted as string[],
+    rejected: info.rejected as string[],
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    user: config.user,
+  };
 }

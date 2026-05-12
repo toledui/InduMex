@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as service from "../services/configuracionService";
 import { failure, success } from "../utils/response";
-import { sendSmtpTestEmail } from "../utils/mailer";
+import { sendSmtpTestEmail, type SmtpTestResult } from "../utils/mailer";
 
 export async function getConfig(req: Request, res: Response): Promise<void> {
   try {
@@ -42,8 +42,13 @@ export async function testSmtp(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    await sendSmtpTestEmail(recipient);
-    success(res, { message: `Correo de prueba enviado a ${recipient}` });
+    const testResult = await sendSmtpTestEmail(recipient);
+    success(res, {
+      message: `Correo de prueba enviado a ${recipient}`,
+      messageId: testResult.messageId,
+      accepted: testResult.accepted,
+      smtp: `${testResult.host}:${testResult.port} (secure: ${testResult.secure})`,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Error al probar SMTP";
     failure(res, message, 400);

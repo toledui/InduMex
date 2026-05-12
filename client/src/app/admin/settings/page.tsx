@@ -326,7 +326,9 @@ export default function SettingsPage() {
         throw new Error('Ingresa un correo destino para la prueba SMTP.');
       }
       const result = await testSmtpConfig(token, { to: testEmail.trim() });
-      setTestResult({ ok: true, msg: result.message });
+      const detail = result.messageId ? ` · ID: ${result.messageId}` : '';
+      const smtpInfo = result.smtp ? ` · Servidor: ${result.smtp}` : '';
+      setTestResult({ ok: true, msg: `${result.message}${smtpInfo}${detail}` });
     } catch (err) {
       setTestResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al probar SMTP' });
     } finally {
