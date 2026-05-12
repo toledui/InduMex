@@ -100,9 +100,9 @@ function normalizeProveedor(proveedor: Proveedor) {
     logo: (raw.logo ?? "") as string,
     tier: (raw.tier ?? "basic") as "premium" | "verified" | "basic",
     shortDescription: (raw.shortDescription ?? "") as string,
-    sector: (raw.sector ?? pickPrimarySector(raw.sectors, "General")) as string,
+    sector: pickPrimarySector(raw.sectors, "General") as string,
     about: (raw.about ?? "") as string,
-    sectors: toArray(raw.sectors ?? raw.sector),
+    sectors: toArray(raw.sectors),
     certifications: toArray(raw.certifications),
     socialNetworks: normalizeSocialNetworks(raw.socialNetworks ?? raw.social_networks),
     city: (raw.city ?? "") as string,
@@ -283,7 +283,6 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
       logo: String(logo ?? "").trim(),
       tier: "basic",
       shortDescription: String(shortDescription ?? "").trim(),
-      sector: pickPrimarySector(sectors, "General"),
       about: String(about).trim(),
       sectors: Array.isArray(sectors) ? sectors : [],
       certifications: Array.isArray(certifications) ? certifications : [],
@@ -365,7 +364,6 @@ router.put("/proveedores/mi-perfil", requireAuth, async (req, res) => {
     if (about !== undefined) provider.set("about", String(about).trim());
     if (sectors !== undefined) {
       provider.set("sectors", Array.isArray(sectors) ? sectors : []);
-      provider.set("sector", pickPrimarySector(sectors, String(provider.get("sector") || "General")));
     }
     if (certifications !== undefined) provider.set("certifications", Array.isArray(certifications) ? certifications : []);
     if (socialNetworks !== undefined) provider.set("socialNetworks", normalizeSocialNetworks(socialNetworks));
@@ -454,7 +452,6 @@ router.post("/proveedores", requireAuth, requireAdminRole, async (req, res) => {
       logo: String(logo ?? "").trim(),
       tier: tier === "premium" || tier === "verified" ? tier : "basic",
       shortDescription: String(shortDescription ?? "").trim(),
-      sector: pickPrimarySector(sectors, "General"),
       about: String(about).trim(),
       sectors: Array.isArray(sectors) ? sectors : [],
       certifications: Array.isArray(certifications) ? certifications : [],
@@ -556,7 +553,6 @@ router.put("/proveedores/:id", requireAuth, requireAdminRole, async (req, res) =
     if (about !== undefined) provider.set("about", String(about).trim());
     if (sectors !== undefined) {
       provider.set("sectors", Array.isArray(sectors) ? sectors : []);
-      provider.set("sector", pickPrimarySector(sectors, String(provider.get("sector") || "General")));
     }
     if (certifications !== undefined) provider.set("certifications", Array.isArray(certifications) ? certifications : []);
     if (socialNetworks !== undefined) provider.set("socialNetworks", normalizeSocialNetworks(socialNetworks));

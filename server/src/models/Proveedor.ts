@@ -15,7 +15,6 @@ const PROVEEDOR_SAFE_ATTRIBUTES = [
   "logo",
   "tier",
   "shortDescription",
-  "sector",
   "about",
   "sectors",
   "certifications",
@@ -44,7 +43,6 @@ class Proveedor extends Model<
   declare tier: "premium" | "verified" | "basic";
   declare shortDescription: string;
   declare about: string;
-  declare sector: string;
   declare sectors: string[];
   declare certifications: string[];
   declare socialNetworks: Array<{ nombre: string; url: string }>;
@@ -94,12 +92,6 @@ Proveedor.init(
       type: DataTypes.STRING(280),
       allowNull: false,
       defaultValue: "",
-    },
-    sector: {
-      type: DataTypes.STRING(120),
-      allowNull: false,
-      defaultValue: "General",
-      field: "sector",
     },
     about: {
       type: DataTypes.TEXT,
