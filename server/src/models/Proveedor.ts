@@ -7,6 +7,31 @@ import {
 } from "sequelize";
 import sequelize from "../config/database";
 
+const PROVEEDOR_SAFE_ATTRIBUTES = [
+  "id",
+  "usuarioId",
+  "name",
+  "slug",
+  "logo",
+  "tier",
+  "shortDescription",
+  "sector",
+  "about",
+  "sectors",
+  "certifications",
+  "socialNetworks",
+  "city",
+  "state",
+  "country",
+  "website",
+  "email",
+  "phone",
+  "whatsapp",
+  "isActive",
+  "createdAt",
+  "updatedAt",
+] as const;
+
 class Proveedor extends Model<
   InferAttributes<Proveedor>,
   InferCreationAttributes<Proveedor>
@@ -136,6 +161,9 @@ Proveedor.init(
     sequelize,
     tableName: "proveedores",
     timestamps: true,
+    defaultScope: {
+      attributes: [...PROVEEDOR_SAFE_ATTRIBUTES],
+    },
   }
 );
 
