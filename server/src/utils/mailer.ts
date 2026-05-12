@@ -22,7 +22,7 @@ async function createTransporter() {
   const pass = cfg.smtp_password || process.env.SMTP_PASSWORD;
   const secure = (cfg.smtp_secure || process.env.SMTP_SECURE || "false") === "true";
   const fromName = cfg.smtp_from_name || process.env.SMTP_FROM_NAME || "InduMex";
-  const fromEmail = cfg.smtp_from_email || process.env.SMTP_FROM_EMAIL || "no-reply@indumex.blog";
+  const fromEmail = cfg.smtp_from_email || process.env.SMTP_FROM_EMAIL || user;
 
   if (!host || !user || !pass) {
     return null; // SMTP no configurado — el envío será silenciado
@@ -40,7 +40,12 @@ async function createTransporter() {
     },
   });
 
-  return { transporter, from: `"${fromName}" <${fromEmail}>`, config: { host, port, secure, user } };
+  return {
+    transporter,
+    from: `"${fromName}" <${fromEmail}>`,
+    replyTo: user,
+    config: { host, port, secure, user },
+  };
 }
 
 /**
@@ -55,11 +60,12 @@ export async function sendMail(options: MailOptions): Promise<void> {
       return;
     }
 
-    const { transporter, from } = result;
+    const { transporter, from, replyTo } = result;
     const toAddresses = Array.isArray(options.to) ? options.to.join(", ") : options.to;
 
     const info = await transporter.sendMail({
       from,
+      replyTo,
       to: toAddresses,
       subject: options.subject,
       html: options.html,
@@ -123,7 +129,7 @@ export async function sendSmtpTestEmail(to: string): Promise<SmtpTestResult> {
     throw new Error("SMTP no está configurado. Completa host, usuario y contraseña.");
   }
 
-  const { transporter, from, config } = result;
+  const { transporter, from, replyTo, config } = result;
 
   // Verificar conexión real ANTES de intentar el envío
   try {
@@ -135,6 +141,7 @@ export async function sendSmtpTestEmail(to: string): Promise<SmtpTestResult> {
 
   const info = await transporter.sendMail({
     from,
+    replyTo,
     to,
     subject: "Prueba SMTP InduMex",
     html: `
