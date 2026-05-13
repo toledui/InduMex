@@ -323,6 +323,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
   const [registerForm, setRegisterForm] = useState({
     nombre: '',
     apellido: '',
+    empresa: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -369,14 +370,16 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
     }
 
     try {
-      const res = await fetch('/api/v1/auth/register', {
+      const res = await fetch('/api/v1/auth/client/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre: registerForm.nombre,
           apellido: registerForm.apellido,
+          empresa: registerForm.empresa,
           email: registerForm.email,
           password: registerForm.password,
+          aceptaTerminos: true,
         }),
       });
 
@@ -449,7 +452,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                   type="email"
                   value={loginForm.email}
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
@@ -461,7 +464,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                   type="password"
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
@@ -484,7 +487,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                     type="text"
                     value={registerForm.nombre}
                     onChange={(e) => setRegisterForm({ ...registerForm, nombre: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                     required
                   />
                 </div>
@@ -496,10 +499,22 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                     type="text"
                     value={registerForm.apellido}
                     onChange={(e) => setRegisterForm({ ...registerForm, apellido: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                     required
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Empresa
+                </label>
+                <input
+                  type="text"
+                  value={registerForm.empresa}
+                  onChange={(e) => setRegisterForm({ ...registerForm, empresa: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -509,7 +524,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                   type="email"
                   value={registerForm.email}
                   onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
@@ -521,7 +536,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                   type="password"
                   value={registerForm.password}
                   onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
@@ -533,7 +548,7 @@ function AuthModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (us
                   type="password"
                   value={registerForm.confirmPassword}
                   onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#004AAD] focus:border-transparent outline-none text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
