@@ -42,7 +42,7 @@ async function getClipConfig(): Promise<{
   return {
     apiKey: map["clip_api_key"] ?? "",
     secretKey: map["clip_secret_key"] ?? "",
-    sandbox: (map["clip_sandbox"] ?? "true") !== "false",
+    sandbox: map["clip_sandbox"] === "true",
   };
 }
 
@@ -72,14 +72,17 @@ async function createClipCheckout(
   paymentLink: PaymentLink,
   config: {
     sandbox: boolean;
-    customer?: { email?: string | null; phone?: string | null };
+    customer?: { name?: string | null; email?: string | null; phone?: string | null };
   }
 ): Promise<{ checkoutLink: string; checkoutId: string } | { error: string } | null> {
   if (!authToken) {
     return null;
   }
 
-  const endpoint = "https://api.payclip.com/v2/checkout";
+  // Sandbox usa endpoint dev, producción usa el endpoint estándar
+  const endpoint = config.sandbox
+    ? "https://dev-api.payclip.com/v2/checkout"
+    : "https://api.payclip.com/v2/checkout";
 
   // Construir URL pública de webhook y redirecciones
   const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:4000/api/v1";
@@ -87,43 +90,36 @@ async function createClipCheckout(
   const webhookUrl = `${apiBaseUrl}/webhooks/clip-checkout?link_id=${paymentLink.id}`;
   const payPageUrl = `${frontendBaseUrl}/pagar/${paymentLink.token}`;
 
+  // Construir customer_info dentro de metadata (según docs de Clip)
+  const customerInfo: Record<string, string | number> = {};
+  if (config.customer?.name) customerInfo.name = config.customer.name;
+  if (config.customer?.email) customerInfo.email = config.customer.email;
+  if (config.customer?.phone) {
+    const digits = config.customer.phone.replace(/\D/g, "").slice(-10);
+    if (digits.length >= 8) customerInfo.phone = Number(digits);
+  }
+
   const requestBody: Record<string, unknown> = {
     amount: Number(paymentLink.monto),
     currency: paymentLink.moneda,
-    purchase_description: paymentLink.descripcion?.trim() || "Pago InduMex",
-    metadata: {
-      link_id: paymentLink.id,
-      payment_token: paymentLink.token,
-    },
+    purchase_description: (paymentLink.descripcion?.trim() || "Pago InduMex").slice(0, 255),
     redirection_url: {
       success: `${payPageUrl}?clip=success`,
       error: `${payPageUrl}?clip=error`,
       default: payPageUrl,
     },
-    // Send both keys for compatibility across Clip dashboard/API naming.
+    override_settings: {
+      locale: "es-MX",
+      tip_enabled: false,
+    },
+    metadata: {
+      external_reference: String(paymentLink.id),
+      payment_token: paymentLink.token,
+      ...(Object.keys(customerInfo).length > 0 ? { customer_info: customerInfo } : {}),
+    },
+    // Clip acepta webhook_url en el body
     webhook_url: webhookUrl,
-    notify_url: webhookUrl,
   };
-
-  // Pre-fill buyer info if available (improves checkout UX)
-  if (config.customer?.email || config.customer?.phone) {
-    const customerObj: Record<string, string> = {};
-    if (config.customer.email) customerObj.email = config.customer.email;
-    // Clip expects digits only, max 10 digits for MX
-    if (config.customer.phone) {
-      const digits = config.customer.phone.replace(/\D/g, "").slice(-10);
-      if (digits.length >= 8) customerObj.phone = digits;
-    }
-    if (Object.keys(customerObj).length > 0) {
-      requestBody.customer = customerObj;
-    }
-  }
-
-  if (config.sandbox) {
-    requestBody.override_settings = {
-      test: true,
-    };
-  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -133,9 +129,9 @@ async function createClipCheckout(
       method: "POST",
       signal: controller.signal,
       headers: {
-        accept: "application/json",
+        "accept": "application/json",
         "content-type": "application/json",
-        Authorization: authToken,
+        "Authorization": authToken,
       },
       body: JSON.stringify(requestBody),
     });
@@ -164,8 +160,8 @@ async function createClipCheckout(
       (typeof data.checkout_url === "string" && data.checkout_url) ||
       null;
     const checkoutId =
-      (typeof data.id === "string" && data.id) ||
       (typeof data.payment_request_id === "string" && data.payment_request_id) ||
+      (typeof data.id === "string" && data.id) ||
       null;
 
     if (!checkoutLink || !checkoutId) {
@@ -173,10 +169,7 @@ async function createClipCheckout(
       return { error: "Clip no devolvió checkout URL o ID" };
     }
 
-    return {
-      checkoutLink,
-      checkoutId,
-    };
+    return { checkoutLink, checkoutId };
   } catch (err) {
     console.error("[Clip Checkout] Error:", err);
     return { error: err instanceof Error ? err.message : "Error desconocido al crear checkout en Clip" };
