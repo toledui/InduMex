@@ -1,6 +1,5 @@
 ﻿import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
-import ChatWidget from "@/components/ChatWidget";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -34,7 +33,6 @@ export default function RootLayout({
       </head>
       <body className="min-h-full bg-[#021325] text-slate-200 font-['Space_Grotesk'] selection:bg-[#F58634] selection:text-white overflow-x-hidden">
         <SiteChrome>{children}</SiteChrome>
-        <ChatWidget />
       </body>
     </html>
   );
