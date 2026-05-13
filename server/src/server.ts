@@ -56,7 +56,13 @@ app.use(
     },
   })
 );
-app.use(express.json());
+app.use(
+  express.json({
+    verify(req, _res, buf) {
+      (req as typeof req & { rawBody?: Buffer }).rawBody = Buffer.from(buf);
+    },
+  })
+);
 app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.use("/api/v1", proveedoresRoutes);

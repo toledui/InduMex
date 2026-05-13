@@ -1724,50 +1724,60 @@ router.get(
 
 // ─── Webhook Stripe ────────────────────────────────────────────────────────────
 
+type StripeWebhookRequest = Request & { rawBody?: Buffer };
+
 // POST /webhooks/stripe
 // Stripe events are used as the source of truth, including async payments (e.g. OXXO).
-async function processStripeWebhookEvent(req: Request, res: Response): Promise<Response | void> {
+async function processStripeWebhookEvent(req: StripeWebhookRequest, res: Response): Promise<Response | void> {
   try {
     const stripeConfig = await getStripeConfig();
     const webhookSecret = stripeConfig.webhookSecret;
-    const incomingSecret =
-      (req.headers["stripe-signature"] as string | undefined) ||
-      (req.headers["x-signature"] as string | undefined);
+    const sigHeader = req.headers["stripe-signature"];
+    const stripe = await getStripeClient();
+    if (!stripe) {
+      return failure(res, "Stripe no está configurado en este momento.", 500);
+    }
 
-    if (webhookSecret && incomingSecret && incomingSecret !== webhookSecret) {
-      console.warn("[Webhook] Stripe signature mismatch");
+    if (!webhookSecret) {
+      return failure(res, "Stripe webhook secret no configurado.", 500);
+    }
+
+    if (typeof sigHeader !== "string" || !sigHeader) {
+      return failure(res, "Falta la firma de Stripe.", 400);
+    }
+
+    if (!req.rawBody) {
+      return failure(res, "No fue posible leer el cuerpo crudo del webhook.", 400);
+    }
+
+    let payload: any;
+    try {
+      payload = stripe.webhooks.constructEvent(req.rawBody, sigHeader, webhookSecret);
+    } catch (err) {
+      console.warn("[Webhook] Stripe signature verification failed:", err);
       return failure(res, "Unauthorized", 401);
     }
 
-    const payload = req.body as {
-      id?: string;
-      type?: string;
-      data?: {
-        object?: {
-          id?: string;
-          payment_intent?: string;
-          payment_status?: string;
-          customer_details?: {
-            email?: string;
-            name?: string;
-            phone?: string;
-          };
-          receipt_email?: string;
-          status?: string;
-          currency?: string;
-          metadata?: {
-            payment_link_id?: string;
-            payment_token?: string;
-            customer_name?: string;
-            customer_phone?: string;
-          };
-        };
-      };
-      [key: string]: unknown;
-    };
-
     const eventType = payload.type ?? "";
-    const objectData = payload.data?.object;
+    const objectData = payload.data?.object as {
+      id?: string;
+      payment_intent?: string;
+      payment_status?: string;
+      customer_details?: {
+        email?: string;
+        name?: string;
+        phone?: string;
+      };
+      receipt_email?: string;
+      status?: string;
+      currency?: string;
+      metadata?: {
+        payment_link_id?: string;
+        payment_token?: string;
+        customer_name?: string;
+        customer_phone?: string;
+      };
+    } | undefined;
     const linkId = objectData?.metadata?.payment_link_id;
     const paymentToken = objectData?.metadata?.payment_token;
 
@@ -1792,12 +1802,16 @@ async function processStripeWebhookEvent(req: Request, res: Response): Promise<R
       eventType === "checkout.session.async_payment_failed" ||
       eventType === "checkout.session.expired";
 
-    if (isFailedEvent && link.estado === "pending") {
+    if (isFailedEvent) {
       await link.update({ estado: "cancelled" });
       return res.status(200).json({ received: true, status: "cancelled" });
     }
 
-    if (!isPaidEvent || paymentStatus !== "paid") {
+    if (!isPaidEvent || (eventType === "checkout.session.completed" && paymentStatus !== "paid")) {
+      await link.update({
+        ecartpayCheckoutId: objectData?.id ?? link.ecartpayCheckoutId,
+        ecartpayOrderId: objectData?.payment_intent ?? objectData?.id ?? link.ecartpayOrderId,
+      });
       return res.status(200).json({ received: true, status: "pending" });
     }
 
