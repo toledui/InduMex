@@ -9,16 +9,31 @@ interface Message {
   content: string;
 }
 
+function generateSessionId(): string {
+  return 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 9);
+}
+
 export default function ChatWidget() {
   const [isActive, setIsActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Verificar si el chat está activo al montar el componente (client-side only)
+  // Verificar si el chat está activo y establecer sessionId al montar
   useEffect(() => {
+    // Recuperar o generar sessionId persistente en localStorage
+    const stored = localStorage.getItem('indumex_chat_session');
+    if (stored) {
+      setSessionId(stored);
+    } else {
+      const newId = generateSessionId();
+      localStorage.setItem('indumex_chat_session', newId);
+      setSessionId(newId);
+    }
+
     fetch('/api/chat-config')
       .then((r) => r.json())
       .then((data) => setIsActive(data?.isActive === true))
@@ -58,6 +73,7 @@ export default function ChatWidget() {
         },
         body: JSON.stringify({
           message: input.trim(),
+            sessionId,
         }),
       });
 

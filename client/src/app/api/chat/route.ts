@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         message: body.message,
+        sessionId: body.sessionId || null,
       }),
     });
 
