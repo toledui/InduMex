@@ -13,9 +13,35 @@ export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { category } = await params;
+  const title = `${category} | InduMex 2.0`;
+  const description = `Contenido tecnico de la categoria ${category} en InduMex 2.0.`;
+  const url = `https://indumex.blog/${category}`;
+
   return {
-    title: `${category} | InduMex 2.0`,
-    description: `Contenido tecnico de la categoria ${category} en InduMex 2.0.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url,
+      siteName: "InduMex",
+      locale: "es_MX",
+      images: [
+        {
+          url: "https://indumex.blog/images/indumex-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "InduMex - Plataforma Industrial B2B",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://indumex.blog/images/indumex-image.jpg"],
+    },
   };
 }
 

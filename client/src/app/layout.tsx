@@ -3,10 +3,34 @@ import SiteChrome from "@/components/SiteChrome";
 import ChatWidget from "@/components/ChatWidget";
 import "./globals.css";
 
+const OG_IMAGE_DEFAULT = {
+  url: "https://indumex.blog/images/indumex-image.jpg",
+  width: 1200,
+  height: 630,
+  alt: "InduMex - Plataforma Industrial B2B",
+};
+
 export const metadata: Metadata = {
   title: "InduMex 2.0 | Revista Digital Industrial",
   description:
     "Plataforma B2B de inteligencia industrial. Análisis técnico, directorio de proveedores y marketplace para la manufactura mexicana.",
+  openGraph: {
+    title: "InduMex 2.0 | Revista Digital Industrial",
+    description:
+      "Plataforma B2B de inteligencia industrial. Análisis técnico, directorio de proveedores y marketplace para la manufactura mexicana.",
+    type: "website",
+    url: "https://indumex.blog",
+    siteName: "InduMex",
+    locale: "es_MX",
+    images: [OG_IMAGE_DEFAULT],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InduMex 2.0 | Revista Digital Industrial",
+    description:
+      "Plataforma B2B de inteligencia industrial. Análisis técnico, directorio de proveedores y marketplace para la manufactura mexicana.",
+    images: [OG_IMAGE_DEFAULT.url],
+  },
   icons: {
     icon: [
       { url: "/favicon/favicon.ico", sizes: "any" },

@@ -27,9 +27,10 @@ interface AdZoneSliderProps {
   ads: Anuncio[];
   zona: AdZona;
   className?: string;
+  layout?: "card" | "wide";
 }
 
-export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSliderProps) {
+export default function AdZoneSlider({ ads, zona, className = "", layout = "card" }: AdZoneSliderProps) {
   const [current, setCurrent] = useState(0);
 
   const next = useCallback(() => {
@@ -119,6 +120,116 @@ export default function AdZoneSlider({ ads, zona, className = "" }: AdZoneSlider
   }
 
   if (zona === "editorial-grid") {
+    if (layout === "wide") {
+      return (
+        <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#031c38] ${className}`}>
+          {ad.imagen_url ? (
+            <Image
+              src={ad.imagen_url}
+              alt={ad.titulo}
+              fill
+              sizes="100vw"
+              className="object-cover opacity-20"
+            />
+          ) : (
+            <div
+              className="absolute inset-0"
+              style={{ background: `radial-gradient(circle at right, ${acento}30, #021325 60%)` }}
+            />
+          )}
+
+          <div className="absolute inset-0 bg-linear-to-r from-[#021325]/95 via-[#021325]/88 to-[#021325]/78" />
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={ad.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="relative z-10 grid gap-6 p-5 md:grid-cols-[1.2fr_0.8fr] md:items-stretch md:p-8 lg:p-10"
+            >
+              <div className="flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-widest text-gray-300 bg-black/60 px-2.5 py-1 rounded-sm">
+                      Publicidad
+                    </span>
+                    {ad.sector && (
+                      <span
+                        className="text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 rounded-sm"
+                        style={{ color: acento, background: `${acento}22` }}
+                      >
+                        {ad.sector}
+                      </span>
+                    )}
+                  </div>
+
+                  <h4 className="font-['Space_Grotesk'] font-bold text-white text-2xl md:text-3xl leading-tight">
+                    {ad.titulo}
+                  </h4>
+                  <p className="mt-3 max-w-2xl text-slate-300 text-sm md:text-base leading-relaxed">
+                    {ad.descripcion}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex flex-wrap items-center gap-4">
+                  <Link
+                    href={ad.cta_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-[11px] uppercase tracking-widest font-bold px-5 py-2.5 rounded-lg transition-colors"
+                    style={{ backgroundColor: acento, color: acento === "#004AAD" ? "#fff" : "#000" }}
+                  >
+                    {ad.cta_texto}
+                  </Link>
+                  {ad.metrica && (
+                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: acento }}>
+                      {ad.metrica}
+                    </span>
+                  )}
+                </div>
+
+                {ads.length > 1 && (
+                  <div className="mt-5 flex gap-1.5">
+                    {ads.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrent(i)}
+                        className="h-1 rounded-full transition-all duration-300"
+                        style={{
+                          width: i === current ? "1.8rem" : "0.45rem",
+                          backgroundColor: i === current ? acento : "#ffffff30",
+                        }}
+                        aria-label={`Anuncio ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="relative h-52 overflow-hidden rounded-xl border border-white/15 bg-black/30 md:h-full md:min-h-65">
+                {ad.imagen_url ? (
+                  <Image
+                    src={ad.imagen_url}
+                    alt={ad.titulo}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 35vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${acento}1f, #021325)` }}>
+                    <FallbackIcon className="h-14 w-14 opacity-50" style={{ color: acento }} />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-linear-to-t from-[#021325]/45 via-transparent to-transparent" />
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      );
+    }
+
     return (
       <div className={`relative overflow-hidden rounded-xl bg-[#031c38] border border-white/5 flex flex-col ${className}`}>
         {/* Image area */}

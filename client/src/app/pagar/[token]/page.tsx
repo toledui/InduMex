@@ -6,6 +6,28 @@ export const metadata: Metadata = {
   title: 'Pagar | InduMex',
   description: 'Completa tu pago de forma segura.',
   robots: { index: false, follow: false },
+  openGraph: {
+    title: 'Pagar | InduMex',
+    description: 'Completa tu pago de forma segura.',
+    type: 'website',
+    url: 'https://indumex.blog/pagar',
+    siteName: 'InduMex',
+    locale: 'es_MX',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pagar | InduMex',
+    description: 'Completa tu pago de forma segura.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
+  },
 };
 
 export default async function PagarPage({ params }: { params: Promise<{ token: string }> }) {

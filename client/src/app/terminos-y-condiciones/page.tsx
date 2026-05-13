@@ -20,6 +20,21 @@ export const metadata: Metadata = {
     siteName: 'InduMex',
     locale: 'es_MX',
     type: 'website',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Términos y Condiciones | InduMex',
+    description:
+      'Consulta los Términos y Condiciones de uso y venta de indumex.blog, incluyendo contenido, compras, garantías y devoluciones.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
   },
 };
 

@@ -12,6 +12,20 @@ export const metadata: Metadata = {
     siteName: 'InduMex',
     locale: 'es_MX',
     type: 'website',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Política de Privacidad | InduMex',
+    description: 'Aviso de Privacidad de indumex.blog conforme a la legislación mexicana.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
   },
   alternates: { canonical: 'https://indumex.blog/privacidad' },
 };

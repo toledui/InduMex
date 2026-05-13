@@ -7,6 +7,30 @@ export const metadata: Metadata = {
   title: "Blog Industrial | InduMex 2.0",
   description:
     "Archivo de noticias industriales, señales de mercado y análisis técnico para directivos y proveedores B2B.",
+  openGraph: {
+    title: "Blog Industrial | InduMex 2.0",
+    description:
+      "Archivo de noticias industriales, señales de mercado y análisis técnico para directivos y proveedores B2B.",
+    type: "website",
+    url: "https://indumex.blog/blog",
+    siteName: "InduMex",
+    locale: "es_MX",
+    images: [
+      {
+        url: "https://indumex.blog/images/indumex-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "InduMex - Plataforma Industrial B2B",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog Industrial | InduMex 2.0",
+    description:
+      "Archivo de noticias industriales, señales de mercado y análisis técnico para directivos y proveedores B2B.",
+    images: ["https://indumex.blog/images/indumex-image.jpg"],
+  },
 };
 
 export default async function BlogPage() {

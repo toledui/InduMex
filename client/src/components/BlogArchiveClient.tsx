@@ -225,7 +225,7 @@ export default function BlogArchiveClient({
 
       <section className="pt-8 md:pt-10">
         <div className="max-w-400 mx-auto px-4 sm:px-6">
-          <AdBanner ads={editorialAds} />
+          <AdBanner ads={editorialAds} layout="wide" />
         </div>
       </section>
 

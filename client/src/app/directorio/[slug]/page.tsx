@@ -17,10 +17,36 @@ async function getProviderBySlug(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const provider = await getProviderBySlug(slug);
+  const providerUrl = `https://indumex.blog/directorio/${slug}`;
+  const title = provider ? `${provider.name} | Directorio B2B | InduMex` : 'Proveedor | Directorio B2B | InduMex';
+  const description =
+    provider?.shortDescription ?? 'Perfil de proveedor industrial dentro del Directorio B2B de InduMex.';
 
   return {
-    title: provider ? `${provider.name} | Directorio B2B | InduMex` : 'Proveedor | Directorio B2B | InduMex',
-    description: provider?.shortDescription ?? 'Perfil de proveedor industrial dentro del Directorio B2B de InduMex.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: providerUrl,
+      siteName: 'InduMex',
+      locale: 'es_MX',
+      images: [
+        {
+          url: 'https://indumex.blog/images/indumex-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'InduMex - Plataforma Industrial B2B',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://indumex.blog/images/indumex-image.jpg'],
+    },
   };
 }
 

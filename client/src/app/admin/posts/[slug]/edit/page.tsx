@@ -13,8 +13,33 @@ export async function generateMetadata(
   props: EditPostPageProps
 ): Promise<Metadata> {
   const params = await props.params;
+  const title = `Editar: ${params.slug} | Admin InduMex`;
+
   return {
-    title: `Editar: ${params.slug} | Admin InduMex`,
+    title,
+    description: 'Editor de artículos del panel administrativo de InduMex.',
+    openGraph: {
+      title,
+      description: 'Editor de artículos del panel administrativo de InduMex.',
+      type: 'website',
+      url: `https://indumex.blog/admin/posts/${params.slug}/edit`,
+      siteName: 'InduMex',
+      locale: 'es_MX',
+      images: [
+        {
+          url: 'https://indumex.blog/images/indumex-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'InduMex - Plataforma Industrial B2B',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: 'Editor de artículos del panel administrativo de InduMex.',
+      images: ['https://indumex.blog/images/indumex-image.jpg'],
+    },
   };
 }
 

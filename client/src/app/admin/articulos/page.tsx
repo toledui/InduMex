@@ -7,6 +7,28 @@ import ArticulosClient from './ArticulosClient';
 export const metadata: Metadata = {
   title: 'Artículos | Admin InduMex',
   description: 'Gestiona todos los artículos del blog',
+  openGraph: {
+    title: 'Artículos | Admin InduMex',
+    description: 'Gestiona todos los artículos del blog',
+    type: 'website',
+    url: 'https://indumex.blog/admin/articulos',
+    siteName: 'InduMex',
+    locale: 'es_MX',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Artículos | Admin InduMex',
+    description: 'Gestiona todos los artículos del blog',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
+  },
 };
 
 export default async function ArticulosPage() {

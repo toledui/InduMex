@@ -19,6 +19,21 @@ export const metadata: Metadata = {
     siteName: 'InduMex',
     locale: 'es_MX',
     type: 'website',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Directorio B2B Industrial | InduMex',
+    description:
+      'Conecta con proveedores premium, verified y básicos en el ecosistema industrial B2B de InduMex.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
   },
 };
 

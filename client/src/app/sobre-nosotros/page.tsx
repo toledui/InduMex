@@ -41,6 +41,7 @@ export const metadata: Metadata = {
     title: 'Sobre Nosotros | InduMex 2.0',
     description:
       'Transformando la industria manufacturera en México a través de inteligencia B2B y compromiso social.',
+    images: ['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200'],
   },
 };
 

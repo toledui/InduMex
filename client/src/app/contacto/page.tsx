@@ -16,6 +16,21 @@ export const metadata: Metadata = {
     siteName: 'InduMex',
     locale: 'es_MX',
     type: 'website',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contáctanos | InduMex',
+    description:
+      'Ponte en contacto con el equipo de InduMex. Escríbenos o llena el formulario y te respondemos pronto.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
   },
   alternates: {
     canonical: 'https://indumex.blog/contacto',

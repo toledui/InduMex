@@ -5,6 +5,28 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Admin | Dashboard | InduMex 2.0',
   description: 'Panel de administración para controlar servicios y usuarios de InduMex.',
+  openGraph: {
+    title: 'Admin | Dashboard | InduMex 2.0',
+    description: 'Panel de administración para controlar servicios y usuarios de InduMex.',
+    type: 'website',
+    url: 'https://indumex.blog/admin',
+    siteName: 'InduMex',
+    locale: 'es_MX',
+    images: [
+      {
+        url: 'https://indumex.blog/images/indumex-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'InduMex - Plataforma Industrial B2B',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Admin | Dashboard | InduMex 2.0',
+    description: 'Panel de administración para controlar servicios y usuarios de InduMex.',
+    images: ['https://indumex.blog/images/indumex-image.jpg'],
+  },
 };
 
 const cards = [
