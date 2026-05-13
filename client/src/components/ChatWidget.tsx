@@ -9,26 +9,31 @@ interface Message {
   content: string;
 }
 
-interface ChatWidgetProps {
-  isActive: boolean;
-}
-
-export default function ChatWidget({ isActive }: ChatWidgetProps) {
+export default function ChatWidget() {
+  const [isActive, setIsActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // No renderizar si el chat no está activo
-  if (!isActive) {
-    return null;
-  }
+  // Verificar si el chat está activo al montar el componente (client-side only)
+  useEffect(() => {
+    fetch('/api/chat-config')
+      .then((r) => r.json())
+      .then((data) => setIsActive(data?.isActive === true))
+      .catch(() => setIsActive(false));
+  }, []);
 
   // Auto-scroll al último mensaje
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // No renderizar si el chat no está activo
+  if (!isActive) {
+    return null;
+  }
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
