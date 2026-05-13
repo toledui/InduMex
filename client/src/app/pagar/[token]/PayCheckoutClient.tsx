@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { completePayment, getClientTokenFromCookie, type PublicPayLink } from '@/lib/api';
+import { getClientTokenFromCookie, type PublicPayLink } from '@/lib/api';
 import { Loader2, ShieldCheck, AlertCircle, CheckCircle2, CreditCard } from 'lucide-react';
 
 // Extend window with EcartPay SDK
@@ -67,6 +67,7 @@ function normalizeItems(raw: unknown): { name: string; price: number; quantity: 
 export default function PayCheckoutClient({ link, linkToken }: Props) {
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [processingReturn, setProcessingReturn] = useState(false);
   const clipReturnHandled = useRef(false);
@@ -94,41 +95,16 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
       return;
     }
 
-    if (!link.compradorEmail?.trim()) {
-      setError('No se pudo confirmar el pago porque el link no tiene correo del comprador.');
-      return;
-    }
-
     clipReturnHandled.current = true;
     setProcessingReturn(true);
     setError(null);
 
-    void (async () => {
-      try {
-        await completePayment(
-          linkToken,
-          {
-            email: link.compradorEmail ?? 'desconocido@indumex.blog',
-            first_name: link.compradorNombre ?? undefined,
-            orderId: searchParams.get('session_id') ?? undefined,
-            payload: {
-              provider: 'stripe',
-              sessionId: searchParams.get('session_id') ?? undefined,
-              returnQuery: Object.fromEntries(searchParams.entries()),
-            },
-          },
-          clientToken
-        );
-
-        setSuccess(true);
-      } catch (err) {
-        clipReturnHandled.current = false; // allow retry
-        setError(err instanceof Error ? err.message : 'No se pudo confirmar el pago devuelto por Stripe.');
-      } finally {
-        setProcessingReturn(false);
-      }
-    })();
-  }, [clientToken, link.compradorEmail, link.compradorNombre, linkToken, searchParams, success]);
+    // Stripe confirms final payment status via webhook.
+    // For async methods (e.g. OXXO), success return means checkout completed,
+    // not necessarily that funds are already settled.
+    setPending(true);
+    setProcessingReturn(false);
+  }, [linkToken, searchParams, success]);
 
   // Force return to site after successful completion, even if provider modal stays open.
   useEffect(() => {
@@ -161,6 +137,22 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
         </p>
         <p className="text-xs text-white/30">Redirigiendo a InduMex...</p>
         <p className="text-xs text-white/20">Puedes cerrar esta ventana.</p>
+      </div>
+    );
+  }
+
+  if (pending) {
+    return (
+      <div className="max-w-md w-full bg-[#031c38] border border-[#004AAD]/30 rounded-2xl p-8 text-center space-y-4">
+        <ShieldCheck size={48} className="mx-auto text-[#004AAD]" />
+        <h1 className="text-xl font-bold text-white">Pago en proceso de confirmación</h1>
+        <p className="text-sm text-white/60">
+          Stripe enviará la confirmación por webhook automáticamente.
+          Si pagaste con OXXO u otro método fuera de línea, puede tardar en reflejarse.
+        </p>
+        <p className="text-xs text-white/35">
+          Puedes cerrar esta ventana y revisar tu estado más tarde en tu cuenta.
+        </p>
       </div>
     );
   }

@@ -70,6 +70,8 @@ async function createStripeCheckout(
   const payPageUrl = `${frontendBaseUrl}/pagar/${paymentLink.token}`;
 
   const normalizedCurrency = (paymentLink.moneda || "MXN").toLowerCase();
+  const paymentMethodTypes =
+    normalizedCurrency === "mxn" ? ["card", "oxxo"] : ["card"];
   const items = normalizeItems(paymentLink.items);
   const lineItems =
     items.length > 0
@@ -99,11 +101,21 @@ async function createStripeCheckout(
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      payment_method_types: paymentMethodTypes,
       line_items: lineItems,
       customer_email: config.customer?.email ?? undefined,
+      locale: "es",
       phone_number_collection: {
         enabled: true,
       },
+      payment_method_options:
+        normalizedCurrency === "mxn"
+          ? {
+              oxxo: {
+                expires_after_days: 3,
+              },
+            }
+          : undefined,
       metadata: {
         payment_link_id: String(paymentLink.id),
         payment_token: paymentLink.token,
@@ -1713,8 +1725,8 @@ router.get(
 // ─── Webhook Stripe ────────────────────────────────────────────────────────────
 
 // POST /webhooks/stripe
-// Stripe can send generic payment notifications here.
-router.post("/webhooks/stripe", async (req: Request, res: Response) => {
+// Stripe events are used as the source of truth, including async payments (e.g. OXXO).
+async function processStripeWebhookEvent(req: Request, res: Response): Promise<Response | void> {
   try {
     const stripeConfig = await getStripeConfig();
     const webhookSecret = stripeConfig.webhookSecret;
@@ -1723,51 +1735,8 @@ router.post("/webhooks/stripe", async (req: Request, res: Response) => {
       (req.headers["x-signature"] as string | undefined);
 
     if (webhookSecret && incomingSecret && incomingSecret !== webhookSecret) {
+      console.warn("[Webhook] Stripe signature mismatch");
       return failure(res, "Unauthorized", 401);
-    }
-
-    const payload = req.body as {
-      id?: string;
-      type?: string;
-      data?: { object?: { id?: string; payment_intent?: string } };
-      [key: string]: unknown;
-    };
-
-    const orderId =
-      (payload.data?.object?.payment_intent as string | undefined) ||
-      (payload.data?.object?.id as string | undefined) ||
-      payload.id;
-
-    if (orderId) {
-      const venta = await Venta.findOne({
-        where: { ecartpayOrderId: orderId },
-      });
-      if (venta) {
-        await venta.update({ ecartpayPayload: payload });
-      }
-    }
-
-    res.status(200).json({ received: true });
-  } catch {
-    failure(res, "Webhook error", 500);
-  }
-});
-
-async function processStripeCheckoutWebhook(req: Request, res: Response): Promise<Response | void> {
-  try {
-    const linkId = req.query.link_id as string | undefined;
-    if (!linkId) {
-      return failure(res, "link_id is required", 400);
-    }
-
-    const stripeConfig = await getStripeConfig();
-    const webhookSecret = stripeConfig.webhookSecret;
-    const incomingSecret =
-      (req.headers["stripe-signature"] as string | undefined) ||
-      (req.headers["x-signature"] as string | undefined);
-
-    if (webhookSecret && incomingSecret && incomingSecret !== webhookSecret) {
-      console.warn(`[Webhook] Secret mismatch for link ${linkId}`);
     }
 
     const payload = req.body as {
@@ -1777,11 +1746,15 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
         object?: {
           id?: string;
           payment_intent?: string;
+          payment_status?: string;
           customer_details?: {
             email?: string;
             name?: string;
             phone?: string;
           };
+          receipt_email?: string;
+          status?: string;
+          currency?: string;
           metadata?: {
             payment_link_id?: string;
             payment_token?: string;
@@ -1793,17 +1766,56 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
       [key: string]: unknown;
     };
 
-    const link = await PaymentLink.findByPk(Number(linkId));
+    const eventType = payload.type ?? "";
+    const objectData = payload.data?.object;
+    const linkId = objectData?.metadata?.payment_link_id;
+    const paymentToken = objectData?.metadata?.payment_token;
+
+    let link: PaymentLink | null = null;
+    if (linkId && Number.isInteger(Number(linkId))) {
+      link = await PaymentLink.findByPk(Number(linkId));
+    }
+    if (!link && paymentToken) {
+      link = await PaymentLink.findOne({ where: { token: paymentToken } });
+    }
+
     if (!link) {
-      return failure(res, "Link not found", 404);
+      // Ignore unrelated Stripe events.
+      return res.status(200).json({ received: true, ignored: true });
+    }
+
+    const paymentStatus = objectData?.payment_status;
+    const isPaidEvent =
+      eventType === "checkout.session.completed" ||
+      eventType === "checkout.session.async_payment_succeeded";
+    const isFailedEvent =
+      eventType === "checkout.session.async_payment_failed" ||
+      eventType === "checkout.session.expired";
+
+    if (isFailedEvent && link.estado === "pending") {
+      await link.update({ estado: "cancelled" });
+      return res.status(200).json({ received: true, status: "cancelled" });
+    }
+
+    if (!isPaidEvent || paymentStatus !== "paid") {
+      return res.status(200).json({ received: true, status: "pending" });
     }
 
     if (link.estado === "paid") {
-      return res.status(200).json({ received: true, alreadyPaid: true });
+      const existingVenta = await Venta.findOne({
+        where: { paymentLinkId: link.id, estado: "completed" },
+        order: [["createdAt", "DESC"]],
+      });
+      return res.status(200).json({
+        received: true,
+        alreadyPaid: true,
+        ventaId: existingVenta?.id ?? null,
+      });
     }
 
     const customerEmail =
       payload.data?.object?.customer_details?.email ||
+      payload.data?.object?.receipt_email ||
       link.compradorEmail ||
       "";
     const customerName =
@@ -1815,6 +1827,10 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
       payload.data?.object?.payment_intent ||
       payload.data?.object?.id ||
       payload.id ||
+      null;
+    const customerPhone =
+      payload.data?.object?.customer_details?.phone ||
+      payload.data?.object?.metadata?.customer_phone ||
       null;
 
     await link.update({
@@ -1838,8 +1854,9 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
       paymentLinkId: link.id,
       planId: link.planId || null,
       usuarioId: resolvedUsuarioId,
-      compradorEmail: customerEmail,
+      compradorEmail: customerEmail || link.compradorEmail || "",
       compradorNombre: customerName || link.compradorNombre,
+      compradorTelefono: customerPhone,
       monto: link.monto,
       moneda: link.moneda,
       ecartpayOrderId: orderId,
@@ -1871,6 +1888,7 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
           <p><strong>Monto:</strong> ${formatCurrency(Number(link.monto), link.moneda)}</p>
           <p><strong>Email:</strong> ${customerEmail}</p>
           <p><strong>Nombre:</strong> ${customerName}</p>
+          <p><strong>Proveedor:</strong> Stripe (${eventType})</p>
           <p><strong>Payment Intent / Session:</strong> ${orderId || "N/A"}</p>
           ${link.planId ? `<p><strong>Media Kit Plan ID:</strong> ${link.planId}</p>` : ""}
           <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
@@ -1880,17 +1898,18 @@ async function processStripeCheckoutWebhook(req: Request, res: Response): Promis
 
     res.status(200).json({ received: true, ventaId: venta.id });
   } catch (err) {
-    console.error("[Webhook] Stripe checkout error:", err);
+    console.error("[Webhook] Stripe event error:", err);
     return failure(res, "Webhook error", 500);
   }
 }
 
-// Primary Stripe checkout webhook route
-router.post("/webhooks/stripe-checkout", processStripeCheckoutWebhook);
+// Primary Stripe webhook routes
+router.post("/webhooks/stripe", processStripeWebhookEvent);
+router.post("/webhooks/stripe-checkout", processStripeWebhookEvent);
 
 // Legacy compatibility routes
-router.post("/webhooks/clip", processStripeCheckoutWebhook);
-router.post("/webhooks/clip-checkout", processStripeCheckoutWebhook);
-router.post("/webhooks/ecartpay-checkout", processStripeCheckoutWebhook);
+router.post("/webhooks/clip", processStripeWebhookEvent);
+router.post("/webhooks/clip-checkout", processStripeWebhookEvent);
+router.post("/webhooks/ecartpay-checkout", processStripeWebhookEvent);
 
 export default router;
