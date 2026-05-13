@@ -473,7 +473,15 @@ export default function DirectorioClientModern({
               </p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#031c38] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+            <div>
+              <Link
+                href="/mi-cuenta?section=provider"
+                className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-[#F58634] transition-colors hover:text-white"
+              >
+                Registra tu perfil de empresa <ChevronRight className="h-4 w-4" />
+              </Link>
+
+              <div className="rounded-3xl border border-white/10 bg-[#031c38] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
               <label className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white/40">
                 <Search className="h-4 w-4 text-[#F58634]" />
                 Terminal de búsqueda
@@ -509,6 +517,10 @@ export default function DirectorioClientModern({
                   )}
                 </div>
               </div>
+              <p className="mt-3 text-xs uppercase tracking-[0.2em] text-white/40">
+                Publica tu empresa y empieza a aparecer en el directorio.
+              </p>
+            </div>
             </div>
           </div>
         </div>

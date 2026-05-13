@@ -415,6 +415,15 @@ export default function MarketplaceCatalogClient({ productos, categorias, errorM
             </div>
           </div>
 
+          <div className="mt-4">
+            <Link
+              href="/mi-cuenta?section=marketplace"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-[#F58634] transition-colors hover:text-white"
+            >
+              Registra tu empresa y vende tus productos a más de 15 mil empresas <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
           {activeFilterCount > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {filters.featuredOnly && <FilterChip label="Solo destacados" onRemove={() => setFilters((prev) => ({ ...prev, featuredOnly: false }))} />}
