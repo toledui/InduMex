@@ -70,11 +70,14 @@ export default function ChatWidget() {
       // Extraer respuesta de n8n
       // La estructura depende de cómo n8n retorne la respuesta
       // Asumiendo que devuelve { response: "..." } o similar
+      // n8n puede devolver { output }, { response }, { message }, { text }, o un array
+      const raw = Array.isArray(result.data) ? result.data[0] : result.data;
       const assistantContent =
-        result.data?.response ||
-        result.data?.message ||
-        result.data?.text ||
-        JSON.stringify(result.data);
+        raw?.output ||
+        raw?.response ||
+        raw?.message ||
+        raw?.text ||
+        (typeof raw === 'string' ? raw : JSON.stringify(raw));
 
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
