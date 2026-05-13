@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.198.1"],
+  rewrites: async () => ({
+    beforeFiles: [
+      {
+        source: "/api/v1/:path*",
+        destination: `${process.env.NEXT_INTERNAL_API_URL || "http://localhost:4000"}/api/v1/:path*`,
+      },
+    ],
+  }),
   images: {
     remotePatterns: [
       {
