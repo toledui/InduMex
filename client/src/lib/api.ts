@@ -1,5 +1,9 @@
+// En el servidor (Server Components) usamos la URL interna para evitar loops a través de Cloudflare.
+// En el cliente (browser) usamos la URL pública relativa que pasa por el proxy de Next.js.
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+  typeof window === "undefined"
+    ? `${process.env.NEXT_INTERNAL_API_URL ?? "http://localhost:4000"}/api/v1`
+    : "/api/v1";
 
 type ApiResponse<T> = {
   success: boolean;
