@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { Op } from "sequelize";
 import PDFDocument from "pdfkit";
+const Stripe = require("stripe");
 import MediaKitPlan from "../models/MediaKitPlan";
 import PaymentLink from "../models/PaymentLink";
 import Venta from "../models/Venta";
@@ -28,158 +29,113 @@ function generateToken(): string {
   return randomBytes(24).toString("hex");
 }
 
-async function getClipConfig(): Promise<{
-  apiKey: string;
+async function getStripeConfig(): Promise<{
   secretKey: string;
-  sandbox: boolean;
+  webhookSecret: string;
 }> {
   const rows = await Configuracion.findAll({
     where: {
-      clave: ["clip_api_key", "clip_secret_key", "clip_sandbox"],
+      clave: ["stripe_secret_key", "stripe_webhook_secret"],
     },
   });
   const map = Object.fromEntries(rows.map((r) => [r.clave, r.valor ?? ""]));
   return {
-    apiKey: map["clip_api_key"] ?? "",
-    secretKey: map["clip_secret_key"] ?? "",
-    sandbox: map["clip_sandbox"] === "true",
+    secretKey: map["stripe_secret_key"] ?? process.env.STRIPE_SECRET_KEY ?? "",
+    webhookSecret:
+      map["stripe_webhook_secret"] ?? process.env.STRIPE_WEBHOOK_SECRET ?? "",
   };
 }
 
-async function getClipWebhookSecret(): Promise<string> {
-  const row = await Configuracion.findOne({
-    where: { clave: "clip_webhook_secret" },
-  });
-  return row?.valor ?? "";
-}
-
-async function createClipAuthorizationToken(config: {
-  apiKey: string;
-  secretKey: string;
-  sandbox: boolean;
-}): Promise<string | null> {
-  if (!config.apiKey || !config.secretKey) {
+async function getStripeClient(): Promise<any | null> {
+  const config = await getStripeConfig();
+  if (!config.secretKey) {
     return null;
   }
 
-  // Clip usa autenticación Basic base64(api_key:secret_key).
-  const basic = Buffer.from(`${config.apiKey}:${config.secretKey}`).toString("base64");
-  return `Basic ${basic}`;
+  return new Stripe(config.secretKey);
 }
 
-async function createClipCheckout(
-  authToken: string,
+async function createStripeCheckout(
+  stripe: any,
   paymentLink: PaymentLink,
   config: {
-    sandbox: boolean;
     customer?: { name?: string | null; email?: string | null; phone?: string | null };
   }
 ): Promise<{ checkoutLink: string; checkoutId: string } | { error: string } | null> {
-  if (!authToken) {
-    return null;
-  }
-
-  // Sandbox usa endpoint dev, producción usa el endpoint estándar
-  const endpoint = config.sandbox
-    ? "https://dev-api.payclip.com/v2/checkout"
-    : "https://api.payclip.com/v2/checkout";
-
-  // Construir URL pública de webhook y redirecciones
-  const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:4000/api/v1";
   const frontendBaseUrl = process.env.FRONTEND_BASE_URL ?? "http://localhost:3000";
-  const webhookUrl = `${apiBaseUrl}/webhooks/clip-checkout?link_id=${paymentLink.id}`;
   const payPageUrl = `${frontendBaseUrl}/pagar/${paymentLink.token}`;
 
-  // Construir customer_info dentro de metadata (según docs de Clip)
-  const customerInfo: Record<string, string | number> = {};
-  if (config.customer?.name) customerInfo.name = config.customer.name;
-  if (config.customer?.email) customerInfo.email = config.customer.email;
-  if (config.customer?.phone) {
-    const digits = config.customer.phone.replace(/\D/g, "").slice(-10);
-    if (digits.length >= 8) customerInfo.phone = Number(digits);
-  }
-
-  const requestBody: Record<string, unknown> = {
-    amount: Number(paymentLink.monto),
-    currency: paymentLink.moneda,
-    purchase_description: (paymentLink.descripcion?.trim() || "Pago InduMex").slice(0, 255),
-    redirection_url: {
-      success: `${payPageUrl}?clip=success`,
-      error: `${payPageUrl}?clip=error`,
-      default: payPageUrl,
-    },
-    override_settings: {
-      locale: "es-MX",
-      tip_enabled: false,
-    },
-    metadata: {
-      external_reference: String(paymentLink.id),
-      payment_token: paymentLink.token,
-      ...(Object.keys(customerInfo).length > 0 ? { customer_info: customerInfo } : {}),
-    },
-    // Clip acepta webhook_url en el body
-    webhook_url: webhookUrl,
-  };
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const normalizedCurrency = (paymentLink.moneda || "MXN").toLowerCase();
+  const items = normalizeItems(paymentLink.items);
+  const lineItems =
+    items.length > 0
+      ? items.map((item) => ({
+          quantity: Number(item.quantity || 1),
+          price_data: {
+            currency: normalizedCurrency,
+            unit_amount: Math.max(1, Math.round(Number(item.price || 0) * 100)),
+            product_data: {
+              name: item.name || "Item",
+            },
+          },
+        }))
+      : [
+          {
+            quantity: 1,
+            price_data: {
+              currency: normalizedCurrency,
+              unit_amount: Math.max(1, Math.round(Number(paymentLink.monto) * 100)),
+              product_data: {
+                name: (paymentLink.descripcion?.trim() || "Pago InduMex").slice(0, 255),
+              },
+            },
+          },
+        ];
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        "accept": "application/json",
-        "content-type": "application/json",
-        "Authorization": authToken,
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: lineItems,
+      customer_email: config.customer?.email ?? undefined,
+      phone_number_collection: {
+        enabled: true,
       },
-      body: JSON.stringify(requestBody),
+      metadata: {
+        payment_link_id: String(paymentLink.id),
+        payment_token: paymentLink.token,
+        ...(config.customer?.name ? { customer_name: config.customer.name } : {}),
+        ...(config.customer?.phone ? { customer_phone: config.customer.phone } : {}),
+      },
+      success_url: `${payPageUrl}?stripe=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${payPageUrl}?stripe=cancel`,
+      payment_intent_data: {
+        metadata: {
+          payment_link_id: String(paymentLink.id),
+          payment_token: paymentLink.token,
+        },
+      },
+      after_expiration: {
+        recovery: {
+          enabled: true,
+        },
+      },
     });
 
-    if (!response.ok) {
-      let detail = "";
-      try {
-        detail = await response.text();
-      } catch {
-        detail = "";
-      }
-      const reason =
-        response.status === 401
-          ? "Credenciales Clip inválidas o sin permiso para checkout"
-          : `Clip respondió ${response.status}`;
-      const composed = detail ? `${reason}: ${detail}` : reason;
-      console.error(`[Clip Checkout] ${composed}`);
-      return { error: composed };
-    }
-
-    const data = (await response.json()) as Record<string, unknown>;
-    const checkoutLink =
-      (typeof data.payment_request_url === "string" && data.payment_request_url) ||
-      (typeof data.link === "string" && data.link) ||
-      (typeof data.url === "string" && data.url) ||
-      (typeof data.checkout_url === "string" && data.checkout_url) ||
-      null;
-    const checkoutId =
-      (typeof data.payment_request_id === "string" && data.payment_request_id) ||
-      (typeof data.id === "string" && data.id) ||
-      null;
+    const checkoutLink = session.url ?? null;
+    const checkoutId = session.id ?? null;
 
     if (!checkoutLink || !checkoutId) {
-      console.error("[Clip Checkout] Missing link or id in response", data);
-      return { error: "Clip no devolvió checkout URL o ID" };
+      console.error("[Stripe Checkout] Missing checkout URL or session id");
+      return { error: "Stripe no devolvió URL o session id" };
     }
 
     return { checkoutLink, checkoutId };
   } catch (err) {
-    console.error("[Clip Checkout] Error:", err);
-    return { error: err instanceof Error ? err.message : "Error desconocido al crear checkout en Clip" };
-  } finally {
-    clearTimeout(timeout);
+    console.error("[Stripe Checkout] Error:", err);
+    return {
+      error: err instanceof Error ? err.message : "Error desconocido al crear checkout en Stripe",
+    };
   }
-}
-
-function buildClipCheckoutUrl(checkoutId: string): string {
-  return `https://checkout.clip.mx/pay/${encodeURIComponent(checkoutId)}`;
 }
 
 function normalizeItems(
@@ -295,7 +251,7 @@ function extractPaymentMethodLabel(payload: unknown): string {
     return `Metodo ${methodId.toUpperCase()}`;
   }
 
-  return "Checkout Clip";
+  return "Checkout Stripe";
 }
 
 function formatReceiptStatus(status: string): string {
@@ -920,40 +876,78 @@ router.get(
   }
 );
 
-// GET /admin/pagos/clip/validate
+// GET /admin/pagos/stripe/validate
+router.get(
+  "/admin/pagos/stripe/validate",
+  requireAuth,
+  requireAdminRole,
+  async (_req: Request, res: Response) => {
+    try {
+      const config = await getStripeConfig();
+      const stripe = await getStripeClient();
+
+      if (!config.secretKey) {
+        return failure(
+          res,
+          "Faltan credenciales de Stripe (secret key)",
+          400
+        );
+      }
+
+      if (!stripe) {
+        return failure(
+          res,
+          "No fue posible inicializar Stripe con las credenciales actuales",
+          400
+        );
+      }
+
+      success(res, {
+        sandbox: false,
+        hasPublicId: false,
+        hasSecretKey: Boolean(config.secretKey),
+        tokenGenerated: true,
+      });
+    } catch {
+      failure(res, "Error al validar credenciales de Stripe", 500);
+    }
+  }
+);
+
+// Legacy alias used by current admin UI
 router.get(
   "/admin/pagos/clip/validate",
   requireAuth,
   requireAdminRole,
   async (_req: Request, res: Response) => {
     try {
-      const config = await getClipConfig();
-      const token = await createClipAuthorizationToken(config);
+      const config = await getStripeConfig();
+      const stripe = await getStripeClient();
 
-      if (!config.apiKey || !config.secretKey) {
+      if (!config.secretKey) {
         return failure(
           res,
-          "Faltan credenciales de Clip (api_key o secret_key)",
+          "Faltan credenciales de Stripe (secret key)",
           400
         );
       }
 
-      if (!token) {
+      if (!stripe) {
         return failure(
           res,
-          "No fue posible generar el token de autorización con las credenciales actuales",
+          "No fue posible inicializar Stripe con las credenciales actuales",
           400
         );
       }
 
       success(res, {
-        sandbox: config.sandbox,
-        hasPublicId: Boolean(config.apiKey),
+        sandbox: false,
+        hasPublicId: false,
         hasSecretKey: Boolean(config.secretKey),
         tokenGenerated: true,
       });
     } catch {
-      failure(res, "Error al validar credenciales de Clip", 500);
+      failure(res, "Error al validar credenciales de Stripe", 500);
     }
   }
 );
@@ -1046,13 +1040,10 @@ router.post(
         expiresAt: parsedExpiresAt,
       });
 
-      // Create Clip checkout link
-      const clipConfig = await getClipConfig();
-      const authToken = await createClipAuthorizationToken(clipConfig);
-      if (authToken) {
-        const checkoutResult = await createClipCheckout(authToken, link, {
-          sandbox: clipConfig.sandbox,
-        });
+      // Create Stripe checkout link
+      const stripe = await getStripeClient();
+      if (stripe) {
+        const checkoutResult = await createStripeCheckout(stripe, link, {});
         if (checkoutResult && "checkoutLink" in checkoutResult) {
           await link.update({
             ecartpayCheckoutId: checkoutResult.checkoutId,
@@ -1068,7 +1059,7 @@ router.post(
             201
           );
         } else if (checkoutResult && "error" in checkoutResult) {
-          console.warn(`[Clip Checkout] Link admin ${link.id}: ${checkoutResult.error}`);
+          console.warn(`[Stripe Checkout] Link admin ${link.id}: ${checkoutResult.error}`);
         }
       }
 
@@ -1284,23 +1275,14 @@ router.get("/pay/:token", async (req: Request, res: Response) => {
       }
     }
 
-    const { apiKey, secretKey, sandbox } = await getClipConfig();
+    const stripe = await getStripeClient();
 
-    // Always try to generate a fresh checkout link. If Clip is unavailable,
-    // fallback to previous id-based URL when available.
-    let checkoutLink = link.ecartpayCheckoutId
-      ? buildClipCheckoutUrl(link.ecartpayCheckoutId)
-      : null;
+    // Always try to generate a fresh Stripe checkout link.
+    let checkoutLink: string | null = null;
 
-    const authToken = await createClipAuthorizationToken({
-      apiKey,
-      secretKey,
-      sandbox,
-    });
-    if (authToken) {
-      let clipError: string | null = null;
-      const checkoutResult = await createClipCheckout(authToken, link, {
-        sandbox,
+    if (stripe) {
+      let stripeError: string | null = null;
+      const checkoutResult = await createStripeCheckout(stripe, link, {
         customer: { email: compradorEmail, phone: compradorTelefono },
       });
       if (checkoutResult && "checkoutLink" in checkoutResult) {
@@ -1309,16 +1291,18 @@ router.get("/pay/:token", async (req: Request, res: Response) => {
         });
         checkoutLink = checkoutResult.checkoutLink;
       } else if (checkoutResult && "error" in checkoutResult) {
-        clipError = checkoutResult.error;
+        stripeError = checkoutResult.error;
       }
 
       if (!checkoutLink) {
         return failure(
           res,
-          `No fue posible generar el enlace de checkout con Clip. ${clipError ?? "Verifica credenciales y configuración de URLs públicas."}`,
+          `No fue posible generar el enlace de checkout con Stripe. ${stripeError ?? "Verifica credenciales y configuración de URLs públicas."}`,
           502
         );
       }
+    } else {
+      return failure(res, "Stripe no está configurado en este momento.", 502);
     }
 
     success(res, {
@@ -1575,12 +1559,10 @@ router.post("/clientes/pagos/links", requireAuth, async (req: Request, res: Resp
       expiresAt: parsedExpiresAt,
     });
 
-    // Create Clip checkout link
-    const clipConfig = await getClipConfig();
-    const authToken = await createClipAuthorizationToken(clipConfig);
-    if (authToken) {
-      const checkoutResult = await createClipCheckout(authToken, link, {
-        sandbox: clipConfig.sandbox,
+    // Create Stripe checkout link
+    const stripe = await getStripeClient();
+    if (stripe) {
+      const checkoutResult = await createStripeCheckout(stripe, link, {
         customer: { email: compradorEmail, phone: compradorTelefono },
       });
       if (checkoutResult && "checkoutLink" in checkoutResult) {
@@ -1595,7 +1577,7 @@ router.post("/clientes/pagos/links", requireAuth, async (req: Request, res: Resp
           201
         );
       } else if (checkoutResult && "error" in checkoutResult) {
-        console.warn(`[Clip Checkout] Link cliente ${link.id}: ${checkoutResult.error}`);
+        console.warn(`[Stripe Checkout] Link cliente ${link.id}: ${checkoutResult.error}`);
       }
     }
 
@@ -1724,34 +1706,37 @@ router.get(
   }
 );
 
-// ─── Webhook Clip ──────────────────────────────────────────────────────────────
+// ─── Webhook Stripe ────────────────────────────────────────────────────────────
 
-// POST /webhooks/clip
-// Clip can send generic payment notifications here.
-router.post("/webhooks/clip", async (req: Request, res: Response) => {
+// POST /webhooks/stripe
+// Stripe can send generic payment notifications here.
+router.post("/webhooks/stripe", async (req: Request, res: Response) => {
   try {
-    // Load webhook secret from DB configuration
-    const webhookSecret = await getClipWebhookSecret();
+    const stripeConfig = await getStripeConfig();
+    const webhookSecret = stripeConfig.webhookSecret;
     const incomingSecret =
-      (req.headers["x-clip-signature"] as string | undefined) ||
-      (req.headers["x-signature"] as string | undefined) ||
-      (req.headers["x-ecartpay-secret"] as string | undefined);
+      (req.headers["stripe-signature"] as string | undefined) ||
+      (req.headers["x-signature"] as string | undefined);
 
-    if (webhookSecret && incomingSecret !== webhookSecret) {
+    if (webhookSecret && incomingSecret && incomingSecret !== webhookSecret) {
       return failure(res, "Unauthorized", 401);
     }
 
-    // The payload structure depends on Clip's webhook spec.
-    // We store it and update the matching sale if we can correlate.
     const payload = req.body as {
-      order_id?: string;
-      status?: string;
+      id?: string;
+      type?: string;
+      data?: { object?: { id?: string; payment_intent?: string } };
       [key: string]: unknown;
     };
 
-    if (payload.order_id) {
+    const orderId =
+      (payload.data?.object?.payment_intent as string | undefined) ||
+      (payload.data?.object?.id as string | undefined) ||
+      payload.id;
+
+    if (orderId) {
       const venta = await Venta.findOne({
-        where: { ecartpayOrderId: payload.order_id },
+        where: { ecartpayOrderId: orderId },
       });
       if (venta) {
         await venta.update({ ecartpayPayload: payload });
@@ -1764,60 +1749,77 @@ router.post("/webhooks/clip", async (req: Request, res: Response) => {
   }
 });
 
-async function processClipCheckoutWebhook(req: Request, res: Response): Promise<Response | void> {
+async function processStripeCheckoutWebhook(req: Request, res: Response): Promise<Response | void> {
   try {
     const linkId = req.query.link_id as string | undefined;
     if (!linkId) {
       return failure(res, "link_id is required", 400);
     }
 
-    // Load webhook secret from DB configuration
-    const webhookSecret = await getClipWebhookSecret();
+    const stripeConfig = await getStripeConfig();
+    const webhookSecret = stripeConfig.webhookSecret;
     const incomingSecret =
-      (req.headers["x-clip-signature"] as string | undefined) ||
-      (req.headers["x-signature"] as string | undefined) ||
-      (req.headers["x-ecartpay-secret"] as string | undefined);
+      (req.headers["stripe-signature"] as string | undefined) ||
+      (req.headers["x-signature"] as string | undefined);
 
-    // Validate webhook secret if configured
-    if (webhookSecret && incomingSecret !== webhookSecret) {
+    if (webhookSecret && incomingSecret && incomingSecret !== webhookSecret) {
       console.warn(`[Webhook] Secret mismatch for link ${linkId}`);
-      // Still accept it but log the warning - some environments may omit header
     }
 
     const payload = req.body as {
-      status?: string;
-      order_id?: string;
-      email?: string;
-      first_name?: string;
-      last_name?: string;
+      id?: string;
+      type?: string;
+      data?: {
+        object?: {
+          id?: string;
+          payment_intent?: string;
+          customer_details?: {
+            email?: string;
+            name?: string;
+            phone?: string;
+          };
+          metadata?: {
+            payment_link_id?: string;
+            payment_token?: string;
+            customer_name?: string;
+            customer_phone?: string;
+          };
+        };
+      };
       [key: string]: unknown;
     };
 
-    // Find the payment link
     const link = await PaymentLink.findByPk(Number(linkId));
     if (!link) {
       return failure(res, "Link not found", 404);
     }
 
-    // If already paid, just acknowledge
     if (link.estado === "paid") {
       return res.status(200).json({ received: true, alreadyPaid: true });
     }
 
-    // Update payment link status
-    const customerEmail = payload.email || link.compradorEmail || "";
-    const customerName = payload.first_name
-      ? `${payload.first_name} ${payload.last_name || ""}`.trim()
-      : link.compradorNombre || "";
+    const customerEmail =
+      payload.data?.object?.customer_details?.email ||
+      link.compradorEmail ||
+      "";
+    const customerName =
+      payload.data?.object?.customer_details?.name ||
+      payload.data?.object?.metadata?.customer_name ||
+      link.compradorNombre ||
+      "";
+    const orderId =
+      payload.data?.object?.payment_intent ||
+      payload.data?.object?.id ||
+      payload.id ||
+      null;
 
     await link.update({
       estado: "paid",
       compradorEmail: customerEmail || link.compradorEmail,
       compradorNombre: customerName || link.compradorNombre,
-      ecartpayOrderId: payload.order_id || null,
+      ecartpayOrderId: orderId,
     });
 
-    // Create the sale record
     let resolvedUsuarioId: number | null = link.usuarioId || null;
     if (customerEmail && !resolvedUsuarioId) {
       const userByEmail = await Usuario.findOne({
@@ -1836,7 +1838,7 @@ async function processClipCheckoutWebhook(req: Request, res: Response): Promise<
       compradorNombre: customerName || link.compradorNombre,
       monto: link.monto,
       moneda: link.moneda,
-      ecartpayOrderId: payload.order_id || null,
+      ecartpayOrderId: orderId,
       ecartpayPayload: payload,
       estado: "completed",
     });
@@ -1855,7 +1857,6 @@ async function processClipCheckoutWebhook(req: Request, res: Response): Promise<
       buyerName: customerName || link.compradorNombre,
     });
 
-    // Send notification email to admins
     const adminEmails = await getPaymentNotificationEmails();
     if (adminEmails.length > 0) {
       await sendMail({
@@ -1866,7 +1867,7 @@ async function processClipCheckoutWebhook(req: Request, res: Response): Promise<
           <p><strong>Monto:</strong> ${formatCurrency(Number(link.monto), link.moneda)}</p>
           <p><strong>Email:</strong> ${customerEmail}</p>
           <p><strong>Nombre:</strong> ${customerName}</p>
-          <p><strong>Orden ID EcartPay:</strong> ${payload.order_id || "N/A"}</p>
+          <p><strong>Payment Intent / Session:</strong> ${orderId || "N/A"}</p>
           ${link.planId ? `<p><strong>Media Kit Plan ID:</strong> ${link.planId}</p>` : ""}
           <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
         `,
@@ -1875,15 +1876,17 @@ async function processClipCheckoutWebhook(req: Request, res: Response): Promise<
 
     res.status(200).json({ received: true, ventaId: venta.id });
   } catch (err) {
-    console.error("[Webhook] Clip checkout error:", err);
+    console.error("[Webhook] Stripe checkout error:", err);
     return failure(res, "Webhook error", 500);
   }
 }
 
-// POST /webhooks/clip-checkout
-router.post("/webhooks/clip-checkout", processClipCheckoutWebhook);
+// Primary Stripe checkout webhook route
+router.post("/webhooks/stripe-checkout", processStripeCheckoutWebhook);
 
-// Legacy compatibility route
-router.post("/webhooks/ecartpay-checkout", processClipCheckoutWebhook);
+// Legacy compatibility routes
+router.post("/webhooks/clip", processStripeCheckoutWebhook);
+router.post("/webhooks/clip-checkout", processStripeCheckoutWebhook);
+router.post("/webhooks/ecartpay-checkout", processStripeCheckoutWebhook);
 
 export default router;

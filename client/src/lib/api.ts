@@ -1247,13 +1247,13 @@ export async function deletePaymentLink(token: string, id: number): Promise<void
   await parseResponse<unknown>(response);
 }
 
-export async function validateClipCredentials(token: string): Promise<{
+export async function validateStripeCredentials(token: string): Promise<{
   sandbox: boolean;
   hasPublicId: boolean;
   hasSecretKey: boolean;
   tokenGenerated: boolean;
 }> {
-  const response = await fetch(`${API_BASE_URL}/admin/pagos/clip/validate`, {
+  const response = await fetch(`${API_BASE_URL}/admin/pagos/stripe/validate`, {
     method: "GET",
     cache: "no-store",
     headers: authHeaders(token),

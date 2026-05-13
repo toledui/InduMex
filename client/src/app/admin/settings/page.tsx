@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Mail, Zap, Save, Server, Lock, User, AtSign, ShieldCheck, Globe, RefreshCw, CheckCircle2, AlertCircle, MessageSquare, CreditCard } from 'lucide-react';
-import { getConfig, updateConfig, testSmtpConfig, getAuthTokenFromCookie, validateClipCredentials } from '@/lib/api';
+import { getConfig, updateConfig, testSmtpConfig, getAuthTokenFromCookie, validateStripeCredentials } from '@/lib/api';
 
 const inputBase =
   'w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all duration-200 focus:border-[#F58634] focus:ring-1 focus:ring-[#F58634]/30';
@@ -76,10 +76,8 @@ export default function SettingsPage() {
 
   // ── EcartPay ──────────────────────────────────────────────────
   const [ecartpayForm, setEcartpayForm] = useState({
-    clip_api_key: '',
-    clip_secret_key: '',
-    clip_webhook_secret: '',
-    clip_sandbox: 'true',
+    stripe_secret_key: '',
+    stripe_webhook_secret: '',
   });
   const [isEcartpayLoading, setIsEcartpayLoading] = useState(true);
   const [isEcartpaySaving, setIsEcartpaySaving] = useState(false);
@@ -149,10 +147,8 @@ export default function SettingsPage() {
         });
 
         setEcartpayForm({
-          clip_api_key: cfg.clip_api_key ?? '',
-          clip_secret_key: cfg.clip_secret_key ?? '',
-          clip_webhook_secret: cfg.clip_webhook_secret ?? '',
-          clip_sandbox: cfg.clip_sandbox ?? 'true',
+          stripe_secret_key: cfg.stripe_secret_key ?? '',
+          stripe_webhook_secret: cfg.stripe_webhook_secret ?? '',
         });
       })
       .catch(() => { /* keep defaults */ })
@@ -257,12 +253,10 @@ export default function SettingsPage() {
     try {
       const token = getAuthTokenFromCookie() ?? '';
       await updateConfig(token, {
-        clip_api_key: ecartpayForm.clip_api_key.trim() || null,
-        clip_secret_key: ecartpayForm.clip_secret_key.trim() || null,
-        clip_webhook_secret: ecartpayForm.clip_webhook_secret.trim() || null,
-        clip_sandbox: ecartpayForm.clip_sandbox,
+        stripe_secret_key: ecartpayForm.stripe_secret_key.trim() || null,
+        stripe_webhook_secret: ecartpayForm.stripe_webhook_secret.trim() || null,
       });
-      setEcartpayResult({ ok: true, msg: 'Credenciales de Clip guardadas correctamente.' });
+      setEcartpayResult({ ok: true, msg: 'Credenciales de Stripe guardadas correctamente.' });
     } catch (err) {
       setEcartpayResult({ ok: false, msg: err instanceof Error ? err.message : 'Error al guardar' });
     } finally {
@@ -275,22 +269,22 @@ export default function SettingsPage() {
     setEcartpayResult(null);
     try {
       const token = getAuthTokenFromCookie() ?? '';
-      const result = await validateClipCredentials(token);
+      const result = await validateStripeCredentials(token);
       if (result.tokenGenerated) {
         setEcartpayResult({
           ok: true,
-          msg: `Conexión Clip OK (${result.sandbox ? 'Sandbox' : 'Producción'}). Token generado correctamente.`,
+          msg: 'Conexión Stripe OK. Credenciales válidas.',
         });
       } else {
         setEcartpayResult({
           ok: false,
-          msg: 'No se pudo generar token de Clip con las credenciales actuales.',
+          msg: 'No se pudo validar Stripe con las credenciales actuales.',
         });
       }
     } catch (err) {
       setEcartpayResult({
         ok: false,
-        msg: err instanceof Error ? err.message : 'Error al comprobar credenciales de Clip',
+        msg: err instanceof Error ? err.message : 'Error al comprobar credenciales de Stripe',
       });
     } finally {
       setIsEcartpayTesting(false);
@@ -991,18 +985,14 @@ export default function SettingsPage() {
               <CreditCard size={18} className="text-[#F58634]" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Clip — Pasarela de Pagos</h2>
-              <p className="text-xs text-white/30 mt-0.5">Credenciales para procesar pagos y generar links de cobro</p>
+              <h2 className="text-base font-semibold text-white">Stripe — Pasarela de Pagos</h2>
+              <p className="text-xs text-white/30 mt-0.5">Credenciales para Stripe Checkout y confirmación por webhook</p>
             </div>
           </div>
-          {!isEcartpayLoading && ecartpayForm.clip_api_key && (
-            <span className={`hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full border ${
-              ecartpayForm.clip_sandbox === 'true'
-                ? 'text-amber-400 bg-amber-400/10 border-amber-400/20'
-                : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${ecartpayForm.clip_sandbox === 'true' ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-              {ecartpayForm.clip_sandbox === 'true' ? 'Modo Sandbox' : 'Producción'}
+          {!isEcartpayLoading && ecartpayForm.stripe_secret_key && (
+            <span className="hidden sm:flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full border text-emerald-400 bg-emerald-400/10 border-emerald-400/20">
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-emerald-400" />
+              Configurado
             </span>
           )}
         </div>
@@ -1016,41 +1006,18 @@ export default function SettingsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <FieldGroup label="Modo" icon={ShieldCheck}>
-              <select
-                name="clip_sandbox"
-                value={ecartpayForm.clip_sandbox}
-                onChange={handleEcartpayChange}
-                className={selectBase}
-              >
-                <option value="true" className="bg-[#031c38] text-white">Sandbox (Pruebas)</option>
-                <option value="false" className="bg-[#031c38] text-white">Producción</option>
-              </select>
-            </FieldGroup>
-
-            <FieldGroup label="API Key" icon={User}>
-              <input
-                type="text"
-                name="clip_api_key"
-                value={ecartpayForm.clip_api_key}
-                onChange={handleEcartpayChange}
-                placeholder="5f2ab3c7-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                className={inputBase}
-              />
-            </FieldGroup>
-
             <div className="md:col-span-2">
               <FieldGroup label="Secret Key" icon={Lock}>
                 <input
                   type="password"
-                  name="clip_secret_key"
-                  value={ecartpayForm.clip_secret_key}
+                  name="stripe_secret_key"
+                  value={ecartpayForm.stripe_secret_key}
                   onChange={handleEcartpayChange}
-                  placeholder="••••••••••••••••••••••••••••••••"
+                  placeholder="sk_live_... / sk_test_..."
                   className={inputBase}
                 />
                 <p className="text-[11px] text-white/25 mt-1">
-                  Se usa en backend junto con API Key para generar Authorization Basic de Clip.
+                  Usa <strong>sk_live</strong> para producción o <strong>sk_test</strong> para pruebas.
                 </p>
               </FieldGroup>
             </div>
@@ -1059,14 +1026,14 @@ export default function SettingsPage() {
               <FieldGroup label="Webhook Secret" icon={ShieldCheck}>
                 <input
                   type="password"
-                  name="clip_webhook_secret"
-                  value={ecartpayForm.clip_webhook_secret}
+                  name="stripe_webhook_secret"
+                  value={ecartpayForm.stripe_webhook_secret}
                   onChange={handleEcartpayChange}
-                  placeholder="hook_••••••••••••••••••••••••••••••••"
+                  placeholder="whsec_..."
                   className={inputBase}
                 />
                 <p className="text-[11px] text-white/25 mt-1">
-                  Secret opcional para validar webhooks de Clip (si habilitas firma en tu configuración).
+                  Secret para verificar firmas de webhook de Stripe (opcional, recomendado).
                 </p>
               </FieldGroup>
             </div>
@@ -1074,9 +1041,9 @@ export default function SettingsPage() {
             <div className="md:col-span-2">
               <div className="rounded-xl border border-[#004AAD]/20 bg-[#004AAD]/5 px-4 py-3 text-xs text-[#004AAD]">
                 <strong>URL del Webhook:</strong>{' '}
-                <code className="font-mono">{typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname.replace('3000', '4000')}/api/v1/webhooks/clip-checkout` : '/api/v1/webhooks/clip-checkout'}</code>
+                <code className="font-mono">{typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname.replace('3000', '4000')}/api/v1/webhooks/stripe` : '/api/v1/webhooks/stripe'}</code>
                 <br />
-                <span className="text-white/25">Configura esta URL en el panel de Clip para recibir confirmaciones server-to-server.</span>
+                <span className="text-white/25">Configura esta URL en Stripe Dashboard para recibir confirmaciones server-to-server.</span>
               </div>
             </div>
           </div>

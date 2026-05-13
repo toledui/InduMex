@@ -77,20 +77,20 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
 
   useEffect(() => {
     if (!checkoutUrl) {
-      setError('No fue posible generar el enlace de checkout con Clip. Solicita un nuevo link al administrador.');
+      setError('No fue posible generar el enlace de checkout con Stripe. Solicita un nuevo link al administrador.');
     }
   }, [checkoutUrl]);
 
   useEffect(() => {
-    const clipStatus = searchParams.get('clip');
-    if (!clipStatus) return;
+    const stripeStatus = searchParams.get('stripe');
+    if (!stripeStatus) return;
 
-    if (clipStatus === 'error') {
-      setError('Clip devolvió el pago con error o cancelación. Intenta nuevamente.');
+    if (stripeStatus === 'cancel' || stripeStatus === 'error') {
+      setError('Stripe devolvió el pago con error o cancelación. Intenta nuevamente.');
       return;
     }
 
-    if (clipStatus !== 'success' || success || clipReturnHandled.current) {
+    if (stripeStatus !== 'success' || success || clipReturnHandled.current) {
       return;
     }
 
@@ -110,8 +110,10 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
           {
             email: link.compradorEmail ?? 'desconocido@indumex.blog',
             first_name: link.compradorNombre ?? undefined,
+            orderId: searchParams.get('session_id') ?? undefined,
             payload: {
-              provider: 'clip',
+              provider: 'stripe',
+              sessionId: searchParams.get('session_id') ?? undefined,
               returnQuery: Object.fromEntries(searchParams.entries()),
             },
           },
@@ -121,7 +123,7 @@ export default function PayCheckoutClient({ link, linkToken }: Props) {
         setSuccess(true);
       } catch (err) {
         clipReturnHandled.current = false; // allow retry
-        setError(err instanceof Error ? err.message : 'No se pudo confirmar el pago devuelto por Clip.');
+        setError(err instanceof Error ? err.message : 'No se pudo confirmar el pago devuelto por Stripe.');
       } finally {
         setProcessingReturn(false);
       }
