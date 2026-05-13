@@ -62,7 +62,11 @@ async function createStripeCheckout(
     customer?: { name?: string | null; email?: string | null; phone?: string | null };
   }
 ): Promise<{ checkoutLink: string; checkoutId: string } | { error: string } | null> {
-  const frontendBaseUrl = process.env.FRONTEND_BASE_URL ?? "http://localhost:3000";
+  const frontendBaseUrl =
+    process.env.FRONTEND_BASE_URL ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_FRONTEND_URL ??
+    "http://localhost:3000";
   const payPageUrl = `${frontendBaseUrl}/pagar/${paymentLink.token}`;
 
   const normalizedCurrency = (paymentLink.moneda || "MXN").toLowerCase();
