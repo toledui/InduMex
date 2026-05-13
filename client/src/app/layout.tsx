@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
 import SiteChrome from "@/components/SiteChrome";
 import ChatWidget from "@/components/ChatWidget";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import "./globals.css";
 
 const OG_IMAGE_DEFAULT = {
@@ -57,6 +58,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#004AAD" />
       </head>
       <body className="min-h-full bg-[#021325] text-slate-200 font-['Space_Grotesk'] selection:bg-[#F58634] selection:text-white overflow-x-hidden">
+        <GoogleAnalytics />
         <SiteChrome>{children}</SiteChrome>
         <ChatWidget />
       </body>
