@@ -19,6 +19,7 @@ import {
   Bell,
   CircleUserRound,
   LogOut,
+  MessageSquare,
 } from 'lucide-react';
 import { CreditCard, LayoutGrid, BadgeCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -49,6 +50,7 @@ const navItems = [
 
   // ── Configuración
   { href: '/admin/settings', label: 'Configuración', icon: Settings, group: 'configuracion' },
+  { href: '/admin/settings/chat', label: 'Chat Widget', icon: MessageSquare, group: 'configuracion' },
 ];
 
 const sectionLabels: Record<string, string> = {
@@ -75,6 +77,7 @@ function getBreadcrumbs(pathname: string): string[] {
     anuncios: 'Anuncios',
     'empresas-lectoras': 'Empresas Lectoras',
     settings: 'Configuración',
+    chat: 'Chat Widget',
   };
   return ['Admin', ...segments.map((s) => labelMap[s] ?? s.charAt(0).toUpperCase() + s.slice(1))];
 }
@@ -89,7 +92,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     monetizacion: true,
     audiencia: true,
     sitioweb: true,
-    configuracion: false,
+    configuracion: true,
   });
 
   useEffect(() => {
