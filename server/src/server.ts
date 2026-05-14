@@ -34,6 +34,7 @@ import "./models/MarketplaceProducto";
 import "./models/MarketplaceProductoCampoPersonalizado";
 import "./models/ChatConfig";
 import { procesarRenovacionesAutomaticas } from "./services/suscripcionRenovacionService";
+import suscriptorSyncService from "./services/suscriptorSyncService";
 
 dotenv.config();
 
@@ -94,6 +95,22 @@ async function startServer(): Promise<void> {
     // Luego cada 24 horas (86400000 ms)
     setInterval(procesarRenovacionesAutomaticas, 24 * 60 * 60 * 1000);
     console.log("[Suscripciones] Renovación automática configurada cada 24 horas");
+
+    // Revisar sincronización de suscriptores cada hora con lotes pequeños
+    setInterval(async () => {
+      try {
+        const result = await suscriptorSyncService.runAutomaticTick();
+        if (result) {
+          console.log(
+            `[Suscriptores] Sync auto ${result.provider}: procesados=${result.processed}, sincronizados=${result.synced}, errores=${result.failed}, pendientes=${result.remaining}`
+          );
+        }
+      } catch (error) {
+        console.error("[Suscriptores] Error en sincronización automática:", error);
+      }
+    }, 60 * 60 * 1000);
+
+    console.log("[Suscriptores] Sincronización automática revisada cada hora");
   } catch (error) {
     console.error("No se pudo iniciar el servidor:", error);
     process.exit(1);

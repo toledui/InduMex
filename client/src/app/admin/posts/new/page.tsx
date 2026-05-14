@@ -174,18 +174,18 @@ export default function NewPostPage() {
   const selectedCatNames = categories.filter(c => article.categoryIds.includes(c.id)).map(c => c.name);
 
   return (
-    <div className="min-h-screen bg-[#010b17] text-white p-8">
+    <div className="min-h-screen bg-[#010b17] text-white p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-black tracking-tight" style={{ fontFamily: 'Space_Grotesk' }}>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight" style={{ fontFamily: 'Space_Grotesk' }}>
           Crear Nuevo Artículo
         </h1>
         <p className="text-gray-400 mt-2">Añade contenido nuevo al blog de InduMex</p>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         {/* COLUMNA IZQUIERDA 8/12 */}
-        <div className="col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-8">
 
           {/* Título */}
           <div>
@@ -194,7 +194,7 @@ export default function NewPostPage() {
               placeholder="Título del artículo..."
               value={article.title}
               onChange={(e) => setArticle(a => ({ ...a, title: e.target.value }))}
-              className="w-full bg-transparent text-5xl font-black placeholder-gray-600 focus:outline-none focus:border-b-2 focus:border-[#004AAD] pb-4 transition-colors"
+              className="w-full bg-transparent text-3xl md:text-5xl font-black placeholder-gray-600 focus:outline-none focus:border-b-2 focus:border-[#004AAD] pb-4 transition-colors"
               style={{ fontFamily: 'Space_Grotesk' }}
             />
           </div>
@@ -214,7 +214,7 @@ export default function NewPostPage() {
 
           {/* Editor */}
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
               <label className="text-sm font-semibold text-gray-300">Contenido del Artículo</label>
               {/* Toggle Visual / HTML */}
               <div className="flex items-center bg-[#1a1a1a] border border-white/10 rounded-lg p-1 gap-1">
@@ -235,7 +235,7 @@ export default function NewPostPage() {
 
             {editorMode === 'visual' ? (
               <>
-                <div className="bg-[#031c38] border border-white/10 rounded-t-lg p-3 flex items-center gap-1 flex-wrap border-b border-white/10">
+                <div className="bg-[#031c38] border border-white/10 rounded-t-lg p-3 flex items-center gap-1 flex-wrap border-b">
                   {([Bold, Italic, Link, ImageIcon, List] as React.ElementType[]).map((Icon, i) => (
                     <button key={i} className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-300 hover:text-white">
                       <Icon size={16} />
@@ -274,7 +274,7 @@ export default function NewPostPage() {
         </div>
 
         {/* COLUMNA DERECHA 4/12 */}
-        <div className="col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
 
           {/* Publicación */}
           <div className="bg-[#031c38] border border-white/10 rounded-xl p-6 hover:border-gray-700 transition-colors">

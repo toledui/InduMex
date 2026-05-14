@@ -60,6 +60,7 @@ type ProviderForm = {
   website: string;
   phone: string;
   whatsapp: string;
+  email: string;
   socialNetworks: Array<{ nombre: string; url: string }>;
   isActive: boolean;
 };
@@ -81,6 +82,7 @@ const emptyProviderForm: ProviderForm = {
   website: '',
   phone: '',
   whatsapp: '',
+  email: '',
   socialNetworks: [],
   isActive: true,
 };
@@ -134,6 +136,7 @@ function mapProviderToForm(provider: PublicProvider): ProviderForm {
     website: stripWebsiteProtocol(provider.website),
     phone: provider.phone,
     whatsapp: provider.whatsapp,
+    email: provider.email,
     socialNetworks: provider.socialNetworks?.length
       ? provider.socialNetworks.map((social) => ({
           nombre: social.nombre,
@@ -487,6 +490,7 @@ export default function MiCuentaClient() {
       website: normalizeWebsite(providerForm.website),
       phone: providerForm.phone,
       whatsapp: providerForm.whatsapp,
+      email: providerForm.email.trim(),
       socialNetworks: providerForm.socialNetworks
         .map((item) => ({
           nombre: item.nombre.trim(),
@@ -1261,6 +1265,13 @@ export default function MiCuentaClient() {
                         onChange={(e) => setProviderForm((prev) => ({ ...prev, whatsapp: e.target.value }))}
                       />
                       <input
+                        type="email"
+                        placeholder="Correo electrónico"
+                        className="md:col-span-2 rounded-lg border border-white/15 bg-black/20 px-4 py-3 text-sm text-white"
+                        value={providerForm.email}
+                        onChange={(e) => setProviderForm((prev) => ({ ...prev, email: e.target.value }))}
+                      />
+                      <input
                         type="text"
                         required
                         placeholder="Ciudad"
@@ -1366,7 +1377,7 @@ export default function MiCuentaClient() {
 
                     <div className="mt-4 space-y-3">
                       {providerForm.socialNetworks.map((social, index) => (
-                        <div key={`${index}-${social.nombre}-${social.url}`} className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+                        <div key={index} className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
                           <input
                             type="text"
                             placeholder="Nombre de la red"
@@ -1621,7 +1632,8 @@ export default function MiCuentaClient() {
                         </div>
                       ) : (
                         <div className="mt-3 overflow-hidden rounded-2xl border border-white/10">
-                          <table className="min-w-full divide-y divide-white/10 text-sm">
+                          <div className="overflow-x-auto">
+                            <table className="min-w-190 divide-y divide-white/10 text-sm">
                             <thead className="bg-black/30 text-xs uppercase tracking-widest text-slate-400">
                               <tr>
                                 <th className="px-4 py-3 text-left">Link</th>
@@ -1669,7 +1681,8 @@ export default function MiCuentaClient() {
                                 );
                               })}
                             </tbody>
-                          </table>
+                            </table>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1682,7 +1695,8 @@ export default function MiCuentaClient() {
                         </div>
                       ) : (
                         <div className="mt-3 overflow-hidden rounded-2xl border border-white/10">
-                          <table className="min-w-full divide-y divide-white/10 text-sm">
+                          <div className="overflow-x-auto">
+                            <table className="min-w-190 divide-y divide-white/10 text-sm">
                             <thead className="bg-black/30 text-xs uppercase tracking-widest text-slate-400">
                               <tr>
                                 <th className="px-4 py-3 text-left">Folio</th>
@@ -1721,7 +1735,8 @@ export default function MiCuentaClient() {
                                 </tr>
                               ))}
                             </tbody>
-                          </table>
+                            </table>
+                          </div>
                         </div>
                       )}
                     </div>

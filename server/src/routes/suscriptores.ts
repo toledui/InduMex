@@ -9,5 +9,14 @@ router.post("/subscribers/unsubscribe", (req, res) => suscriptoresController.uns
 router.get("/subscribers", requireAuth, requireAdminRole, (req, res) =>
   suscriptoresController.list(req, res)
 );
+router.get("/subscribers/sync/status", requireAuth, requireAdminRole, (req, res) =>
+  suscriptoresController.syncStatus(req, res)
+);
+router.post("/subscribers/sync/run", requireAuth, requireAdminRole, (req, res) =>
+  suscriptoresController.runSync(req, res)
+);
+router.post("/subscribers/sync/auto", requireAuth, requireAdminRole, (req, res) =>
+  suscriptoresController.toggleAutoSync(req, res)
+);
 
 export default router;

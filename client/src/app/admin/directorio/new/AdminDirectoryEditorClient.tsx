@@ -277,8 +277,8 @@ function ProviderEditorForm({
       {error && <p className="mb-6 rounded-xl border border-red-600/30 bg-red-950/30 px-4 py-3 text-sm text-red-300">{error}</p>}
       {message && <p className="mb-6 rounded-xl border border-emerald-600/30 bg-emerald-950/30 px-4 py-3 text-sm text-emerald-300">{message}</p>}
 
-      <form id="provider-editor-form" onSubmit={handleSubmit} className="grid grid-cols-12 gap-8">
-        <div className="col-span-12 space-y-8 lg:col-span-8">
+      <form id="provider-editor-form" onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+        <div className="space-y-8 lg:col-span-8">
           <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 text-lg font-bold text-white">Identidad corporativa</h2>
             <div className="grid gap-5 md:grid-cols-2">
@@ -340,7 +340,7 @@ function ProviderEditorForm({
                 );
               })}
             </div>
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <input className="flex-1 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white" placeholder="Otro sector" value={form.otherSector} onChange={(e) => updateField('otherSector', e.target.value)} />
               <button type="button" onClick={addCustomSector} className="rounded-xl border border-[#004AAD]/30 bg-[#004AAD]/10 px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#004AAD]">Agregar</button>
             </div>
@@ -373,7 +373,7 @@ function ProviderEditorForm({
           </section>
         </div>
 
-        <div className="col-span-12 space-y-8 lg:col-span-4">
+        <div className="space-y-8 lg:col-span-4">
           <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-white"><ListFilter className="h-5 w-5 text-[#F58634]" /> Clasificación</h2>
             <div className="space-y-3">
@@ -489,7 +489,7 @@ export default function AdminDirectoryEditorClient() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-8 text-white">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 text-white">
       <div className="mb-8 flex flex-col gap-4 border-b border-white/10 pb-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-[#F58634]">
@@ -503,7 +503,7 @@ export default function AdminDirectoryEditorClient() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full lg:w-auto flex-wrap items-center gap-3">
           <Link
             href="/admin/directorio"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-all hover:border-white/20 hover:text-white"
@@ -514,7 +514,7 @@ export default function AdminDirectoryEditorClient() {
           <button
             type="submit"
             form="provider-editor-form"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#F58634] px-5 py-2.5 text-sm font-bold text-black transition-all hover:bg-[#e5762a] disabled:opacity-50"
+            className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-xl bg-[#F58634] px-5 py-2.5 text-sm font-bold text-black transition-all hover:bg-[#e5762a] disabled:opacity-50"
           >
             <Save size={16} />
             {editingProvider ? 'Guardar cambios' : 'Crear proveedor'}

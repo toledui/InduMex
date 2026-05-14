@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Award, ChevronRight, Filter, Globe2, MapPin, Search, ShieldCheck, Star, X } from 'lucide-react';
+import { Award, ChevronRight, Filter, Globe2, Mail, MapPin, Search, ShieldCheck, Star, X } from 'lucide-react';
 
 type ModalTab = 'sector' | 'ubicacion' | 'tipo';
 
@@ -114,6 +114,12 @@ function ProviderCard({ provider }: { provider: B2BProvider }) {
           <Globe2 className="h-4 w-4 text-[#004AAD]" />
           <a href={provider.contact.website} target="_blank" rel="noopener noreferrer" className="hover:text-white">
             {provider.contact.website.replace(/^https?:\/\//, '')}
+          </a>
+        </div>
+        <div className="flex items-center gap-2">
+          <Mail className="h-4 w-4 text-[#F58634]" />
+          <a href={`mailto:${provider.contact.email}`} className="hover:text-white">
+            {provider.contact.email}
           </a>
         </div>
       </div>

@@ -229,7 +229,7 @@ export default function AdminUsuariosPage() {
               className="w-full px-3 py-2.5 rounded-xl bg-black/20 border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-[#F58634] focus:ring-1 focus:ring-[#F58634]/30"
             />
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <select
                 value={form.rol}
                 onChange={(e) => onFieldChange('rol', e.target.value as 'admin' | 'editor')}
@@ -248,7 +248,7 @@ export default function AdminUsuariosPage() {
               </select>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
               <button
                 type="submit"
                 disabled={loading}
@@ -271,13 +271,13 @@ export default function AdminUsuariosPage() {
         </article>
 
         <article className="rounded-2xl border border-white/10 bg-[#021325] overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+          <div className="px-5 py-4 border-b border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h2 className="text-sm uppercase tracking-widest text-white/55 font-semibold">Listado de usuarios</h2>
             <span className="text-xs text-white/40">{users.length} registros</span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-190 text-sm">
               <thead className="text-white/40 border-b border-white/10">
                 <tr>
                   <th className="text-left px-5 py-3 font-medium">Nombre</th>

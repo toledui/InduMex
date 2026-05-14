@@ -547,12 +547,12 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
 
       <div className="grid gap-6">
         <section className="rounded-2xl border border-white/10 bg-[#021325] p-5">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h3 className="font-['Rubik'] text-xl font-bold text-white">Productos</h3>
               <p className="mt-1 text-sm text-white/50">Alta manual con categoría, SKU, estado, imágenes y campos personalizados.</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={openCategoryModal}
@@ -878,7 +878,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
             ) : (
               products.map((product) => (
                 <article key={product.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-sm font-semibold text-white">{product.nombre}</p>
@@ -908,7 +908,7 @@ export default function MarketplaceManager({ token, perfil, suscripcion }: Marke
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
                       <button
                         type="button"
                         onClick={() => handleEditProduct(product)}

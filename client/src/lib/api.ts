@@ -64,6 +64,37 @@ export type Subscriber = {
   updatedAt: string;
 };
 
+export type SubscriberSyncProvider = "local" | "mailrelay" | "mailchimp";
+
+export type SubscriberSyncStatus = {
+  activeProvider: SubscriberSyncProvider;
+  enabledAccounts: {
+    mailrelay: boolean;
+    mailchimp: boolean;
+  };
+  providerReady: boolean;
+  autoSyncEnabled: boolean;
+  hourlyBatchSize: number;
+  pending: {
+    mailrelay: number;
+    mailchimp: number;
+    activeProvider: number;
+  };
+};
+
+export type SubscriberSyncRunResult = {
+  provider: Exclude<SubscriberSyncProvider, "local">;
+  source: "manual" | "auto";
+  processed: number;
+  synced: number;
+  failed: number;
+  remaining: number;
+  errors: Array<{
+    email: string;
+    reason: string;
+  }>;
+};
+
 async function parseResponse<T>(response: Response): Promise<T> {
   const payload = (await response.json()) as ApiResponse<T>;
 
@@ -868,7 +899,7 @@ export async function deleteAdminMarketplacePlan(token: string, id: number): Pro
 
 export async function createMyProviderProfile(
   token: string,
-  payload: Omit<PublicProvider, "id" | "tier" | "slug" | "email" | "isActive">
+  payload: Omit<PublicProvider, "id" | "tier" | "slug" | "isActive">
 ): Promise<PublicProvider> {
   const response = await fetch(`${API_BASE_URL}/proveedores/mi-perfil`, {
     method: "POST",
@@ -884,7 +915,7 @@ export async function createMyProviderProfile(
 
 export async function updateMyProviderProfile(
   token: string,
-  payload: Partial<Omit<PublicProvider, "id" | "tier" | "slug" | "email">>
+  payload: Partial<Omit<PublicProvider, "id" | "tier" | "slug">>
 ): Promise<PublicProvider> {
   const response = await fetch(`${API_BASE_URL}/proveedores/mi-perfil`, {
     method: "PUT",
@@ -1050,6 +1081,56 @@ export async function getSubscribers(token: string, emailQuery?: string): Promis
   });
 
   return parseResponse<Subscriber[]>(response);
+}
+
+export async function getSubscriberSyncStatus(token: string): Promise<SubscriberSyncStatus> {
+  const response = await fetch(`${API_BASE_URL}/subscribers/sync/status`, {
+    method: "GET",
+    cache: "no-store",
+    headers: {
+      ...authHeaders(token),
+    },
+  });
+
+  return parseResponse<SubscriberSyncStatus>(response);
+}
+
+export async function runSubscriberSync(
+  token: string,
+  payload?: {
+    provider?: "mailrelay" | "mailchimp" | "active";
+    limit?: number;
+  }
+): Promise<SubscriberSyncRunResult> {
+  const response = await fetch(`${API_BASE_URL}/subscribers/sync/run`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload ?? {}),
+  });
+
+  return parseResponse<SubscriberSyncRunResult>(response);
+}
+
+export async function setSubscriberAutoSync(
+  token: string,
+  payload: {
+    enabled: boolean;
+    batchSize?: number;
+  }
+): Promise<SubscriberSyncStatus> {
+  const response = await fetch(`${API_BASE_URL}/subscribers/sync/auto`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return parseResponse<SubscriberSyncStatus>(response);
 }
 
 // ─── EcartPay Types ──────────────────────────────────────────────────────────

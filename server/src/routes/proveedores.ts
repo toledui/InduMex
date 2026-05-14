@@ -266,6 +266,7 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
       state,
       country,
       website,
+      email,
       phone,
       whatsapp,
     } = req.body ?? {};
@@ -275,6 +276,7 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
     }
 
     const slug = await generateUniqueSlug(String(name), userId);
+    const normalizedProviderEmail = String(email ?? userEmail).trim().toLowerCase();
 
     const provider = await Proveedor.create({
       usuarioId: userId,
@@ -291,7 +293,7 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
       state: String(state).trim(),
       country: String(country ?? "México").trim(),
       website: String(website).trim(),
-      email: userEmail,
+      email: normalizedProviderEmail,
       phone: String(phone ?? "").trim(),
       whatsapp: String(whatsapp ?? "").trim(),
       isActive: true,
@@ -299,7 +301,7 @@ router.post("/proveedores/mi-perfil", requireAuth, async (req, res) => {
 
     try {
       await suscriptorService.subscribe({
-        email: userEmail,
+        email: normalizedProviderEmail,
         nombre: String(name).trim(),
         telefono: String(phone ?? "").trim(),
         empresa: String(name).trim(),
@@ -348,6 +350,7 @@ router.put("/proveedores/mi-perfil", requireAuth, async (req, res) => {
       state,
       country,
       website,
+      email,
       phone,
       whatsapp,
       isActive,
@@ -371,13 +374,16 @@ router.put("/proveedores/mi-perfil", requireAuth, async (req, res) => {
     if (state !== undefined) provider.set("state", String(state).trim());
     if (country !== undefined) provider.set("country", String(country).trim() || "México");
     if (website !== undefined) provider.set("website", String(website).trim());
+    if (email !== undefined) {
+      const normalizedProviderEmail = String(email).trim().toLowerCase();
+      provider.set("email", normalizedProviderEmail || userEmail);
+    }
     if (phone !== undefined) provider.set("phone", String(phone).trim());
     if (whatsapp !== undefined) provider.set("whatsapp", String(whatsapp).trim());
     if (typeof isActive === "boolean") provider.set("isActive", isActive);
 
     // Siempre forzar tier basic para cuentas cliente.
     provider.set("tier", "basic");
-    provider.set("email", userEmail);
 
     await provider.save();
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import suscriptorService from "../services/suscriptorService";
+import suscriptorSyncService from "../services/suscriptorSyncService";
 import { failure, success } from "../utils/response";
 
 class SuscriptoresController {
@@ -61,6 +62,54 @@ class SuscriptoresController {
       const message = error instanceof Error ? error.message : "Error al cancelar suscripción.";
       const status = message === "No se encontró el suscriptor." ? 404 : 400;
       return failure(res, message, status);
+    }
+  }
+
+  async syncStatus(_req: Request, res: Response): Promise<Response> {
+    try {
+      const data = await suscriptorSyncService.getStatus();
+      return success(res, data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error al obtener estado de sincronización.";
+      return failure(res, message, 500);
+    }
+  }
+
+  async runSync(req: Request, res: Response): Promise<Response> {
+    try {
+      const { provider, limit } = req.body as {
+        provider?: "mailrelay" | "mailchimp" | "active";
+        limit?: number;
+      };
+
+      const data = await suscriptorSyncService.runManualSync({
+        provider,
+        limit,
+      });
+
+      return success(res, data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error al ejecutar sincronización.";
+      return failure(res, message, 400);
+    }
+  }
+
+  async toggleAutoSync(req: Request, res: Response): Promise<Response> {
+    try {
+      const { enabled, batchSize } = req.body as {
+        enabled?: boolean;
+        batchSize?: number;
+      };
+
+      if (typeof enabled !== "boolean") {
+        return failure(res, "El campo enabled es obligatorio y debe ser boolean.", 422);
+      }
+
+      const data = await suscriptorSyncService.setAutoSync(enabled, batchSize);
+      return success(res, data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Error al actualizar sincronización automática.";
+      return failure(res, message, 400);
     }
   }
 }

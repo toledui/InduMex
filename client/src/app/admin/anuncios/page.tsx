@@ -164,7 +164,7 @@ export default function AdminAnunciosPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-start sm:items-center gap-3">
         <Megaphone className="h-7 w-7 text-[#F58634]" />
         <div>
           <h1 className="text-2xl font-bold text-white font-['Space_Grotesk']">Gestión de Anuncios</h1>
@@ -181,7 +181,7 @@ export default function AdminAnunciosPage() {
       )}
 
       {/* Form */}
-      <section className="rounded-2xl border border-white/10 bg-[#031c38] p-6">
+      <section className="rounded-2xl border border-white/10 bg-[#031c38] p-4 sm:p-6">
         <h2 className="text-lg font-bold text-white mb-6 font-['Space_Grotesk']">
           {editingId !== null ? 'Editar Anuncio' : 'Crear Nuevo Anuncio'}
         </h2>
@@ -339,7 +339,7 @@ export default function AdminAnunciosPage() {
           </div>
 
           {/* Buttons */}
-          <div className="md:col-span-2 flex gap-3 pt-2">
+          <div className="md:col-span-2 flex flex-col sm:flex-row gap-3 pt-2">
             <button
               type="submit"
               disabled={loading}
@@ -392,10 +392,10 @@ export default function AdminAnunciosPage() {
             {filteredAds.map((ad, i) => (
               <li
                 key={ad.id}
-                className={`flex items-start gap-4 p-5 ${i !== 0 ? 'border-t border-white/5' : ''} hover:bg-white/2 transition-colors`}
+                className={`flex flex-col sm:flex-row items-start gap-4 p-4 sm:p-5 ${i !== 0 ? 'border-t border-white/5' : ''} hover:bg-white/2 transition-colors`}
               >
                 {/* Image preview */}
-                <div className="relative h-16 w-24 shrink-0 rounded-lg overflow-hidden bg-[#1a1a1a] border border-white/10">
+                <div className="relative h-16 w-full sm:w-24 shrink-0 rounded-lg overflow-hidden bg-[#1a1a1a] border border-white/10">
                   {ad.imagen_url ? (
                     <Image src={ad.imagen_url} alt={ad.titulo} fill className="object-cover" />
                   ) : (
@@ -437,7 +437,7 @@ export default function AdminAnunciosPage() {
                 />
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   <button
                     onClick={() => handleEdit(ad)}
                     className="rounded-lg p-2 text-gray-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors"

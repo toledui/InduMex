@@ -283,7 +283,7 @@ export default function PagosPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Pagos y Ventas</h1>
           <p className="mt-1 text-sm text-white/40">
@@ -294,7 +294,7 @@ export default function PagosPage() {
           <button
             type="button"
             onClick={openForm}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] transition-all"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] transition-all"
           >
             <Plus size={16} />
             Nuevo Link
@@ -322,8 +322,8 @@ export default function PagosPage() {
 
       {/* Create form */}
       {showForm && (
-        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-6 space-y-5">
-          <div className="flex items-center justify-between">
+        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-4 sm:p-6 space-y-5">
+          <div className="flex items-start justify-between gap-3">
             <h2 className="text-base font-bold text-white">{editingLink ? `Editar Link #${editingLink.id}` : 'Nuevo Link de Pago'}</h2>
             <button type="button" onClick={closeForm} className="text-white/40 hover:text-white transition-colors">
               <X size={18} />
@@ -338,7 +338,7 @@ export default function PagosPage() {
               </div>
               <div>
                 <p className="text-xs text-white/30 uppercase tracking-widest mb-2">URL de pago generada</p>
-                <div className="flex items-center gap-3 bg-black/30 border border-white/10 rounded-xl px-4 py-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-black/30 border border-white/10 rounded-xl px-4 py-3">
                   <code className="flex-1 text-sm text-white/70 break-all">{payUrl(createdToken)}</code>
                   <CopyButton text={payUrl(createdToken)} />
                 </div>
@@ -499,7 +499,7 @@ export default function PagosPage() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-2 border-t border-white/5">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2 border-t border-white/5">
                 <button type="button" onClick={closeForm} className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white/50 border border-white/10 hover:text-white hover:border-white/20 transition-all">
                   Cancelar
                 </button>
@@ -519,21 +519,23 @@ export default function PagosPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10 gap-1">
-        {(['links', 'ventas'] as Tab[]).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={`px-5 py-2.5 text-sm font-semibold capitalize border-b-2 -mb-px transition-all ${
-              tab === t
-                ? 'border-[#F58634] text-[#F58634]'
-                : 'border-transparent text-white/40 hover:text-white/60'
-            }`}
-          >
-            {t === 'links' ? 'Links de Pago' : 'Historial de Ventas'}
-          </button>
-        ))}
+      <div className="overflow-x-auto border-b border-white/10">
+        <div className="flex gap-1 min-w-max">
+          {(['links', 'ventas'] as Tab[]).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              className={`px-4 sm:px-5 py-2.5 text-sm font-semibold capitalize border-b-2 -mb-px transition-all whitespace-nowrap ${
+                tab === t
+                  ? 'border-[#F58634] text-[#F58634]'
+                  : 'border-transparent text-white/40 hover:text-white/60'
+              }`}
+            >
+              {t === 'links' ? 'Links de Pago' : 'Historial de Ventas'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
@@ -548,7 +550,7 @@ export default function PagosPage() {
           <p className="text-sm text-white/30 py-6">No hay links creados aún.</p>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#031c38]">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-220 text-sm">
               <thead className="border-b border-white/5">
                 <tr className="text-left text-[11px] uppercase tracking-widest text-white/25">
                   <th className="px-5 py-3">Token</th>
@@ -625,7 +627,7 @@ export default function PagosPage() {
           <p className="text-sm text-white/30 py-6">No hay ventas registradas aún.</p>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#031c38]">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-190 text-sm">
               <thead className="border-b border-white/5">
                 <tr className="text-left text-[11px] uppercase tracking-widest text-white/25">
                   <th className="px-5 py-3">#</th>

@@ -23,6 +23,10 @@ class SuscriptorRepository {
     return Suscriptor.findAll({ order: [["createdAt", "DESC"]] });
   }
 
+  private getSyncField(provider: "mailrelay" | "mailchimp"): "syncMailrelay" | "syncMailchimp" {
+    return provider === "mailrelay" ? "syncMailrelay" : "syncMailchimp";
+  }
+
   async findByEmail(email: string): Promise<Suscriptor | null> {
     return Suscriptor.findOne({ where: { email } });
   }
@@ -57,6 +61,54 @@ class SuscriptorRepository {
         },
       },
       order: [["createdAt", "DESC"]],
+    });
+  }
+
+  async findPendingForProvider(
+    provider: "mailrelay" | "mailchimp",
+    limit: number
+  ): Promise<Suscriptor[]> {
+    const syncField = this.getSyncField(provider);
+    return Suscriptor.findAll({
+      where: {
+        estatus: "activo",
+        [syncField]: {
+          [Op.in]: ["pendiente", "error"],
+        },
+      },
+      order: [["createdAt", "ASC"]],
+      limit,
+    });
+  }
+
+  async countPendingForProvider(provider: "mailrelay" | "mailchimp"): Promise<number> {
+    const syncField = this.getSyncField(provider);
+    return Suscriptor.count({
+      where: {
+        estatus: "activo",
+        [syncField]: {
+          [Op.in]: ["pendiente", "error"],
+        },
+      },
+    });
+  }
+
+  async updateSyncStatus(
+    id: number,
+    provider: "mailrelay" | "mailchimp",
+    status: SyncStatus,
+    notas?: string | null
+  ): Promise<void> {
+    const syncField = this.getSyncField(provider);
+    const payload: Record<string, unknown> = {
+      proveedorPreferido: provider,
+      notas: notas ?? null,
+    };
+
+    payload[syncField] = status;
+
+    await Suscriptor.update(payload, {
+      where: { id },
     });
   }
 }

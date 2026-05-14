@@ -197,7 +197,7 @@ export default function AdminDirectoryPage() {
         ) : (
           <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-white/10 text-left text-sm">
+              <table className="min-w-230 divide-y divide-white/10 text-left text-sm">
                 <thead className="bg-black/30 text-xs uppercase tracking-[0.2em] text-white/35">
                   <tr>
                     <th className="px-4 py-3 font-semibold">Proveedor</th>

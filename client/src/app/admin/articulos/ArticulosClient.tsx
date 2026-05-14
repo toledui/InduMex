@@ -92,117 +92,121 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
       {/* Tabla de Artículos */}
       {paginatedPosts.length > 0 ? (
         <div className="bg-[#031c38] border border-white/10 rounded-lg overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10 text-sm font-semibold text-gray-300">
-            <div className="col-span-5">Título</div>
-            <div className="col-span-2">Categoría</div>
-            <div className="col-span-2">Publicado</div>
-            <div className="col-span-3 text-right">Acciones</div>
-          </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-225">
+              {/* Header */}
+              <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10 text-sm font-semibold text-gray-300">
+                <div className="col-span-5">Título</div>
+                <div className="col-span-2">Categoría</div>
+                <div className="col-span-2">Publicado</div>
+                <div className="col-span-3 text-right">Acciones</div>
+              </div>
 
-          {/* Rows */}
-          {paginatedPosts.map((post) => {
-            const imageUrl = getImageUrl(post);
-            const category = getPrimaryCategory(post);
+              {/* Rows */}
+              {paginatedPosts.map((post) => {
+                const imageUrl = getImageUrl(post);
+                const category = getPrimaryCategory(post);
 
-            return (
-              <div
-                key={post.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10/50 hover:bg-white/5 transition-colors items-center"
-              >
-                {/* Título con imagen */}
-                <div className="col-span-5 flex items-center gap-3">
-                  {imageUrl ? (
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
-                      <Image
-                        src={imageUrl}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs text-gray-400">IMG</span>
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white truncate">{post.title}</p>
-                    <p className="text-xs text-gray-400">/{post.slug}</p>
-                  </div>
-                </div>
-
-                {/* Categoría */}
-                <div className="col-span-2">
-                  <span className="text-sm text-blue-400 bg-blue-500/10 px-3 py-1 rounded-lg">
-                    {category}
-                  </span>
-                </div>
-
-                {/* Fecha */}
-                <div className="col-span-2">
-                  <p className="text-sm text-gray-400">{formatDate(post.date)}</p>
-                </div>
-
-                {/* Acciones */}
-                <div className="col-span-3 flex items-center justify-end gap-2 relative">
-                  <Link
-                    href={post.uri || `/blog/${post.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-                    title="Ver en el sitio"
+                return (
+                  <div
+                    key={post.id}
+                    className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/10/50 hover:bg-white/5 transition-colors items-center"
                   >
-                    <Eye size={18} />
-                  </Link>
+                    {/* Título con imagen */}
+                    <div className="col-span-5 flex items-center gap-3">
+                      {imageUrl ? (
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-800">
+                          <Image
+                            src={imageUrl}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center shrink-0">
+                          <span className="text-xs text-gray-400">IMG</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-white truncate">{post.title}</p>
+                        <p className="text-xs text-gray-400">/{post.slug}</p>
+                      </div>
+                    </div>
 
-                  <button
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === post.id ? null : post.id)
-                    }
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-                  >
-                    <MoreVertical size={18} />
-                  </button>
+                    {/* Categoría */}
+                    <div className="col-span-2">
+                      <span className="text-sm text-blue-400 bg-blue-500/10 px-3 py-1 rounded-lg">
+                        {category}
+                      </span>
+                    </div>
 
-                  {/* Dropdown Menu */}
-                  {openMenuId === post.id && (
-                    <div className="absolute right-0 top-full mt-2 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-50 min-w-48">
+                    {/* Fecha */}
+                    <div className="col-span-2">
+                      <p className="text-sm text-gray-400">{formatDate(post.date)}</p>
+                    </div>
+
+                    {/* Acciones */}
+                    <div className="col-span-3 flex items-center justify-end gap-2 relative">
                       <Link
-                        href={`/admin/posts/${post.slug}/edit`}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10"
+                        href={post.uri || `/blog/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                        title="Ver en el sitio"
                       >
-                        <Edit size={16} />
-                        <span>Editar</span>
+                        <Eye size={18} />
                       </Link>
 
                       <button
-                        onClick={() => {
-                          handleDuplicate(post.slug);
-                          setOpenMenuId(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10 text-left"
+                        onClick={() =>
+                          setOpenMenuId(openMenuId === post.id ? null : post.id)
+                        }
+                        className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
                       >
-                        <Copy size={16} />
-                        <span>Duplicar</span>
+                        <MoreVertical size={18} />
                       </button>
 
-                      <button
-                        onClick={() => {
-                          handleDelete(post.slug);
-                          setOpenMenuId(null);
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors text-left"
-                      >
-                        <Trash2 size={16} />
-                        <span>Eliminar</span>
-                      </button>
+                      {/* Dropdown Menu */}
+                      {openMenuId === post.id && (
+                        <div className="absolute right-0 top-full mt-2 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-50 min-w-48">
+                          <Link
+                            href={`/admin/posts/${post.slug}/edit`}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10"
+                          >
+                            <Edit size={16} />
+                            <span>Editar</span>
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              handleDuplicate(post.slug);
+                              setOpenMenuId(null);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/10 text-white transition-colors border-b border-white/10 text-left"
+                          >
+                            <Copy size={16} />
+                            <span>Duplicar</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              handleDelete(post.slug);
+                              setOpenMenuId(null);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors text-left"
+                          >
+                            <Trash2 size={16} />
+                            <span>Eliminar</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="bg-[#031c38] border border-white/10 rounded-lg p-12 text-center">
@@ -222,12 +226,12 @@ export default function ArticulosClient({ initialPosts }: ArticulosClientProps) 
 
       {/* Paginación */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between bg-[#031c38] border border-white/10 rounded-lg p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-[#031c38] border border-white/10 rounded-lg p-4">
           <p className="text-sm text-gray-400">
             Página {currentPage + 1} de {totalPages} ({filteredPosts.length} artículos)
           </p>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 0}

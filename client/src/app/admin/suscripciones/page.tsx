@@ -251,7 +251,7 @@ function PlanModal({
           </div>
 
           {/* Precio + Moneda + Periodicidad */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-white/60 mb-1.5">Precio</label>
               <input
@@ -497,7 +497,7 @@ export default function SuscripcionesPage() {
 
       <div className="space-y-8">
         {/* ── Header ── */}
-        <header className="flex items-center justify-between">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-black text-white font-['Rubik'] tracking-tight">
               Suscripciones de Proveedores
@@ -508,7 +508,7 @@ export default function SuscripcionesPage() {
           </div>
           <button
             onClick={() => setModalPlan('new')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F58634] text-white text-sm font-semibold hover:bg-orange-500 transition-colors"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F58634] text-white text-sm font-semibold hover:bg-orange-500 transition-colors"
           >
             <Plus size={16} />
             Nuevo Plan
@@ -528,7 +528,7 @@ export default function SuscripcionesPage() {
 
         {/* ── Planes Grid ── */}
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between gap-3 mb-4">
             <h2 className="text-sm font-bold text-white/70 uppercase tracking-wider">
               Planes Disponibles
             </h2>
@@ -642,7 +642,7 @@ export default function SuscripcionesPage() {
         </section>
 
         {/* ── Stats ── */}
-        <section className="grid grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { label: 'Activas', count: statsCounts.activa, color: 'text-green-400' },
             { label: 'Vencidas', count: statsCounts.vencida, color: 'text-gray-400' },
@@ -684,7 +684,7 @@ export default function SuscripcionesPage() {
           {showSubs && (
             <>
               {/* Filter */}
-              <div className="flex gap-2 px-6 py-3 border-b border-white/5">
+              <div className="flex flex-wrap gap-2 px-4 sm:px-6 py-3 border-b border-white/5">
                 {(['all', 'activa', 'vencida', 'cancelada', 'pausada'] as const).map((f) => (
                   <button
                     key={f}
@@ -713,7 +713,7 @@ export default function SuscripcionesPage() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full min-w-195 text-sm">
                     <thead>
                       <tr className="border-b border-white/5 text-xs text-white/40 uppercase tracking-wider">
                         <th className="text-left px-6 py-3">ID</th>

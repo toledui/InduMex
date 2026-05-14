@@ -226,7 +226,7 @@ export default function MediaKitPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Media Kit — Planes</h1>
           <p className="mt-1 text-sm text-white/40">
@@ -237,7 +237,7 @@ export default function MediaKitPage() {
           <button
             type="button"
             onClick={openCreate}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] transition-all"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-[#F58634] text-black hover:bg-[#e5762a] transition-all"
           >
             <Plus size={16} />
             Nuevo Plan
@@ -247,8 +247,8 @@ export default function MediaKitPage() {
 
       {/* Editor */}
       {isCreating && (
-        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-6 space-y-6">
-          <div className="flex items-center justify-between">
+        <section className="bg-[#031c38] border border-[#F58634]/20 rounded-2xl p-4 sm:p-6 space-y-6">
+          <div className="flex items-start justify-between gap-3">
             <h2 className="text-base font-bold text-white">{editing ? `Editar: ${editing.nombre}` : 'Nuevo Plan'}</h2>
             <button type="button" onClick={closeEditor} className="text-white/40 hover:text-white transition-colors">
               <X size={18} />
@@ -330,7 +330,7 @@ export default function MediaKitPage() {
             </div>
             <div className="space-y-2">
               {form.items.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-[1fr_120px_80px_32px] gap-2 items-center">
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-[1fr_120px_80px_32px] gap-2 items-center">
                   <input
                     type="text"
                     placeholder="Nombre del ítem"
@@ -355,7 +355,7 @@ export default function MediaKitPage() {
                     onChange={(e) => setItem(idx, 'quantity', e.target.value)}
                     className={inputBase}
                   />
-                  <button type="button" onClick={() => removeItem(idx)} className="text-white/25 hover:text-red-400 transition-colors flex items-center justify-center">
+                  <button type="button" onClick={() => removeItem(idx)} className="text-white/25 hover:text-red-400 transition-colors flex items-center justify-center sm:justify-self-auto justify-self-end">
                     <X size={14} />
                   </button>
                 </div>
@@ -404,7 +404,7 @@ export default function MediaKitPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-3 pt-2 border-t border-white/5">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2 border-t border-white/5">
             <button type="button" onClick={closeEditor} className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white/50 border border-white/10 hover:text-white hover:border-white/20 transition-all">
               Cancelar
             </button>
