@@ -141,8 +141,9 @@ function getHourlyBatchSize(config: ConfigMap): number {
   return parseBatchSize(config.subscriber_auto_sync_batch_size);
 }
 
-function normalizeMailrelayApiUrl(rawUrl: string): string {
-  return rawUrl.replace(/\/+$/, "");
+function normalizeMailrelaySubscribersUrl(rawUrl: string): string {
+  const trimmed = rawUrl.replace(/\/+$/, "");
+  return trimmed.endsWith("/subscribers") ? trimmed : `${trimmed}/subscribers`;
 }
 
 function buildAxiosErrorMessage(
@@ -173,31 +174,31 @@ async function syncWithMailrelay(
   config: ConfigMap
 ): Promise<void> {
   const apiUrl = normalizeString(config.mailrelay_api_url);
-  const normalizedApiUrl = normalizeMailrelayApiUrl(apiUrl);
+  const endpoint = normalizeMailrelaySubscribersUrl(apiUrl);
   const apiKey = normalizeString(config.mailrelay_api_key);
   const groupId = normalizeString(config.mailrelay_group_id);
+  const groupIdNumber = Number(groupId);
 
   const payload: Record<string, unknown> = {
-    function: "addSubscriber",
-    apiKey,
+    status: "active",
     email: input.email,
     name: input.nombre?.trim() || input.email.split("@")[0],
-    status: 1,
-    groups: [groupId],
+    group_ids: Number.isFinite(groupIdNumber) ? [groupIdNumber] : [groupId],
   };
 
   let response;
   try {
-    response = await axios.post(normalizedApiUrl, payload, {
+    response = await axios.post(endpoint, payload, {
       timeout: 15000,
       headers: {
         "Content-Type": "application/json",
+        "X-AUTH-TOKEN": apiKey,
       },
     });
   } catch (error) {
     throw new Error(
       buildAxiosErrorMessage("mailrelay", error, {
-        endpoint: normalizedApiUrl,
+        endpoint,
         email: input.email,
         hasGroup: Boolean(groupId),
       })
@@ -371,13 +372,19 @@ class SuscriptorSyncService {
     for (const subscriber of subscribers) {
       try {
         await syncSingleSubscriber(selectedProvider, subscriber, config);
-        await suscriptorRepository.updateSyncStatus(subscriber.id, selectedProvider, "sincronizado", null);
+        await suscriptorRepository.updateSyncStatus(
+          subscriber.id,
+          selectedProvider,
+          "sincronizado",
+          null
+        );
         synced += 1;
       } catch (error) {
         failed += 1;
-        const reason = buildAxiosErrorMessage(selectedProvider, error, {
-          email: subscriber.email,
-        });
+        const reason = error instanceof Error
+          ? error.message
+          : buildAxiosErrorMessage(selectedProvider, error, { email: subscriber.email });
+
         errors.push({
           email: subscriber.email,
           reason,
