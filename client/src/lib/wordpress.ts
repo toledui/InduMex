@@ -569,12 +569,16 @@ export async function getPostBySlug(
       );
       return withSeo.post;
     } catch {
-      const fallback = await wordpressFetch<{ post: WordPressPostDetail | null }>(
-        GET_POST_BY_SLUG,
-        { slug },
-        { tags: cacheTags }
-      );
-      return fallback.post;
+      try {
+        const fallback = await wordpressFetch<{ post: WordPressPostDetail | null }>(
+          GET_POST_BY_SLUG,
+          { slug },
+          { tags: cacheTags }
+        );
+        return fallback.post;
+      } catch {
+        return null;
+      }
     }
   }
 }
@@ -582,12 +586,16 @@ export async function getPostBySlug(
 export async function getCategories(
   first = 12
 ): Promise<WordPressCategory[]> {
-  const data = await wordpressFetch<{ categories: { nodes: WordPressCategory[] } }>(
-    GET_CATEGORIES,
-    { first },
-    { tags: [WORDPRESS_CACHE_TAGS.categories] }
-  );
-  return data.categories.nodes;
+  try {
+    const data = await wordpressFetch<{ categories: { nodes: WordPressCategory[] } }>(
+      GET_CATEGORIES,
+      { first },
+      { tags: [WORDPRESS_CACHE_TAGS.categories] }
+    );
+    return data.categories.nodes;
+  } catch {
+    return [];
+  }
 }
 
 export async function getAllCategoriesUnlimited(

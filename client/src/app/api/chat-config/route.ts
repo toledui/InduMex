@@ -25,7 +25,12 @@ export async function GET(request: NextRequest) {
     console.error('[CHAT CONFIG API]', error);
     return NextResponse.json(
       { isActive: false, n8nWebhookUrl: null },
-      { status: 500 }
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        },
+      }
     );
   }
 }
