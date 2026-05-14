@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+﻿import { Request, Response } from "express";
 import suscriptorService from "../services/suscriptorService";
 import suscriptorSyncService from "../services/suscriptorSyncService";
 import { failure, success } from "../utils/response";
@@ -70,6 +70,7 @@ class SuscriptoresController {
       const data = await suscriptorSyncService.getStatus();
       return success(res, data);
     } catch (error) {
+      console.error("[Suscriptores] Error al consultar estado de sync:", error);
       const message = error instanceof Error ? error.message : "Error al obtener estado de sincronización.";
       return failure(res, message, 500);
     }
@@ -89,6 +90,7 @@ class SuscriptoresController {
 
       return success(res, data);
     } catch (error) {
+      console.error("[Suscriptores] Error en sincronización manual:", error);
       const message = error instanceof Error ? error.message : "Error al ejecutar sincronización.";
       return failure(res, message, 400);
     }
@@ -108,6 +110,7 @@ class SuscriptoresController {
       const data = await suscriptorSyncService.setAutoSync(enabled, batchSize);
       return success(res, data);
     } catch (error) {
+      console.error("[Suscriptores] Error al actualizar sync automática:", error);
       const message = error instanceof Error ? error.message : "Error al actualizar sincronización automática.";
       return failure(res, message, 400);
     }

@@ -1,4 +1,4 @@
-import axios from "axios";
+﻿import axios from "axios";
 import { createHash } from "crypto";
 import type { ConfigMap } from "./configuracionService";
 import * as configuracionService from "./configuracionService";
@@ -84,7 +84,8 @@ function isProviderReady(provider: SyncProvider, config: ConfigMap): boolean {
     return (
       parseBooleanValue(config.mailrelay_enabled) &&
       Boolean(normalizeString(config.mailrelay_api_url)) &&
-      Boolean(normalizeString(config.mailrelay_api_key))
+      Boolean(normalizeString(config.mailrelay_api_key)) &&
+      Boolean(normalizeString(config.mailrelay_group_id))
     );
   }
 
@@ -96,12 +97,72 @@ function isProviderReady(provider: SyncProvider, config: ConfigMap): boolean {
   );
 }
 
+function getMissingConfigFields(provider: SyncProvider, config: ConfigMap): string[] {
+  if (provider === "mailrelay") {
+    const required: Array<[string, string | null | undefined]> = [
+      ["mailrelay_enabled", parseBooleanValue(config.mailrelay_enabled) ? "true" : "false"],
+      ["mailrelay_api_url", config.mailrelay_api_url],
+      ["mailrelay_api_key", config.mailrelay_api_key],
+      ["mailrelay_group_id", config.mailrelay_group_id],
+    ];
+
+    return required
+      .filter(([key, value]) => {
+        if (key === "mailrelay_enabled") {
+          return value !== "true";
+        }
+        return !normalizeString(value);
+      })
+      .map(([key]) => key);
+  }
+
+  const required: Array<[string, string | null | undefined]> = [
+    ["mailchimp_enabled", parseBooleanValue(config.mailchimp_enabled) ? "true" : "false"],
+    ["mailchimp_api_key", config.mailchimp_api_key],
+    ["mailchimp_server_prefix", config.mailchimp_server_prefix],
+    ["mailchimp_audience_id", config.mailchimp_audience_id],
+  ];
+
+  return required
+    .filter(([key, value]) => {
+      if (key === "mailchimp_enabled") {
+        return value !== "true";
+      }
+      return !normalizeString(value);
+    })
+    .map(([key]) => key);
+}
+
 function getAutoSyncEnabled(config: ConfigMap): boolean {
   return parseBooleanValue(config.subscriber_auto_sync_enabled);
 }
 
 function getHourlyBatchSize(config: ConfigMap): number {
   return parseBatchSize(config.subscriber_auto_sync_batch_size);
+}
+
+function normalizeMailrelayApiUrl(rawUrl: string): string {
+  return rawUrl.replace(/\/+$/, "");
+}
+
+function buildAxiosErrorMessage(
+  provider: SyncProvider,
+  error: unknown,
+  context?: Record<string, unknown>
+): string {
+  if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
+    const statusText = error.response?.statusText;
+    const responseData = error.response?.data
+      ? JSON.stringify(error.response.data).slice(0, 400)
+      : "sin body";
+    const requestInfo = context ? ` | context=${JSON.stringify(context)}` : "";
+    return `${provider} HTTP ${status ?? "N/A"}${statusText ? ` ${statusText}` : ""}: ${responseData}${requestInfo}`;
+  }
+
+  const base = error instanceof Error ? error.message : "Error desconocido";
+  const requestInfo = context ? ` | context=${JSON.stringify(context)}` : "";
+  return `${provider}: ${base}${requestInfo}`;
 }
 
 async function syncWithMailrelay(
@@ -112,6 +173,7 @@ async function syncWithMailrelay(
   config: ConfigMap
 ): Promise<void> {
   const apiUrl = normalizeString(config.mailrelay_api_url);
+  const normalizedApiUrl = normalizeMailrelayApiUrl(apiUrl);
   const apiKey = normalizeString(config.mailrelay_api_key);
   const groupId = normalizeString(config.mailrelay_group_id);
 
@@ -121,29 +183,38 @@ async function syncWithMailrelay(
     email: input.email,
     name: input.nombre?.trim() || input.email.split("@")[0],
     status: 1,
+    groups: [groupId],
   };
 
-  if (groupId) {
-    payload.groups = [groupId];
+  let response;
+  try {
+    response = await axios.post(normalizedApiUrl, payload, {
+      timeout: 15000,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    throw new Error(
+      buildAxiosErrorMessage("mailrelay", error, {
+        endpoint: normalizedApiUrl,
+        email: input.email,
+        hasGroup: Boolean(groupId),
+      })
+    );
   }
-
-  const response = await axios.post(apiUrl, payload, {
-    timeout: 15000,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 
   const serialized = JSON.stringify(response.data ?? {}).toLowerCase();
   const looksLikeError =
     serialized.includes('"status":false') ||
     serialized.includes('"error"') ||
     serialized.includes("invalid");
-  const alreadyExists =
-    serialized.includes("already") && serialized.includes("exist");
+  const alreadyExists = serialized.includes("already") && serialized.includes("exist");
 
   if (looksLikeError && !alreadyExists) {
-    throw new Error("Mailrelay rechazó el contacto.");
+    throw new Error(
+      `Mailrelay rechazo el contacto: ${JSON.stringify(response.data ?? {}).slice(0, 400)}`
+    );
   }
 }
 
@@ -233,10 +304,7 @@ class SuscriptorSyncService {
         mailrelay: parseBooleanValue(config.mailrelay_enabled),
         mailchimp: parseBooleanValue(config.mailchimp_enabled),
       },
-      providerReady:
-        activeProvider !== "local"
-          ? isProviderReady(activeProvider, config)
-          : false,
+      providerReady: activeProvider !== "local" ? isProviderReady(activeProvider, config) : false,
       autoSyncEnabled: getAutoSyncEnabled(config),
       hourlyBatchSize: getHourlyBatchSize(config),
       pending: {
@@ -279,16 +347,18 @@ class SuscriptorSyncService {
     const activeProvider = getActiveProvider(config);
 
     const selectedProvider =
-      input?.provider && input.provider !== "active"
-        ? input.provider
-        : activeProvider;
+      input?.provider && input.provider !== "active" ? input.provider : activeProvider;
 
     if (selectedProvider === "local") {
       throw new Error("No hay proveedor activo para sincronizar (Mailrelay/Mailchimp).");
     }
 
     if (!isProviderReady(selectedProvider, config)) {
-      throw new Error(`La cuenta activa de ${selectedProvider} no está configurada correctamente.`);
+      const missing = getMissingConfigFields(selectedProvider, config);
+      const missingText = missing.length > 0 ? ` Faltan: ${missing.join(", ")}.` : "";
+      throw new Error(
+        `La cuenta activa de ${selectedProvider} no esta configurada correctamente.${missingText}`
+      );
     }
 
     const limit = Math.min(200, Math.max(1, Math.floor(input?.limit ?? 25)));
@@ -301,20 +371,19 @@ class SuscriptorSyncService {
     for (const subscriber of subscribers) {
       try {
         await syncSingleSubscriber(selectedProvider, subscriber, config);
-        await suscriptorRepository.updateSyncStatus(
-          subscriber.id,
-          selectedProvider,
-          "sincronizado",
-          null
-        );
+        await suscriptorRepository.updateSyncStatus(subscriber.id, selectedProvider, "sincronizado", null);
         synced += 1;
       } catch (error) {
         failed += 1;
-        const reason = error instanceof Error ? error.message : "Error de sincronización";
+        const reason = buildAxiosErrorMessage(selectedProvider, error, {
+          email: subscriber.email,
+        });
         errors.push({
           email: subscriber.email,
           reason,
         });
+
+        console.error(`[Suscriptores] Error sync ${selectedProvider} para ${subscriber.email}: ${reason}`);
 
         await suscriptorRepository.updateSyncStatus(
           subscriber.id,
